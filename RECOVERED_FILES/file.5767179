@@ -1,0 +1,56 @@
+ez-segway: read from ../data/randomhaha
+topology: {0: [0, 3], 1: [1, 0, 3], 2: [2, 3], 3: [3], 4: [4, 3], 5: [5, 3]}
+topology: sw to ctrl delays: {0: 7.33, 1: 13.5, 2: 11.44, 3: 0, 4: 11.29, 5: 13.47}
+ez-segway: 2
+ez-segway: skip deadlock: False
+segmentation: inside split_flows
+segmentation: end split_flows
+ControllerHandler: old flow: Flow0: src=2, dst=5, paths=[], vol=10.541016, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow0: src=2, dst=5, paths=[2, 0, 5], vol=10.541016, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow1: src=5, dst=2, paths=[], vol=5.206542, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow1: src=5, dst=2, paths=[5, 0, 2], vol=5.206542, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow2: src=2, dst=5, paths=[], vol=10.541016, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow2: src=2, dst=5, paths=[2, 3, 5], vol=10.541016, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow3: src=5, dst=2, paths=[], vol=5.206542, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow3: src=5, dst=2, paths=[5, 3, 2], vol=5.206542, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow4: src=2, dst=5, paths=[], vol=10.541016, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow4: src=2, dst=5, paths=[2, 3, 5], vol=10.541016, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow5: src=5, dst=2, paths=[], vol=5.206542, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow5: src=5, dst=2, paths=[5, 3, 2], vol=5.206542, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow6: src=1, dst=3, paths=[], vol=1.301210, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow6: src=1, dst=3, paths=[1, 4, 3], vol=1.301210, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow7: src=3, dst=1, paths=[], vol=3.807708, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow7: src=3, dst=1, paths=[3, 4, 1], vol=3.807708, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow8: src=1, dst=3, paths=[], vol=1.301210, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow8: src=1, dst=3, paths=[1, 0, 3], vol=1.301210, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow9: src=3, dst=1, paths=[], vol=3.807708, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow9: src=3, dst=1, paths=[3, 0, 1], vol=3.807708, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow10: src=1, dst=3, paths=[], vol=1.301210, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow10: src=1, dst=3, paths=[1, 2, 3], vol=1.301210, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow11: src=3, dst=1, paths=[], vol=3.807708, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow11: src=3, dst=1, paths=[3, 2, 1], vol=3.807708, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow12: src=0, dst=4, paths=[], vol=25.298780, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow12: src=0, dst=4, paths=[0, 5, 4], vol=25.298780, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow13: src=4, dst=0, paths=[], vol=0.703428, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow13: src=4, dst=0, paths=[4, 5, 0], vol=0.703428, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow14: src=0, dst=4, paths=[], vol=25.298780, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow14: src=0, dst=4, paths=[0, 1, 4], vol=25.298780, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow15: src=4, dst=0, paths=[], vol=0.703428, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow15: src=4, dst=0, paths=[4, 1, 0], vol=0.703428, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow16: src=0, dst=4, paths=[], vol=25.298780, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow16: src=0, dst=4, paths=[0, 2, 4], vol=25.298780, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: old flow: Flow17: src=4, dst=0, paths=[], vol=0.703428, reversed_vol=0.000000, update_type=ADDING_FLOW
+ControllerHandler: new flow: Flow17: src=4, dst=0, paths=[4, 2, 0], vol=0.703428, reversed_vol=0.000000, update_type=ADDING_FLOW
+ez-segway: delay from ctrl to sw: {0: 7.33, 1: 13.5, 2: 11.44, 3: 0, 4: 11.29, 5: 13.47}
+ez-segway: send to ctrl: 0
+ez-segway: 5880
+ez-segway: send to ctrl: 1
+ez-segway: 5836
+ez-segway: send to ctrl: 2
+ez-segway: 5880
+ez-segway: send to ctrl: 3
+ez-segway: 5880
+ez-segway: send to ctrl: 4
+ez-segway: 5836
+ez-segway: send to ctrl: 5
+ez-segway: 5836

@@ -62,10 +62,13 @@ class EzGlobalController(object):
         self.deadlock_unsplittable_count = 0
 
     def install_update(self, old_flows, new_flows):
+        self.log.info("---------------------global controller install update--------------------------")
         self.no_of_received_msgs = 0
         self.current_start_time = time() * 1000
+
+        #new messages = [InstallUpdateMessage]
         new_msgs = self.handler.do_install_update(old_flows, new_flows, self.test_number, self.skip_deadlock)
-        # self.log.info(new_msgs)
+        # self.log.info("new_msgs" + str(new_msgs))
         self.current_sending_time = time() * 1000
         self.current_computation_time = self.current_sending_time - self.current_start_time
         self.log.debug("delay from ctrl to sw: %s" % global_vars.sw_to_ctrl_delays)
@@ -76,6 +79,8 @@ class EzGlobalController(object):
             str_message = pickle.dumps(new_msg, pickle.HIGHEST_PROTOCOL)
             pickled_msgs.append(str_message)
 
+        self.log.info("example of one new_msg")
+        self.log.info("example of one pickled msg" + str(pickled_msgs[0]))
         c = 0
         for new_msg in new_msgs:
             # self.send_to_switch(new_msg, pickled_msgs[c])
@@ -100,7 +105,12 @@ class EzGlobalController(object):
         self.times_sending_to_switches[msg.dst_id] = sending_time
 
         latency = global_vars.sw_to_ctrl_delays[msg.dst_id]
+
+        self.log.info("This is Ldd"  + (str(msg_len)+ '\t' + str(sending_time) + '\t' +str(latency)))
+
+        
         data = struct.pack('Ldd', msg_len, sending_time, latency) + str_message
+        self.log.info("send to switch data"+str(data))
         self.sockets[msg.dst_id].sendall(data)
 
         if self.last_sending_time == None or self.last_sending_time < sending_time:
@@ -111,6 +121,7 @@ class EzGlobalController(object):
             # self.test_number = self.test_number % self.repeat_time
             self.log.info("deadlock count: %d" % self.deadlock_count)
             self.log.info("unsplittable deadlock count: %d" % self.deadlock_unsplittable_count)
+            self.log.info("expriment finished")
             sys.exit(0)
             return
             # When running on real switch use this:

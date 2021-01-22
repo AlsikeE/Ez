@@ -2,7 +2,8 @@
 
 EZ_PATH=./src
 N="ez-segway"
-
+rm -rf ./logs/local/
+mkdir -p ./logs/local/
 cd $EZ_PATH
 
 tmux new-session -d -s $N

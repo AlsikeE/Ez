@@ -219,7 +219,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                                            self.handler.scheduler.trace.times_using_new_path_to_string()))
         # log.info("calculating time: %d ms" % self.current_dependency_graph_cal)
         # log.info("finished after %s ms from sending" % (finish_time_from_sending * 1000))
-        if self.test_number < 1000:
+        if self.test_number < 1:
             hub.spawn_after(1, self._cyclic_update)
         else:
             os.kill(os.getpid(), signal.SIGTERM)
@@ -317,9 +317,13 @@ class SimpleSwitch13(app_manager.RyuApp):
     def error_msg_handler(self, ev):
         msg = ev.msg
 
+        # self.logger.debug('OFPErrorMsg received: type=0x%02x code=0x%02x '
+        #                   'message=%s',
+        #                   msg.type, msg.code, utils.hex_array(msg.data))
+
         self.logger.debug('OFPErrorMsg received: type=0x%02x code=0x%02x '
                           'message=%s',
-                          msg.type, msg.code, utils.hex_array(msg.data))
+                          msg.type, msg.code, str(msg.data))
 
     def call_to_install_update(self, old_flows, new_flows):
         # self.current_notification_time = {x: -1 for x in self.topo.keys()}

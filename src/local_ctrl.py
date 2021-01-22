@@ -42,6 +42,7 @@ import struct
 from eventlet.green import socket
 
 sys.path.append(os.path.realpath("../simulator"))
+sys.path.append('/root/ez-segway')
 
 from ez_lib import ez_switch_handler
 from ez_lib.ez_topo import Ez_Topo
@@ -53,6 +54,12 @@ from datetime import datetime
 
 from topo.topo_factory import TopoFactory
 
+import random
+import binascii
+import simulator.misc.logger as logger
+import six
+logger.init('/root/ez-segway/logs/local/locallog%s'%str(random.random()),constants.LOG_LEVEL)
+log = logger.getLogger("local", constants.LOG_LEVEL)
 
 class SimpleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -123,8 +130,10 @@ class SimpleSwitch13(app_manager.RyuApp):
         # truncated packet data. In that case, we cannot output packets
         # correctly.  The bug has been fixed in OVS v2.1.0.
         match = parser.OFPMatch()
+        # actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
+        #                                   ofproto.OFPCML_NO_BUFFER)]
         actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
-                                          ofproto.OFPCML_NO_BUFFER)]
+                                           ofproto.OFPCML_NO_BUFFER)]
         self.add_flow(datapath, 0, match, actions)
 
         self.logger.info("datapath id %s", datapath.id)
@@ -306,6 +315,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         #     self.handler.scheduler.trace.add_trace_for_msgs(time() * 1000, sent_this_time)
 
     def send_msg(self, datapath, msg):
+        self.logger.info("----------------------in send message-------------------------")
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
 
@@ -324,8 +334,10 @@ class SimpleSwitch13(app_manager.RyuApp):
                               src=src_mac,
                               ethertype=ether.ETH_TYPE_IP)
         sending_time = time() * 1000
+
         msg.sending_time = sending_time
         pmsg = pickle.dumps(msg)
+
         i = ipv4.ipv4(src=src_ip,
                       dst=dst_ip,
                       proto=IPPROTO_UDP,
@@ -339,8 +351,19 @@ class SimpleSwitch13(app_manager.RyuApp):
         pkt.add_protocol(e)
         pkt.add_protocol(i)
         pkt.add_protocol(u)
+
+        # pkpro = binascii.hexlify(str(pkt.protocols))
+        # self.logger.info("send before serialize pkt.protocols " + str(pkt.protocols))
+        # self.logger.info("send before serialize pkt.data " + str(pkt.data))
         pkt.serialize()
+
+        # self.logger.info("send after serialize pkt.protocols " + str(pkt.protocols))
+        # self.logger.info("send after serialize pkt.data " + str(pkt.data))
+     
+
+        # pkt.data += bytearray(pmsg)
         pkt.data += bytearray(pmsg)
+
         # FIXME: pmsg could be more than maximum payload ~1450 bytes
 
         out = parser.OFPPacketOut(datapath=datapath, in_port=ofproto.OFPP_CONTROLLER,
@@ -397,8 +420,10 @@ class SimpleSwitch13(app_manager.RyuApp):
 
     def process_ezsegway_notification_msg(self, pkt, datapath, receiving_time=time()):
         agg_msg = pickle.loads(pkt.protocols[-1])
+        self.logger.info(agg_msg)
         receiving_time *= 1000
         agg_msg.receiving_time = receiving_time
+        self.logger.info("hereis loads agg_msg"+str(agg_msg))
         self.logger.info("msg %s is transfer in: %s ms" % (str(agg_msg),
                                                          agg_msg.receiving_time - agg_msg.sending_time))
         # if self.receiving_update_time is not None:
@@ -413,6 +438,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         finished = 0
         for notification_msg in notification_msgs:
             if finished != 1:
+                self.logger.info("still not finished")
                 update_infos, finished = self.handler.do_handle_notification(notification_msg)
             else:
                 update_infos, no_care = self.handler.do_handle_notification(notification_msg)
@@ -421,6 +447,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.logger.debug(update_info_s)
         self.install_updates(datapath, update_info_s)
         if finished == 1:
+            self.logger.info("finished")
             # hub.spawn_after(global_vars.sw_to_ctrl_delays[self.switch_id]/1000, self.send_finish_msg)
             hub.spawn_after(self.sw_to_ctrl_delay / 1000, self.send_finish_msg)
 
@@ -428,6 +455,7 @@ class SimpleSwitch13(app_manager.RyuApp):
     def _packet_in_handler(self, ev):
         # If you hit this you might want to increase
         # the "miss_send_length" of your switch
+        self.logger.info("------------------in packet in handler-------------------")
         receiving_time = time()
         if ev.msg.msg_len < ev.msg.total_len:
             self.logger.debug("packet truncated: only %s of %s bytes",
@@ -437,6 +465,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         ofproto = datapath.ofproto
         in_port = msg.match['in_port']
         dpid = datapath.id
+
 
         pkt = packet.Packet(msg.data)
         eth = pkt.get_protocols(ethernet.ethernet)[0]
@@ -462,16 +491,20 @@ class SimpleSwitch13(app_manager.RyuApp):
         out = datapath.ofproto_parser.OFPPacketOut(
             datapath=datapath, buffer_id=buffer_id, in_port=in_port,
             actions=actions)
+        self.logger.info("out" + str(out))
         datapath.send_msg(out)
 
     @set_ev_cls(ofp_event.EventOFPErrorMsg,
                 [HANDSHAKE_DISPATCHER, CONFIG_DISPATCHER, MAIN_DISPATCHER])
     def error_msg_handler(self, ev):
         msg = ev.msg
-
         self.logger.debug('OFPErrorMsg received: type=0x%02x code=0x%02x '
                           'message=%s',
-                          msg.type, msg.code, utils.hex_array(msg.data))
+                          msg.type, msg.code, str(msg.data))
+
+        # self.logger.debug('OFPErrorMsg received: type=0x%02x code=0x%02x '
+        #                   'message=%s',
+        #                   msg.type, msg.code, utils.hex_array(msg.data))
 
     def connection_handler(self, fd):
         while True:
