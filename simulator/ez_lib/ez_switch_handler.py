@@ -2,12 +2,14 @@ from collections import deque, defaultdict
 import itertools
 
 from domain.message import *
-from misc import logger, global_vars
+from misc import logger, global_vars,constants
 # from misc.utils import SortedPair
 from ez_lib.p2p_scheduler import P2PScheduler
 from domain.network_premitives import LinkSegment, Link
 from time import time
 from collections import deque
+
+
 
 
 class EzSwitchHandler(object):
@@ -30,13 +32,17 @@ class EzSwitchHandler(object):
 
     @staticmethod
     def init_logger(id_):
+        # logger.init('/root/ez-segway/logs/handler/handlerlog%d'% id_,constants.LOG_LEVEL)
         return logger.getLogger("SwitchHandler%d" % id_, constants.LOG_LEVEL)
 
     def do_install_update(self, msg):
+        self.log.info("-----------in do install update")
         assert isinstance(msg, InstallUpdateMessage)
         self.scheduler.current_update = msg.update_id
         self.scheduler.reset()
         self.scheduler.can_violate_congestion = msg.skip_deadlock
+
+
         self.scheduler.create_local_dependency_graph(msg.link_by_endpoints,
                                                      msg.segments_by_seg_path_id)
         self.__store_pred_succ_by_flow__(msg)
@@ -183,6 +189,12 @@ class EzSwitchHandler(object):
         affected_links = deque([])
         self.log.debug(finished_list)
         self.log.debug(update_infos)
+# self.scheduler
+# self.scheduler.links_by_endpoints
+        self.log.info("==================Jason: self.scheduler")
+        self.log.info(self.scheduler)
+        self.log.info(self.scheduler.links_by_endpoints)
+
         link = self.scheduler.links_by_endpoints[end_points]
         l_segment = self.scheduler.segments_by_seg_path_id[msg.seg_path_id]
         if msg.split_vol < 0:

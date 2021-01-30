@@ -602,6 +602,8 @@ class P2PScheduler(EzScheduler):
                 local_seg_path_ids[u_op.seg_path_id] = [(src, dst)]
             else:
                 local_seg_path_ids[u_op.seg_path_id].append((src, dst))
+                
+            #why anweiyu 2?
             if type_segments.has_key(u_op.seg_path_id):
                 type_segments[u_op.seg_path_id] |= 2
             else:

@@ -58,8 +58,8 @@ import random
 import binascii
 import simulator.misc.logger as logger
 import six
-logger.init('/root/ez-segway/logs/local/locallog%s'%str(random.random()),constants.LOG_LEVEL)
-log = logger.getLogger("local", constants.LOG_LEVEL)
+# log = logger.init('/root/ez-segway/logs/local/locallog%s'%str(random.random()),constants.LOG_LEVEL)
+
 
 class SimpleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -89,6 +89,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         # self.repeat_time = int(os.environ.get("REPEAT_TIMES", 6))
         self.datapath = None
         self.eth_to_port = {}
+        logger.init('/root/ez-segway/logs/local/locallog%d'% (self.switch_id +1 ) ,constants.LOG_LEVEL)
+        log = self.logger
         self.logger.info("switch_id=%d" % self.switch_id)
         self.logger.info("topo_input=%s" % self.topo_input)
         self.logger.level = constants.LOG_LEVEL
@@ -109,6 +111,13 @@ class SimpleSwitch13(app_manager.RyuApp):
         # initialize the handler based on switch id
         neighbors = map(lambda x: x - 1, self.topo[self.switch_id + 1].keys())
         self.handler = ez_switch_handler.EzSwitchHandler(self.switch_id, None, neighbors, self.callback_func)
+
+    def send_set_config(self,datapath):
+        ofp = datapath.ofproto
+        ofp_parser = datapath.ofproto_parser
+        req = ofp_parser.OFPSetConfig(datapath,ofp.OFPC_FRAG_FRAG_NORMAL, 512)
+        datapath.send_msg(req)
+
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
@@ -141,6 +150,11 @@ class SimpleSwitch13(app_manager.RyuApp):
         match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_dst=ipAdd(datapath.id))
         actions = [parser.OFPActionOutput(1)]
         self.add_flow(datapath, 1, match, actions)
+        #modify the miss_len
+        req = parser.OFPSetConfig(datapath,ofproto.OFPC_FRAG_NORMAL,512)
+        datapath.send_msg(req)
+
+        #after the only switch connected, start the server 
         hub.spawn(self.run_server)
 
         self.create_topology_info()
@@ -258,6 +272,9 @@ class SimpleSwitch13(app_manager.RyuApp):
         # if self.receiving_update_time is not None:
         #     current_time = time() * 1000
         #     self.logger.info("sending barrier at %s" % str(current_time - self.receiving_update_time))
+        self.logger.info("install_updates: i've finished the first, and let me send a barrier")
+        self.logger.info("install_updates: here is the notification_queue %s" % str(self.notification_queue))
+        self.logger.info("----------------------install_updates over---------------------")
         datapath.send_barrier()
 
     def aggregate_msgs(self, msgs):
@@ -283,6 +300,8 @@ class SimpleSwitch13(app_manager.RyuApp):
         #     current_time = time() * 1000
         #     self.logger.info("receiving barrier at %s" % str(current_time - self.receiving_update_time))
         # sent_this_time = list(self.notification_queue)
+
+        self.logger.info("handle barrier: well, got a barrier reply")
         while len(self.notification_queue) > 0:
             msg = self.notification_queue.popleft()
             if not to_switches.has_key(msg.dst_id):
@@ -305,11 +324,14 @@ class SimpleSwitch13(app_manager.RyuApp):
             # else:
             #     to_switches[(msg.dst_id, msg.msg_type)].append(msg)
 
+        self.logger.info("------------------barrier handler called some sendmsg-----------------")
         # agg_msgs = {}
         for l_msg in to_switches.values():
             for msg in l_msg:
                 # agg_msg = self.aggregate_msgs(to_switches[(dst, msg_type)])
                 # self.logger.debug("message: %s" % str(agg_msg))
+                self.logger.info("------------------barrier handler: an example of msg %s" %str(msg))
+                self.logger.info("------------------barrier handler: over-------------------------")
                 self.send_msg(self.datapath, msg)
         # if sent_this_time:
         #     self.handler.scheduler.trace.add_trace_for_msgs(time() * 1000, sent_this_time)
@@ -353,21 +375,23 @@ class SimpleSwitch13(app_manager.RyuApp):
         pkt.add_protocol(u)
 
         # pkpro = binascii.hexlify(str(pkt.protocols))
-        # self.logger.info("send before serialize pkt.protocols " + str(pkt.protocols))
-        # self.logger.info("send before serialize pkt.data " + str(pkt.data))
+        self.logger.info("send before serialize pkt.protocols " + str(pkt.protocols))
+        self.logger.info("send before serialize pkt.data " + str(pkt.data))
         pkt.serialize()
 
         # self.logger.info("send after serialize pkt.protocols " + str(pkt.protocols))
         # self.logger.info("send after serialize pkt.data " + str(pkt.data))
      
 
-        # pkt.data += bytearray(pmsg)
         pkt.data += bytearray(pmsg)
+
 
         # FIXME: pmsg could be more than maximum payload ~1450 bytes
 
         out = parser.OFPPacketOut(datapath=datapath, in_port=ofproto.OFPP_CONTROLLER,
                                   buffer_id=ofproto.OFP_NO_BUFFER, actions=actions, data=pkt.data)
+        self.logger.info("in sendmsg the out.data %s "%str(out.data))
+        self.logger.info("in sendmsg the out.data over")
         if self.start_receiving_update_time is not None:
             current_time = time() * 1000
             # self.logger.info("sending msg to %d at %s" %
@@ -386,6 +410,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
                                              actions)]
         if buffer_id:
+            # self.logger.info("-!!!--buffer id in add_flow----")
             mod = parser.OFPFlowMod(datapath=datapath, buffer_id=buffer_id,
                                     priority=priority, match=match,
                                     instructions=inst)
@@ -401,6 +426,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
                                              actions)]
         if buffer_id:
+            # self.logger.info("-!!!--buffer id in update_flow----")
             mod = parser.OFPFlowMod(datapath=datapath, command=ofproto.OFPFC_MODIFY_STRICT, buffer_id=buffer_id,
                                     priority=priority, match=match,
                                     instructions=inst)
@@ -419,11 +445,46 @@ class SimpleSwitch13(app_manager.RyuApp):
         datapath.send_msg(mod)
 
     def process_ezsegway_notification_msg(self, pkt, datapath, receiving_time=time()):
-        agg_msg = pickle.loads(pkt.protocols[-1])
+        # a = type(pkt.protocols[-1])
+        # rcved = pkt.protocols[-1]
+        rcved = pkt
+        self.logger.info("+++++++++++++++++received notif message+++++++++++++++")
+        self.logger.info(rcved)
+        self.logger.info("-------------end of received notif message-------------")
+        arr = rcved.split(b"(idomain")
+        self.logger.info("+++++++++++++++++arr splitted+++++++++++++++")
+        self.logger.info(arr)
+        self.logger.info(b"(idomain")
+        self.logger.info(arr[-1])
+
+        agg_msg = pickle.loads(str(b"(idomain") + str(arr[-1]))
+        # agg_msg = pickle.loads(str(b"(idomain") + str(b""))
+        # haha = pkt.protocols[-1]
+        # # b = bytearray(pkt.protocols[-1])
+        # c = str(pkt.protocols[-1])
+
+        
+        # d = pkt.get_protocol(udp.udp)
+        # da = type(d)
+        # # db = bytearray(d)
+        # dc =str(d)
+
+
+        # self.logger.info("=========a,b,c=========================")
+        # self.logger.info(str(a))
+        # # self.logger.info(str(b))
+        # self.logger.info(c)
+
+
+        self.logger.info("===========rebuild the string by adding (idomain=======================")
         self.logger.info(agg_msg)
+        # # self.logger.info(str(db))
+        # self.logger.info(dc)
+
+        # agg_msg = pickle.loads(pkt.protocols[-1])
         receiving_time *= 1000
         agg_msg.receiving_time = receiving_time
-        self.logger.info("hereis loads agg_msg"+str(agg_msg))
+        # self.logger.info("hereis loads agg_msg "+str(agg_msg))
         self.logger.info("msg %s is transfer in: %s ms" % (str(agg_msg),
                                                          agg_msg.receiving_time - agg_msg.sending_time))
         # if self.receiving_update_time is not None:
@@ -441,6 +502,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 self.logger.info("still not finished")
                 update_infos, finished = self.handler.do_handle_notification(notification_msg)
             else:
+                self.logger.info("handling Good to Move and finished == 1")
                 update_infos, no_care = self.handler.do_handle_notification(notification_msg)
             self.logger.debug("finished: %s for msg: %s" % (finished, notification_msg))
             update_info_s.extend(update_infos)
@@ -455,7 +517,6 @@ class SimpleSwitch13(app_manager.RyuApp):
     def _packet_in_handler(self, ev):
         # If you hit this you might want to increase
         # the "miss_send_length" of your switch
-        self.logger.info("------------------in packet in handler-------------------")
         receiving_time = time()
         if ev.msg.msg_len < ev.msg.total_len:
             self.logger.debug("packet truncated: only %s of %s bytes",
@@ -468,14 +529,26 @@ class SimpleSwitch13(app_manager.RyuApp):
 
 
         pkt = packet.Packet(msg.data)
+        
+        
         eth = pkt.get_protocols(ethernet.ethernet)[0]
         dst = eth.dst
         src = eth.src
 
         udp_pkt = pkt.get_protocol(udp.udp)
         if udp_pkt and udp_pkt.dst_port == 6620:
-            self.process_ezsegway_notification_msg(pkt, datapath, receiving_time)
-
+            self.logger.info("in packet in handler and the port is 6620 ")
+            self.logger.info("--------------------raw msg----------------")
+            self.logger.info(str(msg))
+            self.logger.info("--------------------------------raw msg over now raw msg.data----------------")
+            self.logger.info(str(msg.data))
+            self.logger.info("--------------------------------raw msg.data over now packeted pkt----------------")
+            self.logger.info(str(pkt))
+            self.logger.info("--------------------------------pkt over now packeted udp----------------")
+            self.logger.info(str(pkt.protocols[-1]))
+            self.logger.info("--------------port 6620 over----------------")
+            # self.process_ezsegway_notification_msg(pkt, datapath, receiving_time)
+            self.process_ezsegway_notification_msg(msg.data, datapath, receiving_time)
         # learn a mac address to avoid FLOOD next time.
         self.eth_to_port.setdefault(dpid, {})
         self.eth_to_port[dpid][src] = in_port
@@ -486,13 +559,15 @@ class SimpleSwitch13(app_manager.RyuApp):
             out_port = ofproto.OFPP_FLOOD
 
         actions = [datapath.ofproto_parser.OFPActionOutput(out_port)]
-
+        
         buffer_id = ofproto.OFP_NO_BUFFER if msg.buffer_id == None else msg.buffer_id
         out = datapath.ofproto_parser.OFPPacketOut(
             datapath=datapath, buffer_id=buffer_id, in_port=in_port,
             actions=actions)
-        self.logger.info("out" + str(out))
         datapath.send_msg(out)
+        # if(buffer_id):
+        #     self.logger.info("-!!!--buffer id in packetin_handler----")
+
 
     @set_ev_cls(ofp_event.EventOFPErrorMsg,
                 [HANDSHAKE_DISPATCHER, CONFIG_DISPATCHER, MAIN_DISPATCHER])
@@ -506,19 +581,24 @@ class SimpleSwitch13(app_manager.RyuApp):
         #                   'message=%s',
         #                   msg.type, msg.code, utils.hex_array(msg.data))
 
+
     def connection_handler(self, fd):
+        self.logger.info("------------------------------in connection handler----------------------")
         while True:
             data = fd.recv(24)
+            # self.logger.info("here is the data in connection handler" + str(binascii.hexlify(data)))
             if len(data) == 0:
                 fd.close()
                 return
             self.start_receiving_update_time = time() * 1000
             msg_len, sending_time, self.sw_to_ctrl_delay = struct.unpack('Ldd', data)
+            self.logger.info("length: %d" % msg_len)
             self.logger.debug("length: %d" % msg_len)
             pickle_msg = recv_size(fd, msg_len)
+            # self.logger.info("pickle_msg_by_recv_size in conn handler" + str(pickle_msg))
             self.logger.debug("recv length: %d" % len(pickle_msg))
             msg = pickle.loads(pickle_msg)
-
+            # self.logger.info("msg_by_recv_size in conn handler" + str(msg))
             # self.logger.info("Receive message from global ctrl %s ms after sending (at %s)"
             #                  % (str(self.current_time_to_transfer_install_msg), time_in_date))
             self.logger.debug(msg)
@@ -528,7 +608,7 @@ class SimpleSwitch13(app_manager.RyuApp):
     def run_server(self):
         server = eventlet.listen(('127.0.0.1', 6800 + self.switch_id))
         while True:
-            fd, addr = server.accept()
+            fd, addr = server.accept()  #accept returns (conn,address) so fd is a connection
             self.logger.debug("receive a connection")
             self.connection_handler(fd)
 
@@ -547,4 +627,10 @@ def recv_size(fd, size):
         sock_data = fd.recv(size - total_len)
         total_data.append(sock_data)
         total_len = sum([len(i) for i in total_data ])
+    
+    tolog = pickle.loads(''.join(total_data))
+
+    log = logger.getLogger("recv",constants.LOG_LEVEL)
+    log.info("in recv \n %s"%str(tolog))
+    log.info("--------recv over-----")
     return ''.join(total_data)

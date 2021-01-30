@@ -79,8 +79,8 @@ class EzGlobalController(object):
             str_message = pickle.dumps(new_msg, pickle.HIGHEST_PROTOCOL)
             pickled_msgs.append(str_message)
 
-        self.log.info("example of one new_msg")
-        self.log.info("example of one pickled msg" + str(pickled_msgs[0]))
+        # self.log.info("example of one new_msg")
+        # self.log.info("example of one pickled msg" + str(pickled_msgs[0]))
         c = 0
         for new_msg in new_msgs:
             # self.send_to_switch(new_msg, pickled_msgs[c])
@@ -106,11 +106,11 @@ class EzGlobalController(object):
 
         latency = global_vars.sw_to_ctrl_delays[msg.dst_id]
 
-        self.log.info("This is Ldd"  + (str(msg_len)+ '\t' + str(sending_time) + '\t' +str(latency)))
+        # self.log.info("This is Ldd"  + (str(msg_len)+ '\t' + str(sending_time) + '\t' +str(latency)))
 
         
         data = struct.pack('Ldd', msg_len, sending_time, latency) + str_message
-        self.log.info("send to switch data"+str(data))
+        # self.log.info("send to switch data"+str(data))
         self.sockets[msg.dst_id].sendall(data)
 
         if self.last_sending_time == None or self.last_sending_time < sending_time:
