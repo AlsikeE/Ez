@@ -1,12 +1,12 @@
 #!/bin/bash
-
+cd /root/ez-segway/src
 
 python ./global_ctrl.py  \
 	--logFolder logs\
-	--logFile b4-global-ctrl.log\
+	--logFile random-global-ctrl.log\
 	--logLevel INFO\
 	--data_folder data\
-	--topology b4 \
+	--topology randomhaha \
 	--topology_type adjacency\
 	--method p2p\
 	--generating_method random\

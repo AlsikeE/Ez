@@ -13,5 +13,5 @@ python $EZ_PATH/global_ctrl.py  \
 	--generating_method random\
 	--number_of_flows 0\
 	--failure_rate 0.5\
-	--repeat_time 50\
+	--repeat_time 1\
 	--skip_deadlock 0

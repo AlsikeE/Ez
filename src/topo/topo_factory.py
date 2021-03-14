@@ -3,7 +3,10 @@ from b4 import B4
 from internet2 import Internet2
 from example import Example
 from rf_6462 import rf_6462
+from get_random_topo import Randomhaha
 
+
+DATA_DIR = "/root/ez-segway/data/randomhaha/"
 class TopoFactory(object):
     @staticmethod
     def create_topo(topo_name):
@@ -12,4 +15,4 @@ class TopoFactory(object):
 
 topos = { "triangle": (lambda: Triangle()), "b4": (lambda: B4()),
           "i2": (lambda: Internet2()), "ex": (lambda: Example()),
-          "6462": (lambda: rf_6462())}
+          "6462": (lambda: rf_6462()), "randomhaha": (lambda: Randomhaha(DATA_DIR + "topo.intra", DATA_DIR +  "latencies.intra"))}

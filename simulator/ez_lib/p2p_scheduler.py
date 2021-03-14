@@ -689,6 +689,10 @@ class P2PScheduler(EzScheduler):
             self.extract_local_segment(segments_by_seg_path_id, local_seg_path_ids, type_segments)
         self.segments_to_be_done = set([x for x in local_seg_path_ids.keys()])
         self.count_of_l_segment(self.segments_by_seg_path_id)
+
+        self.log.info("--------------create_local_dependency_graph----------------- ")
+        self.log.info(self.links_by_endpoints)
+        self.log.info("--------------create_local_dependency_graph over----------------- ")
         # self.log.info("install update debug local_links %s" % self.links_by_endpoints)
         # self.log.info("install update debug local_segments %s" % self.segments_by_seg_path_id)
         # self.log.info("old_succ_by_seg_path: %s" % str(self.old_succ_by_seg_path_id))

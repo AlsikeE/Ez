@@ -105,13 +105,17 @@ class EzSwitchHandler(object):
         self.scheduler.trace.no_of_received_messages += 1
         if self.scheduler.current_update == msg.update_id and \
                 msg.seg_path_id not in self.scheduler.segments_to_be_done:
+            self.log.info("in ez_switch_handler case 0")
             return [], -1
         if msg.msg_type == constants.GOOD_TO_MOVE_MSG:
+            self.log.info("in ez_switch_handler case good_to_move")
             return self.handle_good_to_move_msg(msg), self.__is_finished()
         elif msg.msg_type == constants.COHERENT_MSG:
+            self.log.info("in ez_switch_handler case coherent")
             self.scheduler.coherent_succs.add(msg.seg_path_id)
             return self.handle_coherent_msg(msg), self.__is_finished()
         elif msg.msg_type == constants.REMOVING_MSG:
+            self.log.info("in ez_switch_handler case removing")
             self.scheduler.removing_preds.add(msg.seg_path_id)
             return self.handle_removing_msg(msg), self.__is_finished()
         return [], self.__is_finished()
@@ -184,6 +188,8 @@ class EzSwitchHandler(object):
             self.received_good_to_move_msgs.append(msg)
             return
         end_points = (self.id, msg.src_id)
+        
+
         self.scheduler.good_to_move_succs.add(msg.seg_path_id)
         finished_list = set([])
         affected_links = deque([])
@@ -191,12 +197,26 @@ class EzSwitchHandler(object):
         self.log.debug(update_infos)
 # self.scheduler
 # self.scheduler.links_by_endpoints
-        self.log.info("==================Jason: self.scheduler")
-        self.log.info(self.scheduler)
-        self.log.info(self.scheduler.links_by_endpoints)
+        # self.log.info("==================Jason: self.scheduler")
+        # self.log.info(self.scheduler)
+        # self.log.info(self.scheduler.links_by_endpoints)
+        # self.log.info(end_points)
+        # self.log.info(self.scheduler.links_by_endpoints[end_points])
+        # self.log.info("==================Jason: self.scheduler over")
 
+# mu
+        # if(!self.scheduler.links_by_endpoints[end_points]):
+        #     self.log.info("finish this good_to_move_handler cause no such link ")
+        #     return
+# mu
         link = self.scheduler.links_by_endpoints[end_points]
         l_segment = self.scheduler.segments_by_seg_path_id[msg.seg_path_id]
+
+        self.log.info("------------------link and l_segment-------------")
+        self.log.info(link)
+        self.log.info(l_segment)
+        self.log.info("------------------link and l_segment over-------------")
+
         if msg.split_vol < 0:
             self.scheduler.remaining_good_vol_to_move[msg.seg_path_id] = l_segment.vol
             (new_msgs, update_next) = self.scheduler.check_and_execute_update_on_link(

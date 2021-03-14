@@ -11,7 +11,7 @@ log = logger.getLogger("segmentation", constants.LOG_LEVEL)
 mulog = logger.getLogger("ez_flow", constants.LOG_LEVEL)
 PathDiffResult = collections.namedtuple("PathDiffResult", ["id", "to_same", "segs"])
 
-
+#  adding change to old flows
 def split_flows(old_flows, new_flows):
     log.debug("inside split_flows")
     current_id = len(old_flows) - 1
@@ -38,7 +38,8 @@ def split_flows(old_flows, new_flows):
             old_flows.append(flow)
     log.debug("end split_flows")
 
-
+#for (src,dst), add or remove a flow whose vol = delta to new 
+#return the change
 def __split_flow__(old_flow, new_flow, current_id):
     if old_flow.vol == new_flow.vol:
         return None
@@ -55,7 +56,7 @@ def __split_flow__(old_flow, new_flow, current_id):
         adding_flow.path = new_flow.path
         return adding_flow
 
-
+#making the segs into struct<LinkSegment> (including add mod and rmv)
 def update_links_and_segments(psegs, links_by_endpoints, segments_by_seg_path_id,
                               old_flow, new_flow, centralized, demo=False):
     for seg in psegs:
@@ -101,12 +102,12 @@ def path_to_ops_by_link(id, links_by_endpoints, segments_by_seg_path_id, old_flo
         path_d = __path_segmentation__(id, old_flow.path, new_flow.path)
 
     else:
-        if len(old_flow.path) == 0:
+        if len(old_flow.path) == 0:#only new on the link
             segs = Segment(new_flow.flow_id, 0, new_flow.src, new_flow.dst,
                            old_flow.dst, [],
                            new_flow.path[1:len(new_flow.path)],
                            constants.NONE_SEGMENT_LOOP_POS)
-        else:
+        else:#only old on the link
             segs = Segment(old_flow.flow_id, 0, old_flow.src, old_flow.dst,
                            old_flow.dst, old_flow.path[1:len(old_flow.path)],
                            [],

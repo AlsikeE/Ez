@@ -68,7 +68,7 @@ class EzGlobalController(object):
 
         #new messages = [InstallUpdateMessage]
         new_msgs = self.handler.do_install_update(old_flows, new_flows, self.test_number, self.skip_deadlock)
-        # self.log.info("new_msgs" + str(new_msgs))
+        # self.log.info("InstallUpdateMessage" + str(new_msgs))
         self.current_sending_time = time() * 1000
         self.current_computation_time = self.current_sending_time - self.current_start_time
         self.log.debug("delay from ctrl to sw: %s" % global_vars.sw_to_ctrl_delays)
@@ -117,6 +117,7 @@ class EzGlobalController(object):
             self.last_sending_time = sending_time
 
     def on_timer(self):
+        self.log.info("it's the %d time" % self.test_number)
         if self.test_number >= self.repeat_time:
             # self.test_number = self.test_number % self.repeat_time
             self.log.info("deadlock count: %d" % self.deadlock_count)
@@ -162,6 +163,7 @@ class EzGlobalController(object):
             c = socket.socket()
             host = socket.gethostbyname('127.0.0.1')
             c.connect((host, 6800 + sw_id))
+            # c.connect((host, 8700 + sw_id))
             self.sockets[sw_id] = c
 
     def run_server(self):

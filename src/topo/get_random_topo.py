@@ -1,5 +1,5 @@
 from basetopo import BaseTopo
-DATADIR = '/root/ez-segway/data/randomhaha/'
+# DATADIR = '/root/ez-segway/data/randomhaha/'
 def read_matrix_from_file(file,type):
     result = []
     with open(file) as f:
