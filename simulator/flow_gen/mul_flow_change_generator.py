@@ -1,6 +1,7 @@
 import os
 import itertools
 import random
+import uuid
 
 from misc import logger, utils, global_vars, constants
 from misc.utils import FlowSrcDst
@@ -12,6 +13,7 @@ from collections import defaultdict, deque
 from copy import deepcopy, copy
 from itertools import izip
 
+# FLOW_DES_FILE = 'flow-des.intra'
 
 class MulFlowChangeGenerator(object):
     def __init__(self, path_generator=None, rng=random.Random()):
@@ -150,21 +152,21 @@ class MulFlowChangeGenerator(object):
         new_path_str = str("%f\t%s" % (new_vol, new_p))
         return str("%s\t%s\t%s\n" % (end_points, old_path_str, new_path_str))
 
-    def print_flow(self, old_flow, new_flow):
-        lines = ""
-        for old_p, new_p in izip(old_flow.path, new_flow.path):
-            if not old_p and not new_p:
-                continue
-            line = self.print_old_new_path(old_flow.src, old_flow.dst, old_flow.unit_vol, new_flow.unit_vol, old_p, new_p)
-            lines += line
+    # def print_flow(self, old_flow, new_flow):
+    #     lines = ""
+    #     for old_p, new_p in izip(old_flow.path, new_flow.path):
+    #         if not old_p and not new_p:
+    #             continue
+    #         line = self.print_old_new_path(old_flow.src, old_flow.dst, old_flow.unit_vol, new_flow.unit_vol, old_p, new_p)
+    #         lines += line
 
-            reversed_old_p = list(reversed(old_p))
-            reversed_new_p = list(reversed(new_p))
-            line = self.print_old_new_path(old_flow.dst, old_flow.src, old_flow.unit_reversed_vol,
-                                           new_flow.unit_reversed_vol,
-                                           reversed_old_p, reversed_new_p)
-            lines += line
-        return lines
+    #         reversed_old_p = list(reversed(old_p))
+    #         reversed_new_p = list(reversed(new_p))
+    #         line = self.print_old_new_path(old_flow.dst, old_flow.src, old_flow.unit_reversed_vol,
+    #                                        new_flow.unit_reversed_vol,
+    #                                        reversed_old_p, reversed_new_p)
+    #         lines += line
+    #     return lines
 
     def add_statistic_info(self, update, old_flows, new_flows, old_link_caps, new_link_caps):
         if len(old_link_caps) == 0:
@@ -221,27 +223,27 @@ class MulFlowChangeGenerator(object):
         return str_output
 
 
-    def write_flows(self, flow_file, update, write_reversed_flow=True):
-        flow_writer = open(flow_file, 'w')
-        str_statistic = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s%s\n" % (update.stat_info.min_old_utilizing,
-                                                                update.stat_info.max_old_utilizing,
-                                                                update.stat_info.avg_old_utilizing,
-                                                                update.stat_info.free_old_link,
-                                                                update.stat_info.min_new_utilizing,
-                                                                update.stat_info.max_new_utilizing,
-                                                                update.stat_info.avg_new_utilizing,
-                                                                update.stat_info.free_new_link,
-                                                                self.print_pivot_switches_info(
-                                                                    update.stat_info.no_of_segments_by_count
-                                                                ))
-        flow_writer.write(str_statistic)
-        str_flows = ""
-        for old_flow, new_flow in itertools.izip(update.old_flows, update.new_flows):
-            self.log.debug(old_flow)
-            self.log.debug(new_flow)
-            str_flows += self.print_flow(old_flow, new_flow)
-        flow_writer.write(str_flows)
-        flow_writer.close()
+    # def write_flows(self, flow_file, update, write_reversed_flow=True):
+    #     flow_writer = open(flow_file, 'w')
+    #     str_statistic = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s%s\n" % (update.stat_info.min_old_utilizing,
+    #                                                             update.stat_info.max_old_utilizing,
+    #                                                             update.stat_info.avg_old_utilizing,
+    #                                                             update.stat_info.free_old_link,
+    #                                                             update.stat_info.min_new_utilizing,
+    #                                                             update.stat_info.max_new_utilizing,
+    #                                                             update.stat_info.avg_new_utilizing,
+    #                                                             update.stat_info.free_new_link,
+    #                                                             self.print_pivot_switches_info(
+    #                                                                 update.stat_info.no_of_segments_by_count
+    #                                                             ))
+    #     flow_writer.write(str_statistic)
+    #     str_flows = ""
+    #     for old_flow, new_flow in itertools.izip(update.old_flows, update.new_flows):
+    #         self.log.debug(old_flow)
+    #         self.log.debug(new_flow)
+    #         str_flows += self.print_flow(old_flow, new_flow)
+    #     flow_writer.write(str_flows)
+    #     flow_writer.close()
 
     def return_flows(self, old_flows, new_flows, old_link_caps, new_link_caps):
         ret_old_flows = []
@@ -448,6 +450,17 @@ class MulFlowChangeGenerator(object):
             new_dict_flows = dict_flows
             new_link_caps = link_caps
 
+    # def write_flows_pair(self, flow_file, old_flows, new_flows):
+    #     flow_writer = open(flow_file, 'w')
+    #     flow_writer.write('something\n')
+    #     str_flows = ""
+    #     for old_flow, new_flow in itertools.izip(old_flows, new_flows):
+    #         self.log.debug(old_flow)
+    #         self.log.debug(new_flow)
+    #         if old_flow.path != [] or new_flow.path != []:
+    #             str_flows += self.print_flow(old_flow, new_flow)
+    #     flow_writer.write(str_flows)
+    #     flow_writer.close()
     def write_flows_pair(self, flow_file, old_flows, new_flows):
         flow_writer = open(flow_file, 'w')
         flow_writer.write('something\n')
@@ -456,7 +469,7 @@ class MulFlowChangeGenerator(object):
             self.log.debug(old_flow)
             self.log.debug(new_flow)
             if old_flow.path != [] or new_flow.path != []:
-                str_flows += self.print_flow(old_flow, new_flow)
+                str_flows += self.print_flow(old_flow, new_flow)[0]
         flow_writer.write(str_flows)
         flow_writer.close()
 
@@ -467,3 +480,68 @@ class MulFlowChangeGenerator(object):
 
         return no_of_segments_by_count
         # self.print_pivot_switches_info(no_of_segments_by_count)
+
+
+
+
+#alsike starts xudiao
+    def print_flow_des(self, old_flow):
+        end_points = str("(%d, %d)" % (old_flow.src, old_flow.dst))
+        vol = old_flow.unit_vol
+
+        uid = str(uuid.uuid4())
+        _uuid = ''.join(uid.split('-'))
+        port = random.choice([5001,5002,5003,5004,5005])
+        seconds = constants.DATA_LASTING_BASE* random.random()
+        goal = constants.FLOW_OP_GOAL_BASE * random.random()
+        return str("%s\t%s\t%d\t%f\t%f\t%f\n" % (_uuid,end_points, port,vol, seconds,goal))
+
+    def print_flow(self, old_flow, new_flow):
+        lines = ""
+        deses = ""
+        for old_p, new_p in izip(old_flow.path, new_flow.path):
+            if not old_p and not new_p:
+                continue
+            line = self.print_old_new_path(old_flow.src, old_flow.dst, old_flow.unit_vol, new_flow.unit_vol, old_p, new_p)
+            des = self.print_flow_des(old_flow)
+            lines += line
+            deses += des
+
+            reversed_old_p = list(reversed(old_p))
+            reversed_new_p = list(reversed(new_p))
+            line = self.print_old_new_path(old_flow.dst, old_flow.src, old_flow.unit_reversed_vol,
+                                           new_flow.unit_reversed_vol,
+                                           reversed_old_p, reversed_new_p)
+            # des = self.print_flow_des(old_flow)
+            lines += line
+        return lines,deses
+
+    def write_flows(self, flow_file, update, write_reversed_flow=True):
+        flow_writer = open(flow_file, 'w')
+        des_writer = open(constants.FLOW_DES_FILE, 'w')
+        str_statistic = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s%s\n" % (update.stat_info.min_old_utilizing,
+                                                                update.stat_info.max_old_utilizing,
+                                                                update.stat_info.avg_old_utilizing,
+                                                                update.stat_info.free_old_link,
+                                                                update.stat_info.min_new_utilizing,
+                                                                update.stat_info.max_new_utilizing,
+                                                                update.stat_info.avg_new_utilizing,
+                                                                update.stat_info.free_new_link,
+                                                                self.print_pivot_switches_info(
+                                                                    update.stat_info.no_of_segments_by_count
+                                                                ))
+        flow_writer.write(str_statistic)
+        str_flows = ""
+        str_des = ""
+        for old_flow, new_flow in itertools.izip(update.old_flows, update.new_flows):
+            self.log.debug(old_flow)
+            self.log.debug(new_flow)
+            str_flows += self.print_flow(old_flow, new_flow)[0]
+            #need a uuid
+            str_des += self.print_flow(old_flow, new_flow)[1]
+            # str_des += self.print_flow_des(old_flow, _uuid, port, seconds, goal)
+            # des_flows += old_flow.
+        flow_writer.write(str_flows)
+        des_writer.write(str_des)
+        flow_writer.close()
+        des_writer.close()

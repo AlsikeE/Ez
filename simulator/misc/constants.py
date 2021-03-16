@@ -113,3 +113,9 @@ DIFF_SCALE = 100000
 
 import logging
 LOG_LEVEL = logging.INFO
+
+
+#for data 
+DATA_LASTING_BASE = 10
+FLOW_OP_GOAL_BASE = 10
+FLOW_DES_FILE = '/root/ez-segway/data/r-data/flow-des.intra'
