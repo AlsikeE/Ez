@@ -58,6 +58,7 @@ import random
 import binascii
 import simulator.misc.logger as logger
 import six
+import socket
 
 # import time
 # import ryu.app.ofctl.exception.OFError as OFError
@@ -117,6 +118,20 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.handler = ez_switch_handler.EzSwitchHandler(self.switch_id, None, neighbors, self.callback_func)
 
 
+    def send_features_request(self, datapath):
+        ofp_parser = datapath.ofproto_parser
+        req = ofp_parser.OFPFeaturesRequest(datapath)
+        datapath.send_msg(req)
+    
+    # def send_status_msg(self, features):
+    #     status_msg = pickle.dumps({'status':str(features),
+    #                                'fb':None})
+    #     self.logger.info("status")
+    #     self.logger.info(features)
+    #     s = requests.session()
+    #     s.keep_alive = False
+    #     requests.post("http://127.0.0.10:8800", data=status_msg)
+
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
         datapath = ev.msg.datapath
@@ -130,10 +145,8 @@ class SimpleSwitch13(app_manager.RyuApp):
             self.logger.info("dp i've connected is " + str(self.datapath))
             raise Exception('Only one switch can connect!')
 
-
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
-
 
         # install table-miss flow entry
         #
@@ -142,13 +155,31 @@ class SimpleSwitch13(app_manager.RyuApp):
         # 128, OVS will send Packet-In with invalid buffer_id and
         # truncated packet data. In that case, we cannot output packets
         # correctly.  The bug has been fixed in OVS v2.1.0.
-        match = parser.OFPMatch()
+
+        #xunjie  modifiedx
+        # kwargs = dict(ip_proto=inet.IPPROTO_UDP, udp_dst=6620)
+        # kwargs = dict(udp_dst=6620)
+        # match1 = parser.OFPMatch(**kwargs)
+        kwargs = dict(eth_type=ether_types.ETH_TYPE_IP,
+              ip_proto=IPPROTO_UDP, udp_dst=6620)
+        match1 = parser.OFPMatch(**kwargs)
+
+        # match = parser.OFPMatch(nw_proto='UDP',)
         # actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
         #                                   ofproto.OFPCML_NO_BUFFER)]
         actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
                                            ofproto.OFPCML_NO_BUFFER)]
-                                   
-        self.add_flow(datapath, 0, match, actions)
+
+                       
+        self.add_flow(datapath, 0, match1, actions)
+
+        # match = parser.OFPMatch()
+        # # actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
+        # #                                   ofproto.OFPCML_NO_BUFFER)]
+        # actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
+        #                                    ofproto.OFPCML_NO_BUFFER)]
+                      
+        # self.add_flow(datapath, 0, match, actions)
 
 
         # self.logger.info("datapath id %s", datapath.id)
@@ -245,7 +276,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                          % str(self.finishing_update_local - self.start_receiving_update_time))
 
         # self.receiving_update_time = None
-        feedback_msg = pickle.dumps({'switch_id': self.switch_id,
+        feedback_msg = pickle.dumps({'fb':{'switch_id': self.switch_id,
                                      'finish_receiving_time': self.finish_receiving_update_time,
                                      'start_receiving_time': self.start_receiving_update_time,
                                      'finishing_time': self.finishing_update_local,
@@ -263,7 +294,8 @@ class SimpleSwitch13(app_manager.RyuApp):
                                      'number_msgs' : self.handler.scheduler.trace.no_of_received_messages,
                                      'times_using_new_path':
                                          self.handler.scheduler.trace.time_using_new_path_by_seg_path_id,
-                                     'time_next_sw': self.handler.scheduler.trace.time_new_next_sw_by_seg_path_id})
+                                     'time_next_sw': self.handler.scheduler.trace.time_new_next_sw_by_seg_path_id},
+                                     'status':None})
                                      # 'starting_date_time': self.current_starting_date_time,
                                      # 'finishing_date_time': self.finishing_update_local_date_time})
         requests.post("http://127.0.0.10:8800", data=feedback_msg)
@@ -284,7 +316,7 @@ class SimpleSwitch13(app_manager.RyuApp):
             # hub.spawn_after(global_vars.sw_to_ctrl_delays[self.switch_id]/1000, self.send_finish_msg)
             hub.spawn_after(self.sw_to_ctrl_delay / 1000, self.send_finish_msg)
 
-    def install_updates(self, datapath, update_infos):
+    def install_updates(self, datapath, update_infos, type=constants.EZ):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
 
@@ -339,6 +371,57 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.logger.info("----------------------install_updates over---------------------")
         datapath.send_barrier()
 
+#taginstall
+    def tag_install(self, datapath, update_infos):
+    	ofproto = datapath.ofproto
+        parser = datapath.ofproto_parser
+
+        current_time = time() * 1000
+        # if self.receiving_update_time is not None:
+        #     self.logger.info("processing updates at %s" % str(current_time - self.receiving_update_time))
+
+        for update in update_infos:
+            # src+1, dst+1 -> IPs
+            src_ip = ipAdd(update.init_sw + 1)
+            dst_ip = ipAdd(update.end_sw + 1)
+
+            self.logger.debug("process update %s" % update)
+
+            if update.update_next_sw.type == constants.ADD_NEXT:
+
+                out_port = self.topo[datapath.id][update.update_next_sw.next_sw + 1]
+
+                match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=src_ip, ipv4_dst=dst_ip)
+                actions = [parser.OFPActionOutput(out_port)]
+
+                self.add_flow(datapath, 2, match, actions)
+
+            elif update.update_next_sw.type == constants.UPDATE_NEXT:
+                out_port = self.topo[datapath.id][update.update_next_sw.next_sw + 1]
+
+                match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=src_ip, ipv4_dst=dst_ip)
+                actions = [parser.OFPActionOutput(out_port)]
+
+                self.update_flow(datapath, 2, match, actions)
+
+            elif update.update_next_sw.type == constants.REMOVE_NEXT:
+                match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_src=src_ip, ipv4_dst=dst_ip)
+
+                self.remove_flow(datapath, 2, match)
+
+            elif update.update_next_sw.type == constants.NO_UPDATE_NEXT:
+                pass  # Do nothing
+
+            else:
+                raise Exception("what type?")
+
+            if len(update.msgs) > 0:
+                self.notification_queue.extend(update.msgs)
+
+        self.logger.info("install_updates: here is the notification_queue %s" % str(self.notification_queue))
+        self.logger.info("----------------------install_updates over---------------------")
+        datapath.send_barrier()
+
     def aggregate_msgs(self, msgs):
         f_msg = msgs[0]
         agg_msg = AggregatedMessage(f_msg.src_id, f_msg.dst_id, f_msg.msg_type, [], f_msg.update_id)
@@ -364,6 +447,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         # sent_this_time = list(self.notification_queue)
 
         self.logger.info("handle barrier: well, got a barrier reply")
+        self.send_features_request(self.datapath)
         while len(self.notification_queue) > 0:
             msg = self.notification_queue.popleft()
             if not to_switches.has_key(msg.dst_id):
@@ -684,6 +768,8 @@ class SimpleSwitch13(app_manager.RyuApp):
             #hub.spawn_after(global_vars.sw_to_ctrl_delays[self.switch_id]/1000, self.send_finish_msg)
             hub.spawn_after(self.sw_to_ctrl_delay / 1000, self.send_finish_msg)
 
+
+    
 
 def recv_size(fd, size):
     total_len=0

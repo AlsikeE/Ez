@@ -11,10 +11,12 @@ tmux new-session -d -s $N
 n=4
 
 mn -c
-tmux new-window -t $N:100 -n 'mininet'  "sudo python ./topo.py --method p2p --topo randomhaha"
-sleep 1
+# sleep 5
+# tmux new-window -t $N:100 -n 'mininet'  "sudo python ./topo.py --method p2p --topo randomhaha"
+tmux new-window -t $N:100 -n 'mininet'  "sudo python ./topo.py --method p2p --topo randomhaha --iperf 1 --filepath ../data/r-data/flow-des.intra"
+# sleep 1
 # echo "mininet start"
-# tmux send-keys -t $N:100 "dpctl list-br" Enter
+tmux send-keys -t $N:100 "dpctl list-br" Enter
 
 
 for i in `seq 0 $n`; do
@@ -23,6 +25,9 @@ for i in `seq 0 $n`; do
 
   tmux new-window -t $N:$(($i+1)) -n "sw$i" "EZSWITCH_ID=$i TOPO_INPUT=randomhaha ryu-manager --ofp-tcp-listen-port $OFP_PORT --wsapi-port $WSAPI_PORT --use-stderr --verbose ./local_ctrl.py"
 done
+
+# mn -c
+# tmux new-window -t $N:100 -n 'mininet'  "sudo python ./topo.py --method p2p --topo randomhaha --iperf 1 --filepath ../data/r-data/flow-des.intra"
 
 
 sleep 5

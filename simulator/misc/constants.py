@@ -119,3 +119,13 @@ LOG_LEVEL = logging.INFO
 DATA_LASTING_BASE = 10
 FLOW_OP_GOAL_BASE = 10
 FLOW_DES_FILE = '/root/ez-segway/data/r-data/flow-des.intra'
+
+IPERF_SERVER_LOG_DIR = '/root/ez-segway/logs/iperflogs/server/'
+IPERF_CLIENT_LOG_DIR = '/root/ez-segway/logs/iperflogs/client/'
+
+
+#for update type
+EZ = 0
+TAG = 1
+BUF = 2
+CAL = 3

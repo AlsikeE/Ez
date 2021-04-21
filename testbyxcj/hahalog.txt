@@ -50,3 +50,48 @@
 2021-03-14 19:24:32,168 - __main__ - INFO - operf -s -p 5005
 2021-03-14 19:24:32,169 - __main__ - INFO - iperf -p 5005 -u -t 5 -c 10.0.0.2 -b 9M 
 2021-03-14 19:24:32,169 - __main__ - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.1 -b 2.3M 
+2021-03-16 15:20:12,875 - __main__ - INFO - [{'goal': 23.0, 'vol': '10M', 'seconds': 20.0, 'hosts': (<Host h1: h1-eth0:10.0.0.1 pid=117079> , <Host h2: h2-eth0:10.0.0.2 pid=117082> ), 'port': 5001, 'uuid': 'aaaaaa'}, {'goal': 21.0, 'vol': '11M', 'seconds': 20.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=117082> , <Host h1: h1-eth0:10.0.0.1 pid=117079> ), 'port': 5002, 'uuid': 'bbbbbb'}, {'goal': 21.0, 'vol': '20M', 'seconds': 20.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=117082> , <Host h1: h1-eth0:10.0.0.1 pid=117079> ), 'port': 5002, 'uuid': 'cccccc'}, {'goal': 21.0, 'vol': '9M', 'seconds': 5.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=117082> , <Host h1: h1-eth0:10.0.0.1 pid=117079> ), 'port': 5005, 'uuid': 'dddddd'}, {'goal': 21.0, 'vol': '2.3M', 'seconds': 20.0, 'hosts': (<Host h1: h1-eth0:10.0.0.1 pid=117079> , <Host h2: h2-eth0:10.0.0.2 pid=117082> ), 'port': 5001, 'uuid': 'eeeeee'}]
+2021-03-16 15:20:12,877 - __main__ - INFO - operf -s -p 5001
+2021-03-16 15:20:12,879 - __main__ - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.1 -b 10M 
+2021-03-16 15:20:12,880 - __main__ - INFO - operf -s -p 5002
+2021-03-16 15:20:12,881 - __main__ - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 11M 
+2021-03-16 15:20:12,882 - __main__ - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 20M 
+2021-03-16 15:20:12,885 - __main__ - INFO - operf -s -p 5005
+2021-03-16 15:20:12,886 - __main__ - INFO - iperf -p 5005 -u -t 5 -c 10.0.0.2 -b 9M 
+2021-03-16 15:20:12,887 - __main__ - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.1 -b 2.3M 
+2021-03-16 15:24:59,570 - __main__ - INFO - [{'goal': 23.0, 'vol': '10M', 'seconds': 20.0, 'hosts': (<Host h1: h1-eth0:10.0.0.1 pid=119273> , <Host h2: h2-eth0:10.0.0.2 pid=119279> ), 'port': 5001, 'uuid': 'aaaaaa'}, {'goal': 21.0, 'vol': '11M', 'seconds': 20.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=119279> , <Host h1: h1-eth0:10.0.0.1 pid=119273> ), 'port': 5002, 'uuid': 'bbbbbb'}, {'goal': 21.0, 'vol': '20M', 'seconds': 20.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=119279> , <Host h1: h1-eth0:10.0.0.1 pid=119273> ), 'port': 5002, 'uuid': 'cccccc'}, {'goal': 21.0, 'vol': '9M', 'seconds': 5.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=119279> , <Host h1: h1-eth0:10.0.0.1 pid=119273> ), 'port': 5005, 'uuid': 'dddddd'}, {'goal': 21.0, 'vol': '2.3M', 'seconds': 20.0, 'hosts': (<Host h1: h1-eth0:10.0.0.1 pid=119273> , <Host h2: h2-eth0:10.0.0.2 pid=119279> ), 'port': 5001, 'uuid': 'eeeeee'}]
+2021-03-16 15:24:59,572 - __main__ - INFO - operf -s -p 5001
+2021-03-16 15:24:59,572 - __main__ - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.1 -b 10M 
+2021-03-16 15:24:59,573 - __main__ - INFO - operf -s -p 5002
+2021-03-16 15:24:59,574 - __main__ - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 11M 
+2021-03-16 15:24:59,575 - __main__ - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 20M 
+2021-03-16 15:24:59,576 - __main__ - INFO - operf -s -p 5005
+2021-03-16 15:24:59,576 - __main__ - INFO - iperf -p 5005 -u -t 5 -c 10.0.0.2 -b 9M 
+2021-03-16 15:24:59,577 - __main__ - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.1 -b 2.3M 
+2021-03-16 15:25:42,204 - __main__ - INFO - [{'goal': 23.0, 'vol': '10M', 'seconds': 20.0, 'hosts': (<Host h1: h1-eth0:10.0.0.1 pid=120717> , <Host h2: h2-eth0:10.0.0.2 pid=120723> ), 'port': 5001, 'uuid': 'aaaaaa'}, {'goal': 21.0, 'vol': '11M', 'seconds': 20.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=120723> , <Host h1: h1-eth0:10.0.0.1 pid=120717> ), 'port': 5002, 'uuid': 'bbbbbb'}, {'goal': 21.0, 'vol': '20M', 'seconds': 20.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=120723> , <Host h1: h1-eth0:10.0.0.1 pid=120717> ), 'port': 5002, 'uuid': 'cccccc'}, {'goal': 21.0, 'vol': '9M', 'seconds': 5.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=120723> , <Host h1: h1-eth0:10.0.0.1 pid=120717> ), 'port': 5005, 'uuid': 'dddddd'}, {'goal': 21.0, 'vol': '2.3M', 'seconds': 20.0, 'hosts': (<Host h1: h1-eth0:10.0.0.1 pid=120717> , <Host h2: h2-eth0:10.0.0.2 pid=120723> ), 'port': 5001, 'uuid': 'eeeeee'}]
+2021-03-16 15:25:42,205 - __main__ - INFO - operf -s -p 5001
+2021-03-16 15:25:42,206 - __main__ - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.1 -b 10M 
+2021-03-16 15:25:42,207 - __main__ - INFO - operf -s -p 5002
+2021-03-16 15:25:42,208 - __main__ - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 11M 
+2021-03-16 15:25:42,211 - __main__ - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 20M 
+2021-03-16 15:25:42,212 - __main__ - INFO - operf -s -p 5005
+2021-03-16 15:25:42,213 - __main__ - INFO - iperf -p 5005 -u -t 5 -c 10.0.0.2 -b 9M 
+2021-03-16 15:25:42,213 - __main__ - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.1 -b 2.3M 
+2021-03-16 15:26:55,648 - __main__ - INFO - [{'goal': 23.0, 'vol': '10M', 'seconds': 20.0, 'hosts': (<Host h1: h1-eth0:10.0.0.1 pid=122253> , <Host h2: h2-eth0:10.0.0.2 pid=122256> ), 'port': 5001, 'uuid': 'aaaaaa'}, {'goal': 21.0, 'vol': '11M', 'seconds': 20.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=122256> , <Host h1: h1-eth0:10.0.0.1 pid=122253> ), 'port': 5002, 'uuid': 'bbbbbb'}, {'goal': 21.0, 'vol': '20M', 'seconds': 20.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=122256> , <Host h1: h1-eth0:10.0.0.1 pid=122253> ), 'port': 5002, 'uuid': 'cccccc'}, {'goal': 21.0, 'vol': '9M', 'seconds': 5.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=122256> , <Host h1: h1-eth0:10.0.0.1 pid=122253> ), 'port': 5005, 'uuid': 'dddddd'}, {'goal': 21.0, 'vol': '2.3M', 'seconds': 20.0, 'hosts': (<Host h1: h1-eth0:10.0.0.1 pid=122253> , <Host h2: h2-eth0:10.0.0.2 pid=122256> ), 'port': 5001, 'uuid': 'eeeeee'}]
+2021-03-16 15:26:55,650 - __main__ - INFO - operf -s -p 5001
+2021-03-16 15:26:55,651 - __main__ - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.1 -b 10M 
+2021-03-16 15:26:55,652 - __main__ - INFO - operf -s -p 5002
+2021-03-16 15:26:55,653 - __main__ - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 11M 
+2021-03-16 15:26:55,653 - __main__ - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 20M 
+2021-03-16 15:26:55,654 - __main__ - INFO - operf -s -p 5005
+2021-03-16 15:26:55,655 - __main__ - INFO - iperf -p 5005 -u -t 5 -c 10.0.0.2 -b 9M 
+2021-03-16 15:26:55,656 - __main__ - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.1 -b 2.3M 
+2021-03-17 10:39:45,082 - __main__ - INFO - [{'goal': 23.0, 'vol': '10M', 'seconds': 20.0, 'hosts': (<Host h1: h1-eth0:10.0.0.1 pid=111908> , <Host h2: h2-eth0:10.0.0.2 pid=111911> ), 'port': 5001, 'uuid': 'aaaaaa'}, {'goal': 21.0, 'vol': '11M', 'seconds': 20.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=111911> , <Host h1: h1-eth0:10.0.0.1 pid=111908> ), 'port': 5002, 'uuid': 'bbbbbb'}, {'goal': 21.0, 'vol': '20M', 'seconds': 20.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=111911> , <Host h1: h1-eth0:10.0.0.1 pid=111908> ), 'port': 5002, 'uuid': 'cccccc'}, {'goal': 21.0, 'vol': '9M', 'seconds': 5.0, 'hosts': (<Host h2: h2-eth0:10.0.0.2 pid=111911> , <Host h1: h1-eth0:10.0.0.1 pid=111908> ), 'port': 5005, 'uuid': 'dddddd'}, {'goal': 21.0, 'vol': '2.3M', 'seconds': 20.0, 'hosts': (<Host h1: h1-eth0:10.0.0.1 pid=111908> , <Host h2: h2-eth0:10.0.0.2 pid=111911> ), 'port': 5001, 'uuid': 'eeeeee'}]
+2021-03-17 10:39:45,083 - __main__ - INFO - operf -s -p 5001
+2021-03-17 10:39:45,084 - __main__ - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.1 -b 10M 
+2021-03-17 10:39:45,085 - __main__ - INFO - operf -s -p 5002
+2021-03-17 10:39:45,086 - __main__ - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 11M 
+2021-03-17 10:39:45,087 - __main__ - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 20M 
+2021-03-17 10:39:45,088 - __main__ - INFO - operf -s -p 5005
+2021-03-17 10:39:45,088 - __main__ - INFO - iperf -p 5005 -u -t 5 -c 10.0.0.2 -b 9M 
+2021-03-17 10:39:45,089 - __main__ - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.1 -b 2.3M 

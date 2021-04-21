@@ -22,7 +22,7 @@ from ryu.ofproto import ofproto_v1_3
 from ryu.lib import hub
 from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet, ipv4, udp
-from ryu.lib.packet import ether_types
+from ryu.lib.packet import ether_types,in_proto
 from ryu.ofproto import ether
 from ryu.lib.packet.in_proto import IPPROTO_UDP
 from mininet.util import ipAdd, ipStr

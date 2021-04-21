@@ -13,6 +13,7 @@ from misc import logger, constants, utils, global_vars
 from ez_lib import ez_ctrl_handler as handler
 from ez_lib.ez_topo import Ez_Topo
 from domain.message import NotificationMessage
+from server_client import Server
 import eventlet
 import struct
 from collections import deque, defaultdict
@@ -23,6 +24,9 @@ from datetime import datetime
 from collections import OrderedDict
 from domain.events import MessageSendingEvent, FlowChangeEvent, FlowTableChangeEvent
 import json
+import contextlib
+
+
 
 class EzGlobalController(object):
     def __init__(self, log_, repeat_time_, skip_deadlock):
@@ -54,6 +58,7 @@ class EzGlobalController(object):
         self.times_finishing_receiving_install_msg = {}
         self.times_start_receiving_install_msg = {}
         self.current_computation_time = 0
+
         if skip_deadlock == 1:
             self.skip_deadlock = True
         else:
@@ -169,6 +174,7 @@ class EzGlobalController(object):
     def run_server(self):
         wsgi.server(eventlet.listen(('127.0.0.10', 8800)), self.wsgi_app, max_size=50)
 
+
     def run_experiment(self, args):
         data_directory = "../%s/%s" % (args.data_folder, args.topology)
         self.create_topology_from_adjacency_matrix(data_directory)
@@ -179,6 +185,7 @@ class EzGlobalController(object):
         self.on_timer()
         self.run_server()
 
+
     def wsgi_app(self, env, start_response):
         # print "Get finished msg"
         input = env['wsgi.input']
@@ -188,7 +195,7 @@ class EzGlobalController(object):
         self.process_feedback(data_feedback)
         start_response('200 OK', [('Content-Type', 'text/plain')])
         return []
-
+    
     def check_having_splittable_deadlock(self, having_deadlock):
         if having_deadlock & constants.CONGESTION_MODE == constants.CONGESTION_MODE \
                 or having_deadlock & constants.SPLITTING_MODE == constants.SPLITTING_MODE:
@@ -227,7 +234,16 @@ class EzGlobalController(object):
         self.receiving_backs[sw_id] = time() * 1000 + global_vars.sw_to_ctrl_delays[sw_id]
         self.msgs_sent_by_sws.update(data_feedback['msgs'])
 
-    def process_feedback(self, data_feedback):
+    def process_feedback(self, data_feedback_or_status):
+        data_feedback = {}
+        if(data_feedback_or_status['fb']):
+            data_feedback = data_feedback_or_status['fb']
+        if(data_feedback_or_status['status']):
+            data_status = data_feedback_or_status['status']
+            self.log.info("-------------------status------------------")
+            self.log.info(data_status)
+
+
         sw_id = int(data_feedback['switch_id'])
         self.store_feedback_from_sw(sw_id, data_feedback)
 
@@ -330,6 +346,7 @@ class EzGlobalController(object):
         pickle_msgs = pickle.dumps(event_list, pickle.HIGHEST_PROTOCOL)
         of.write(pickle_msgs)
         of.close()
+    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='ez-segway sim.')

@@ -4,6 +4,9 @@
 Create a network where different switches are connected to
 different controllers, by creating a custom Switch() subclass.
 """
+import sys
+sys.path.append('../')
+
 
 from mininet.net import Mininet
 from mininet.node import OVSSwitch, Controller, RemoteController
@@ -13,6 +16,7 @@ from mininet.cli import CLI
 from mininet.link import TCLink
 from topo.topo_factory import TopoFactory
 from topo.basetopo import BaseTopo
+from simulator.datasender import DataSender
 import argparse
 
 setLogLevel( 'info' )
@@ -57,18 +61,53 @@ def create(method, topo_name):
     elif method == "central":
         return net, createCentralControllers(net, topo.switches())
 
+# if __name__ == '__main__':
+#     parser = argparse.ArgumentParser(description='ctrl')
+#     parser.add_argument('--method', nargs='?',
+#                         type=str, default="p2p")
+#     parser.add_argument('--topo', nargs='?',
+#                         type=str, default="triangle")
+#     args = parser.parse_args()
+
+#     net, cmap = create(args.method, args.topo)
+#     net.build()
+#     net.start()
+#     # execute iPerl command according to the flow that is generated
+#     # monitoring packet loss
+#     CLI( net )
+#     net.stop()
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='ctrl')
     parser.add_argument('--method', nargs='?',
                         type=str, default="p2p")
     parser.add_argument('--topo', nargs='?',
                         type=str, default="triangle")
+    parser.add_argument('--iperf', nargs='?',
+                        type=int, default=0)
+    parser.add_argument('--filepath', nargs='?',
+                        type=str, default=None)
     args = parser.parse_args()
 
     net, cmap = create(args.method, args.topo)
     net.build()
+
+
+    iperf = args.iperf
+    filepath = args.filepath
+    # print(filepath)
+    wait_time = 10
+
+
     net.start()
     # execute iPerl command according to the flow that is generated
     # monitoring packet loss
+    ds = None
+    if(filepath):
+        ds = DataSender(net, filepath, wait_time)
+        ds.read_conf(ds.filepath)
+    if(iperf):
+        ds.send_iperfs()
+
     CLI( net )
     net.stop()

@@ -3,6 +3,7 @@ from mininet.net import Mininet
 from mininet.topo import LinearTopo
 from mininet.cli import CLI
 
+from misc import constants
 # from eventlet import greenthread
 import argparse
 import threading
@@ -13,14 +14,12 @@ from time import sleep
 import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(level = logging.INFO)
-handler = logging.FileHandler("hahalog.txt")
+handler = logging.FileHandler("./hahahahahlog.txt")
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-# import eventlet
-# 四个交换机每个下边挂载一个主机
-# import ctypes
+
 
 IPERF_SERVER_LOG_DIR = '/root/ez-segway/logs/iperflogs/server/'
 IPERF_CLIENT_LOG_DIR = '/root/ez-segway/logs/iperflogs/client/'
@@ -39,7 +38,10 @@ class DataSender(object):
         while line:
             des = line.strip('\n').split("\t")
             nodes_index =  des[1].strip('(').strip(')').split(',')
-            hosts = (net.hosts[int(nodes_index[0])], net.hosts[int(nodes_index[1])])
+            logger.info("hhhhhhhhhhhhhhhhhhhhhhhhhhh")
+            logger.info(nodes_index)
+            hosts = (self.net.hosts[int(nodes_index[0])], self.net.hosts[int(nodes_index[1])])
+            logger.info(hosts)
             obj = dict()
             obj['uuid'] = des[0]
             obj['hosts'] = hosts
@@ -55,6 +57,13 @@ class DataSender(object):
         server, client = hosts
         if((server,port) not in self.srv_ports):
             self.srv_ports.append((server,port))
+            logger.info('mxdhhhhhhhhhhhhhhhhhhh')
+            logger.info('iperf -s -u -p %d -i 1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
+
+
+
+# 'iperf -s -u -p %d -i 1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid
+
             server.cmd('iperf -s -u -p %d -i 1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
             logger.info('operf -s -p %d' %port)
 
@@ -78,6 +87,7 @@ class DataSender(object):
 
 
     def send_iperfs(self):
+        sleep(20)
         for c in self.conf:
             self._iperf(hosts=c['hosts'], l4Type="UDP", udpBw=c['vol'], seconds=c['seconds'], port=c['port'],uuid=c['uuid'])
 
