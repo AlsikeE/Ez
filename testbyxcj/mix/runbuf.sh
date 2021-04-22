@@ -8,6 +8,7 @@ tmux ls
 
 mn -c
 tmux new-window -t $N:99 -n "mn" 
+# tmux send-keys -t $N:99 "mn --topo=single,4 --arp --controller=remote,ip=127.0.0.1,port=6666" Enter
 tmux send-keys -t $N:99 "python S4.py" Enter
 
 sleep 1
@@ -16,5 +17,7 @@ tmux new-window -t $N:1 -n "controller"
 
 tmux send-keys -t $N:1 "ryu-manager --verbose --ofp-tcp-listen-port 6666 buf.py" Enter
 sleep 1
-tmux send-keys -t $N:99 "h3 ping h4 " Enter
+tmux send-keys -t $N:99 "h1 ping h2 -s 64 -i 0.01 -c 100 " Enter
+# tmux send-keys -t $N:99 "iperf h3 h4 " Enter
+
 tmux a -t $N

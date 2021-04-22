@@ -8,6 +8,7 @@ import cPickle as pickle
 import logger as logger
 from ryu.lib.packet import *
 
+import consts
 #Process
 
 class BufferManager(multiprocessing.Process):
@@ -25,51 +26,53 @@ class BufferManager(multiprocessing.Process):
         logger.init('./buf.log',logging.INFO)
         self.logger=logger.getLogger('bm',logging.INFO)
 
-        # self.run()
 
     def run(self):
         if(self.conn):
             print("i have a conn")
         while(True):
             # print("but in the list" + str(len(self.pkg_to_save)))
+            cmd_to_me = None
             try:
-                data = self.conn.recv()
-                print(data)
-                self.save_to_buffer(0,data)
+                cmd_to_me = self.conn.recv()
             except Exception as err:
-                print("No No No No No")
-                time.sleep(1)
+                # print("Nothing sent to me, i'm boring")
+                time.sleep(0.01)
+                pass
+            if(cmd_to_me):
+                # print("i can read!!!!")
+                msg_type,key,dpid,pkg,in_port = self.read_and_make_key(cmd_to_me)
+                if(msg_type == consts.BUF_PUSH):
+                    value = self.make_value(dpid,pkg,in_port)
+                    self.save_to_buffer(key,value)
+                elif(msg_type == consts.BUF_POP):
+                    self.get_from_buffer(key)
 
-        # while(True):
-        #     tosave = len(self.pkg_to_save)
-        #     if(tosave>0):
-        #         pkg = self.pkg_to_save[0]
-        #         self.save_to_buffer(0,pkg)
-        #         self.pkg_to_save.pop(0)
-        #     else:
-        #         print("sleep")
-        #         time.sleep(1)
 
-            
-  
-
-    def save_to_buffer(self,key,v):
-        # r = redis.Redis(connection_pool=self.pool)
-        # value = pickle.dumps(v.data)
-        self.rds.rpush(key,v)
+    def save_to_buffer(self,key,value):
+        self.rds.rpush(key,value)
     
     def get_from_buffer(self,key):
-        # r = redis.Redis(connection_pool=self.pool)
-        return self.rds.lpop(key)
+        msg = self.rds.lpop(key)
+        while(msg):
+            self.conn.send(msg)
+            msg = self.rds.lpop(key)
 
-    def read_cmd(self,data):
-        pass
-
-def main():
-    bm = BufferManager()
-    bm.save_to_buffer("emm",'hah')
-    print(bm.get_from_buffer('emm'))
-
-if __name__ == '__main__':
-    main()
+    def read_and_make_key(self,cmd_to_me):
+        cmd_json = pickle.loads(cmd_to_me)
+        msg_type = cmd_json["msg_type"]
+        key = cmd_json["src"]+cmd_json["dst"]+str(cmd_json["dst_port"])
+        dpid = cmd_json["dpid"]
+        pkg = cmd_json["pkg"]
+        in_port = cmd_json["in_port"]
+        return msg_type,key,dpid,pkg,in_port
     
+    def make_value(self,dpid,pkg,in_port):
+        v = {
+            "dpid":dpid,
+            "pkg":pkg,
+            "in_port":in_port
+        }
+        return pickle.dumps(v)
+
+

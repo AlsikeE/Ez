@@ -11,9 +11,9 @@ from mininet.link import TCLink
 from mininet.log import setLogLevel
  
 def topology(remoteip):
-     
+    # topo = SingleSwitchTopo( n=4, lossy=lossy )
     "***Create a network."
-    net = Mininet(controller=RemoteController,switch=OVSSwitch)
+    net = Mininet(controller=RemoteController,switch=OVSSwitch,autoStaticArp=True)
      
     print("***Creating hosts")
     h1 = net.addHost("h1",mac="00:00:00:00:00:01",ip="192.168.1.1/16")
@@ -39,7 +39,6 @@ def topology(remoteip):
     # net.addLink(s1, s99, 99, 1)
 
     #disable arp and ipv6
-    net.staticArp()
     for h in net.hosts:
         h.cmd("sysctl -w net.ipv6.conf.all.disable_ipv6=1")
         h.cmd("sysctl -w net.ipv6.conf.default.disable_ipv6=1")
@@ -51,14 +50,14 @@ def topology(remoteip):
         sw.cmd("sysctl -w net.ipv6.conf.lo.disable_ipv6=1")
  
     print("***Building network.")
-    net.build()
-    s1.start([c1])
+
+    net.start()
     # s99.start([c99])
     # s3.start([c2,c2])
     # s4.start([c2,c2])
      
     print("***Starting network")
-    c1.start()
+    # c1.start()
     # c99.start()
     CLI(net)
      

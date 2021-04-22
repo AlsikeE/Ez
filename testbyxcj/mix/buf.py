@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import multiprocessing
+import threading
 # from queue import Queue
 from collections import defaultdict
 # from fours_topo import fourswitch
@@ -21,7 +22,9 @@ from ryu.lib import hub
 from ryu.topology.switches import LLDPPacket
 
 from buffer_manager import BufferManager
-from eventlet.green import socket
+import consts
+
+
 
 def extract_topo(Topo):
     t = defaultdict(dict)
@@ -51,8 +54,10 @@ class LocalController(app_manager.RyuApp):
         
         self.bm = None
         self.conn = None
+        self.thread = None
         # self.bm.setDaemon(True)
         self.init_my_bm()
+        self.packts_buffed = 0
 
         # self.queue = Queue()
         # logger.init('buftest' ,logging.INFO)
@@ -61,8 +66,30 @@ class LocalController(app_manager.RyuApp):
         self.conn, bm_conn = multiprocessing.Pipe()
         self.bm = BufferManager(name="bm",conn = bm_conn)
         # self.bm = BufferManager(name="bm")
-        self.bm.start()
 
+        self.thread = threading.Thread(target=self.listen_to_my_conn)
+        self.thread.start()
+
+        self.bm.start()
+        
+
+    def listen_to_my_conn(self):
+        while(True):
+            # print("but in the list" + str(len(self.pkg_to_save)))
+            packet_to_me = None
+            try:
+                packet_to_me = self.conn.recv()
+            except Exception as err:
+                # print("I'm waiting for your bilibili")
+                time.sleep(0.01)
+                pass
+            if(packet_to_me):
+                packet = pickle.loads(packet_to_me)
+                print(packet)
+                dpid = packet["dpid"]
+                pkg = packet["pkg"]
+                in_port = packet["in_port"]
+                self.send_back(pkg,dpid,in_port)
     
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def _switch_features_handler(self, ev):
@@ -85,7 +112,7 @@ class LocalController(app_manager.RyuApp):
         # buf_match = parser.OFPMatch(in_port=2)
         # self.send_buf_cmd(self.datapaths[1],buf_match)
         self.disable_dhcp(datapath)
-        self.install(datapath)
+        # self.install(datapath)
 
     
 
@@ -95,11 +122,14 @@ class LocalController(app_manager.RyuApp):
         print(ev.msg)
         print("---------------------------------------------------------")
         datapath = ev.msg.datapath
+        cmd_pop = self.make_buf_message(consts.BUF_POP,src="192.168.1.1",dst="192.168.1.2",dst_port=None,dpid=None,pkg=None,in_port=None)
+        self.conn.send(cmd_pop)
         # if(len(self.buffer)>0):
         #     self.send_back(1,datapath)
         # self.install34(self.datapaths[1])
 
     def install(self,datapath):
+        # time.sleep(2)
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
         priority = 2
@@ -119,33 +149,41 @@ class LocalController(app_manager.RyuApp):
                                     match=match, instructions=inst)
         datapath.send_msg(mod)
 
-        datapath.send_barrier()
-        # req = parser.OFPBarrierRequest(datapath,xid=1)
-        # datapath.send_msg(req)
+        # datapath.send_barrier()
+        req = parser.OFPBarrierRequest(datapath,xid=1)
+        datapath.send_msg(req)
 
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
-        # pkg = ev.msg
-        # datapath = pkg.datapath
-        # ofproto = datapath.ofproto
-        # msg,dp= self.identify_pkg(pkg)
-        # self.bm.pkg_to_save.append(pkg)
+        pkt_in = ev.msg
+        datapath = pkt_in.datapath
+        ofproto = datapath.ofproto
+        in_port = pkt_in.match["in_port"]
+        print(in_port)
+        src,dst,dst_port,dpid,pkg = self.identify_pkg(pkt_in)
+        self.packts_buffed += 1
+        if(self.packts_buffed == 20):
+            self.install(self.datapaths[1])
+        # print(pkg)
+        # self.bm.pkg_to_save.append(pkt_in)
         try:
-            self.conn.send("See what i sent to you!!!!!!!!!!!!")#for process
-            print("I can send!!!!!!!!!!!!!!!!!!!!!!!!")
+            cmd_to_bm = self.make_buf_message(consts.BUF_PUSH,src,dst,dst_port=dst_port,dpid=dpid,pkg=pkg,in_port=in_port)
+            self.conn.send(cmd_to_bm)#for process
         except Exception as e:
-            print("I can not send??????????????????")
+            print(e)
         # ("go and save")
-        # print("dp is " + str(dp))
-        # print("reason is" +str(pkg.reason == ofproto.OFPR_NO_MATCH))
-        # self.save_to_buffer(0,pkg)
-        # try:
-        #     string = pickle.dumps(msg,-1)
-        #     print("wohanima")
-        #     # self.bm.save_to_buffer(0,string)
-        # except Exception as e:
-        #     print(str(e))
+
+    def make_buf_message(self,msg_type,src,dst,dst_port,dpid,pkg,in_port):
+        return pickle.dumps({
+            "msg_type":msg_type,
+            "src":src,
+            "dst":dst,
+            "dst_port":dst_port,
+            "dpid":dpid,
+            "pkg":pkg,
+            "in_port":in_port
+        })
 
     
 
@@ -167,17 +205,7 @@ class LocalController(app_manager.RyuApp):
             actions = [parser.OFPActionOutput(port=ofproto.OFPP_CONTROLLER,max_len=ofproto.OFPCML_NO_BUFFER)]
             self.add_flow(datapath=dp,priority=1,match=match,actions=actions)
 
-    def send_buf_cmd(self,datapath,match):
-        ofproto = datapath.ofproto
-        parser = datapath.ofproto_parser
-        actions = [datapath.ofproto_parser.OFPActionOutput(99)]
-        inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,
-                                             actions)]
-
-        mod = parser.OFPFlowMod(datapath=datapath, priority=1,
-                                    match=match, instructions=inst)
-        datapath.send_msg(mod)
-        print("send over")
+    
 
     #drop packet for udp 68
     def disable_dhcp(self,datapath):
@@ -199,19 +227,15 @@ class LocalController(app_manager.RyuApp):
                                 match=match, priority=priority)
         datapath.send_msg(mod)
 
-    def send_back(self,flow_id,dp):
-        for msg in self.buffer[flow_id]:
-            print(msg)
-            datapath = dp
-            parser = datapath.ofproto_parser
-            in_port = msg.match['in_port']
-            ofproto = datapath.ofproto
-            actions = [parser.OFPActionOutput(port=ofproto.OFPP_TABLE)]
-            req = parser.OFPPacketOut(datapath,in_port=in_port,buffer_id=ofproto.OFP_NO_BUFFER,actions=actions,data=msg.data)
-            # out_port = self.eth_to_port[dpid][dst]
-            datapath.send_msg(req)
-            self.buffer[flow_id].pop(0)
-            print("sent back")
+
+    def send_back(self,pkg,dpid,in_port):
+        datapath = self.datapaths[dpid]
+        parser = datapath.ofproto_parser
+        ofproto = datapath.ofproto
+        actions = [parser.OFPActionOutput(port=ofproto.OFPP_TABLE)]
+        req = parser.OFPPacketOut(datapath,in_port=in_port,buffer_id=ofproto.OFP_NO_BUFFER,actions=actions,data=pkg)
+        datapath.send_msg(req)
+        print("sent back")
 
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
@@ -238,12 +262,21 @@ class LocalController(app_manager.RyuApp):
         self.buffer[flow_id].append(pkg)
         print(len(self.buffer[flow_id]))
     
-    def identify_pkg(self,pkg):
-        datapath = pkg.datapath
-        in_port = pkg.match['in_port']
-        dpid = datapath.id
-        msg = packet.Packet(pkg.data)
-        return msg,datapath
+    def identify_pkg(self,pkt_in):
+        (src,dst,dst_port,dpid,pkg) = ("","",None,None,None)
+        dpid = pkt_in.datapath.id
+        pkg = packet.Packet(pkt_in.data)
+        # pkg = pkt_in.data
+        ipkg = pkg.get_protocol(ipv4.ipv4)
+        if(ipkg):
+            src = ipkg.src
+            dst = ipkg.dst
+            upkg = pkg.get_protocol(udp.udp) or pkg.get_protocol(tcp.tcp) #udp and tcp are not seperated
+            if(upkg):
+                dst_port = upkg.dst_port
+        # print(ipkg)
+        return src,dst,dst_port,dpid,pkg
+
 
     def add_flow(self,datapath,priority,match):
         pass
