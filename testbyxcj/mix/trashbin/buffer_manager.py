@@ -37,7 +37,7 @@ class BufferManager(multiprocessing.Process):
                 cmd_to_me = self.conn.recv()
             except Exception as err:
                 # print("Nothing sent to me, i'm boring")
-                time.sleep(0.01)
+                # time.sleep(0.01)
                 pass
             if(cmd_to_me):
                 # print("i can read!!!!")

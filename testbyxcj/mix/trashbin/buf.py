@@ -24,8 +24,7 @@ from ryu.topology.switches import LLDPPacket
 from buffer_manager import BufferManager
 import consts
 
-
-
+hub.patch()
 def extract_topo(Topo):
     t = defaultdict(dict)
     for link in Topo.iterLinks(withKeys=True, withInfo=True):
@@ -67,8 +66,9 @@ class LocalController(app_manager.RyuApp):
         self.bm = BufferManager(name="bm",conn = bm_conn)
         # self.bm = BufferManager(name="bm")
 
-        self.thread = threading.Thread(target=self.listen_to_my_conn)
-        self.thread.start()
+        # self.thread = threading.Thread(target=self.listen_to_my_conn)
+        # self.thread.start()
+        hub.spawn(self.listen_to_my_conn)
 
         self.bm.start()
         
@@ -81,11 +81,11 @@ class LocalController(app_manager.RyuApp):
                 packet_to_me = self.conn.recv()
             except Exception as err:
                 # print("I'm waiting for your bilibili")
-                time.sleep(0.01)
+                time.sleep(0.01) 
                 pass
             if(packet_to_me):
                 packet = pickle.loads(packet_to_me)
-                print(packet)
+                # print(packet)
                 dpid = packet["dpid"]
                 pkg = packet["pkg"]
                 in_port = packet["in_port"]
@@ -106,7 +106,7 @@ class LocalController(app_manager.RyuApp):
         inst = [parser.OFPInstructionActions(type_=ofproto.OFPIT_APPLY_ACTIONS,actions=actions)]
         mod = parser.OFPFlowMod(datapath=datapath,priority=0,match=parser.OFPMatch(),instructions=inst)
         datapath.send_msg(mod) 
-        buf_match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ipv4_src="192.168.1.1",ipv4_dst="192.168.1.2")
+        # buf_match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ipv4_src="192.168.1.1",ipv4_dst="192.168.1.2")
         # buf_match = parser.OFPMatch(in_port=1)
         # self.send_buf_cmd(self.datapaths[1],buf_match)
         # buf_match = parser.OFPMatch(in_port=2)
@@ -122,8 +122,12 @@ class LocalController(app_manager.RyuApp):
         print(ev.msg)
         print("---------------------------------------------------------")
         datapath = ev.msg.datapath
-        cmd_pop = self.make_buf_message(consts.BUF_POP,src="192.168.1.1",dst="192.168.1.2",dst_port=None,dpid=None,pkg=None,in_port=None)
-        self.conn.send(cmd_pop)
+        cmd_pop = self.make_buf_message(consts.BUF_POP,src="10.0.0.1",dst="10.0.0.2",dst_port=None,dpid=None,pkg=None,in_port=None)
+        try:
+            self.conn.send(cmd_pop)
+        except Exception as e:
+            print("Error in barrier!!!!!!!!!!!")
+            print(e)
         # if(len(self.buffer)>0):
         #     self.send_back(1,datapath)
         # self.install34(self.datapaths[1])
@@ -163,14 +167,15 @@ class LocalController(app_manager.RyuApp):
         print(in_port)
         src,dst,dst_port,dpid,pkg = self.identify_pkg(pkt_in)
         self.packts_buffed += 1
-        if(self.packts_buffed == 20):
+        if(self.packts_buffed == 100):
             self.install(self.datapaths[1])
         # print(pkg)
         # self.bm.pkg_to_save.append(pkt_in)
-        try:
-            cmd_to_bm = self.make_buf_message(consts.BUF_PUSH,src,dst,dst_port=dst_port,dpid=dpid,pkg=pkg,in_port=in_port)
+        cmd_to_bm = self.make_buf_message(consts.BUF_PUSH,src,dst,dst_port=dst_port,dpid=dpid,pkg=pkg,in_port=in_port)
+        try: 
             self.conn.send(cmd_to_bm)#for process
         except Exception as e:
+            print("Error!!!!!!!!!!!!!!!!!!!!!!!!!!")
             print(e)
         # ("go and save")
 
@@ -235,7 +240,7 @@ class LocalController(app_manager.RyuApp):
         actions = [parser.OFPActionOutput(port=ofproto.OFPP_TABLE)]
         req = parser.OFPPacketOut(datapath,in_port=in_port,buffer_id=ofproto.OFP_NO_BUFFER,actions=actions,data=pkg)
         datapath.send_msg(req)
-        print("sent back")
+        # print("sent back")
 
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)

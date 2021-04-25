@@ -9,7 +9,10 @@ from mininet.node import RemoteController,OVSSwitch
 from mininet.cli import CLI
 from mininet.link import TCLink
 from mininet.log import setLogLevel
- 
+from mininet.topo import Topo
+
+
+
 def topology(remoteip):
     # topo = SingleSwitchTopo( n=4, lossy=lossy )
     "***Create a network."
@@ -63,7 +66,9 @@ def topology(remoteip):
      
     print("***Stoping network")
     net.stop()
-     
+
+
+
 if __name__ == "__main__":
     setLogLevel("info")
     topology("127.0.0.1")

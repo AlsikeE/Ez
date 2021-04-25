@@ -64,7 +64,7 @@ class DataSender(object):
 
 # 'iperf -s -u -p %d -i 1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid
 
-            server.cmd('iperf -s -u -p %d -i 1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
+            server.cmd('iperf -s -u -p %d -i 5 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
             logger.info('operf -s -p %d' %port)
 
         iperfArgs = 'iperf -p %d ' % port
@@ -80,14 +80,14 @@ class DataSender(object):
             if not waitListening( client, server.IP(), port ):
                 raise Exception( 'Could not connect to iperf on port %d'
                                  % port )
-        client.cmd( iperfArgs + '-t %d -i 1 -c ' % seconds +
+        client.cmd( iperfArgs + '-t %d -i 5 -c ' % seconds +
                              server.IP() + ' ' + bwArgs +' > ' + IPERF_CLIENT_LOG_DIR +'client%s.txt &'%uuid)
         logger.info(iperfArgs + '-t %d -c ' % seconds +
                              server.IP() + ' ' + bwArgs)
 
 
     def send_iperfs(self):
-        sleep(20)
+        sleep(self.wait_time)
         for c in self.conf:
             self._iperf(hosts=c['hosts'], l4Type="UDP", udpBw=c['vol'], seconds=c['seconds'], port=c['port'],uuid=c['uuid'])
 
