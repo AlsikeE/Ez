@@ -1,16 +1,13 @@
 import sys
-import json
+sys.path.append("../")
 import logging
-import os
-import multiprocessing
-import threading
 import redis
-# from queue import Queue
+
 from collections import defaultdict
-# from fours_topo import fourswitch
 from time import time 
 import time
 import cPickle as pickle
+import json
 from ryu.base import app_manager
 from ryu.controller import ofp_event
 from ryu.controller.handler import MAIN_DISPATCHER, DEAD_DISPATCHER
@@ -18,55 +15,47 @@ from ryu.controller.handler import CONFIG_DISPATCHER
 from ryu.controller.handler import set_ev_cls
 from ryu.ofproto import ofproto_v1_3
 from ryu.lib.packet import *
-from ryu.topology import api
 from ryu.lib import hub
-from ryu.topology.switches import LLDPPacket
 
-from buffer_manager import BufferManager
+import eventlet
+from eventlet import wsgi
+from bricks.flow_des import FlowDes
+from bricks.message import InfoMessage,UpdateMessageByFlow
 import consts
 
-# hub.patch()
-def extract_topo(Topo):
-    t = defaultdict(dict)
-    for link in Topo.iterLinks(withKeys=True, withInfo=True):
-        src, dst, key, info = link
-        if Topo.isSwitch(src) and Topo.isSwitch(dst):
-            s = int(src[1:])
-            d = int(dst[1:])
-            t[s][d] = info['port1']
-            t[d][s] = info['port2']
-    return t 
+import logging
+import logger as logger
 
 class LocalController(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
  
     def __init__(self, *args, **kwargs):
         super(LocalController, self).__init__(*args, **kwargs)
+        logger.init('./localhapi.log',logging.INFO)
+        self.logger=logger.getLogger('local',logging.INFO)
 
-        # self.topo = extract_topo(fourswitch())
         self.topo = {}
         self.time = 0
         self.datapaths={}
-        self.eth_to_port = {}
-        self.flows_final = False
 
-        self.buffer = dict()
+        self.neighbors = {}#port:dpid
+        self.hosts = {"10.0.0.1":1,
+                      "10.0.0.2":2}#ip:port
+        # self.flows_final = False
         
-        self.bm = None
-        self.conn = None
-        self.thread = None
-        # self.bm.setDaemon(True)
-        # self.init_my_bm()
-        self.packts_buffed = 0
+        self.packts_buffed = 0 #temp for update trigger
 
         self.pool = redis.ConnectionPool(host='localhost',port=6379)
         self.rds = redis.Redis(connection_pool=self.pool)
         self.packets_to_save = []
-        self.packets_key = [] #the key
-        # self.queue = Queue()
-        # logger.init('buftest' ,logging.INFO)
-        # hub.spawn(self.buf_manage)
 
+        flowdes0 = FlowDes("10.0.0.1","10.0.0.2",5001,[],[0,1,2],consts.BUF,'udp')
+        flowdes0.up_step = consts.BUF_ADD
+        self.flows = {"10.0.0.110.0.0.25001":flowdes0} # flow_id(src,dst,dst_port):{src,dst,dst_port,update_type:"BUF",xids=[],doing="BUF_DEL"}
+        self.xid_find_flow = {} #xid:[flow_id]
+
+        hub.spawn(self.run_experiment)
+#methods for buffer
     def get_from_buffer(self,key):
         msg = self.rds.lpop(key)    
         while(msg):
@@ -77,11 +66,10 @@ class LocalController(app_manager.RyuApp):
             self.send_back(pkg,dpid,in_port)
             msg = self.rds.lpop(key)
 
-    
     def save_to_buffer(self,pkt_in):
         src,dst,dst_port,dpid,pkg = self.identify_pkg(pkt_in)
         in_port = pkt_in.match["in_port"]
-        key = src + dst + str(dst_port)
+        key = self.make_buf_key(src,dst,dst_port)
         value = pickle.dumps({
             "dpid":dpid,
             "pkg":pkg,
@@ -89,8 +77,43 @@ class LocalController(app_manager.RyuApp):
         })
         self.rds.rpush(key,value)
     
+    def make_buf_key(self,src,dst,dst_port):
+        return src + dst + str(dst_port)
+
+    def send_back(self,pkg,dpid,in_port):
+        datapath = self.datapaths[dpid]
+        parser = datapath.ofproto_parser
+        ofproto = datapath.ofproto
+        actions = [parser.OFPActionOutput(port=ofproto.OFPP_TABLE)]
+        req = parser.OFPPacketOut(datapath,in_port=in_port,buffer_id=ofproto.OFP_NO_BUFFER,actions=actions,data=pkg)
+        datapath.send_msg(req)
     
-    
+    def identify_pkg(self,pkt_in):
+        (src,dst,dst_port,dpid,pkg) = ("","",None,None,None)
+        dpid = pkt_in.datapath.id
+        pkg = packet.Packet(pkt_in.data)
+        ipkg = pkg.get_protocol(ipv4.ipv4)
+        if(ipkg):
+            src = ipkg.src
+            dst = ipkg.dst
+            (upkg,tpkg) = (None,None)
+
+            try:
+                upkg = pkg.get_protocol(udp.udp) 
+                dst_port = upkg.dst_port
+            except:
+                pass#not udp
+            try:
+                tpkg = pkg.get_protocol(tcp.tcp) 
+                dst_port = tpkg.dst_port
+            except:
+                pass#udp and tcp are not seperated
+                
+        # print(ipkg)
+        return src,dst,dst_port,dpid,pkg
+
+
+#methods for control
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def _switch_features_handler(self, ev):
         msg = ev.msg
@@ -106,62 +129,145 @@ class LocalController(app_manager.RyuApp):
         inst = [parser.OFPInstructionActions(type_=ofproto.OFPIT_APPLY_ACTIONS,actions=actions)]
         mod = parser.OFPFlowMod(datapath=datapath,priority=0,match=parser.OFPMatch(),instructions=inst)
         datapath.send_msg(mod) 
-        # buf_match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ipv4_src="192.168.1.1",ipv4_dst="192.168.1.2")
-        # buf_match = parser.OFPMatch(in_port=1)
-        # self.send_buf_cmd(self.datapaths[1],buf_match)
-        # buf_match = parser.OFPMatch(in_port=2)
-        # self.send_buf_cmd(self.datapaths[1],buf_match)
+
         self.disable_dhcp(datapath)
         # self.install(datapath)
 
-    
-
     @set_ev_cls(ofp_event.EventOFPBarrierReply, MAIN_DISPATCHER)
     def _barrier_reply_handler(self,ev):
-        #nononononono   don't 
-        print(ev.msg)
         print("---------------------------------------------------------")
-        datapath = ev.msg.datapath
-        pop_key = "10.0.0.110.0.0.25001"
-        hub.spawn(self.get_from_buffer,pop_key)
-        # pop_key = "10.0.0.110.0.0.25002"
+        print("hello this is reply for xid" +str(ev.msg.xid))
+        xid = ev.msg.xid
+        flows_move_on = self.get_flows_move_on(xid)
+
+        #maybe should be move to global
+        for f in flows_move_on:
+            if(f.up_type == consts.BUF and f.up_step == consts.BUF_ADD):
+                pop_key = f.flow_id
+                hub.spawn(self.get_from_buffer,pop_key)
+                f.barrs_wait = []
+                f.barrs_ok = 0
+                self.xid_find_flow[xid].remove(pop_key)
+            
+            # elif(f.up_type == consts.BUF and f.up_step == consts.BUF_DEL):
+            # elif (f.up_step)
+
+        # datapath = ev.msg.datapath
+        # pop_key = "10.0.0.110.0.0.25001"
         # hub.spawn(self.get_from_buffer,pop_key)
-        # cmd_pop = self.make_buf_message(consts.BUF_POP,src="10.0.0.1",dst="10.0.0.2",dst_port=None,dpid=None,pkg=None,in_port=None)
-        # try:
-        #     self.conn.send(cmd_pop)
-        # except Exception as e:
-        #     print("Error in barrier!!!!!!!!!!!")
-        #     print(e)
-        # if(len(self.buffer)>0):
-        #     self.send_back(1,datapath)
-        # self.install34(self.datapaths[1])
+      
 
-    def install(self,datapath):
-        # time.sleep(2)
-        ofproto = datapath.ofproto
-        parser = datapath.ofproto_parser
-        priority = 2
-        buffer_id = ofproto.OFP_NO_BUFFER
-        match = parser.OFPMatch(in_port=1)
-        actions = [parser.OFPActionOutput(2)]
-        inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,actions)]
-        mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
-                                    match=match, instructions=inst)
-        datapath.send_msg(mod)
-        # time.sleep(10)
-        # datapath.send_barrier()
-        match = parser.OFPMatch(in_port=2)
-        actions = [parser.OFPActionOutput(1)]
-        inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,actions)]
-        mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
-                                    match=match, instructions=inst)
-        datapath.send_msg(mod)
+    #get the flows move on
+    def get_flows_move_on(self,xid):
+        flows = self.xid_find_flow[xid]
+        flows_move_on = []
+        for f_name in flows:
+            f = self.flows[f_name]
+            f.barrs_ok += 1
+            if f.barrs_ok == len(f.barrs_wait):
+                flows_move_on.append(f)
+        return flows_move_on    
 
-        # datapath.send_barrier()
-        req = parser.OFPBarrierRequest(datapath,xid=1)
-        datapath.send_msg(req)
+    # def install(self,datapath):
+    #     # time.sleep(2)
+    #     ofproto = datapath.ofproto
+    #     parser = datapath.ofproto_parser
+    #     priority = 2
+    #     buffer_id = ofproto.OFP_NO_BUFFER
+    #     # match = parser.OFPMatch(in_port=1)
+    #     match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ip_proto=in_proto.IPPROTO_UDP,ipv4_dst='10.0.0.2',ipv4_src='10.0.0.1',udp_dst=5001)
+    #     actions = [parser.OFPActionOutput(2)]
+    #     inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,actions)]
+    #     mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
+    #                                 match=match, instructions=inst)
+    #     datapath.send_msg(mod)
+        
+    #     # match = parser.OFPMatch(in_port=2)
+    #     # match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ip_proto=in_proto.IPPROTO_UDP,ipv4_dst='10.0.0.1',ipv4_src='10.0.0.2',udp_src=5001)
+    #     # actions = [parser.OFPActionOutput(1)]
+    #     # inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,actions)]
+    #     # mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
+    #     #                             match=match, instructions=inst)
+    #     # datapath.send_msg(mod)
 
 
+    #     # req = parser.OFPBarrierRequest(datapath,xid=1)
+    #     # datapath.send_msg(req)
+    #     self.send_barrier(datapath,consts.BUF_ADD,'10.0.0.110.0.0.25001')
+
+
+
+    def any_up_msg(self,up_msg):
+        f = self.flows[up_msg.flow_id]
+        f.up_step = up_msg.up_step
+        to_barr_dp = []
+        self.logger.info("opguonai")
+        self.logger.info(str(up_msg))
+        for d in up_msg.to_del:
+            dplast,dpid,dpnext = d
+            datapath = self.datapaths[dpid]
+            if (dpid not in to_barr_dp):
+                to_barr_dp.append(dpid)
+            ofproto = datapath.ofproto
+            parser = datapath.ofproto_parser
+            match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ipv4_dst=f.dst,ipv4_src=f.src)
+            self.remove_flow(datapath,2,match)
+            match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ipv4_dst=f.src,ipv4_src=f.dst)
+            self.remove_flow(datapath,2,match)
+
+        for a in up_msg.to_add:
+            dplast,dpid,dpnext = a
+            print(dpid)
+            if (dpid not in to_barr_dp):
+                to_barr_dp.append(dpid)
+            print("haha" + str(self.datapaths))
+            datapath = self.datapaths[dpid]
+            ofproto = datapath.ofproto
+            parser = datapath.ofproto_parser
+            trans_pro  = None
+            server_port = None
+            
+            if(f.trans_type=='udp'):
+                trans_pro =in_proto.IPPROTO_UDP
+            elif(f.trans_type=='tcp'):
+                trans_pro =in_proto.IPPROTO_TCP
+            elif(f.trans_type == 'icmp'):
+                trans_pro =in_proto.IPPROTO_ICMP
+
+            if(f.dst_port):
+                server_port = f.dst_port
+
+            match_dict = dict(eth_type=ether_types.ETH_TYPE_IP,ipv4_dst=f.dst,ipv4_src=f.src)
+            reverse_dict = dict(eth_type=ether_types.ETH_TYPE_IP,ipv4_dst=f.src,ipv4_src=f.dst)
+            if(trans_pro):
+                match_dict['ip_proto'] = trans_pro
+                reverse_dict['ip_proto'] = trans_pro
+            if(server_port):
+                index1 = f.trans_type + '_dst'
+                index2 = f.trans_type + '_src'
+                match_dict[index1] = f.dst_port
+                reverse_dict[index2] = f.dst_port
+
+            match = parser.OFPMatch(**match_dict)
+            match_reverse = parser.OFPMatch(**reverse_dict)
+            self.logger.info(str(match))
+            self.logger.info(str(match_reverse))
+            out = self.hosts[f.dst] if(dpid == dpnext) else self.neighbors[dpnext]
+            out_reverse = self.hosts[f.src] if(dpid==dplast) else self.neighbors[dplast]
+            actions = [parser.OFPActionOutput(out)]
+            actions_reverse = [parser.OFPActionOutput(out_reverse)]
+            priority = 2
+            self.add_flow(datapath,priority,match,actions)
+            self.add_flow(datapath,priority,match_reverse,actions_reverse)
+        
+        for dpid in to_barr_dp:
+            self.send_barrier(self.datapaths[dpid],f.up_step,f.flow_id)
+
+    def process_info_msg(self,info_msg):
+        for up_msg in info_msg.ums:
+            self.any_up_msg(up_msg)
+    
+    
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
         pkt_in = ev.msg
@@ -173,55 +279,42 @@ class LocalController(app_manager.RyuApp):
 
         #for simulating the latency of updateing
         self.packts_buffed += 1
-        if(self.packts_buffed == 1800):
-            self.install(self.datapaths[1])
-        # print(pkg)
-        # self.bm.pkg_to_save.append(pkt_in)
-        hub.spawn(self.save_to_buffer,pkt_in)
+        if(self.packts_buffed == 30):
+            # self.install(self.datapaths[1])
+            self.install()
+
+        # hub.spawn(self.save_to_buffer,pkt_in)
+        self.save_to_buffer(pkt_in)
+
+#methods for update
+    def recieving_update_flow(self,flow_id,old,new,up_type):
+        flow_des = FlowDes(flow_id,old,new,up_type)
+        self.flows[flow_id] = flow_des
+        pass
 
 
-    def make_buf_message(self,msg_type,src,dst,dst_port,dpid,pkg,in_port):
-        return pickle.dumps({
-            "msg_type":msg_type,
-            "src":src,
-            "dst":dst,
-            "dst_port":dst_port,
-            "dpid":dpid,
-            "pkg":pkg,
-            "in_port":in_port
-        })
+    def send_barrier(self,datapath,up_step,flow_id):
+        if(not self.xid_find_flow):
+            xid = 1
+        else:
+            xid = max(self.xid_find_flow.keys()) + 1
 
-    def cal_update(self,src,dst,old,new):
-        n_buf = new[0]
-        match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP, ipv4_dst=ipAdd(dst))
-        actions_buf = [parser.OFPActionOutput(port=ofproto.OFPP_CONTROLLER,max_len=ofproto.OFPCML_NO_BUFFER)]
-        dp_buf = self.datapaths[n_buf]
-        self.add_flow(datapath=dp_buf,priority=233,match=match,actions=actions)
-
-        match_remove = parser.OFPMatch(eth_type=ether_types.ETH_TYPEk_IP, ipv4_dst=ipAdd(dst))
-        for node in old:
-            dp = self.datapaths[node]
-            self.remove_flow(datapath=dp,priority=1,match=match)
-
-        new_reverse = new[::-1]
-        for node in new:
-            dp = self.datapaths[node]
-            actions = [parser.OFPActionOutput(port=ofproto.OFPP_CONTROLLER,max_len=ofproto.OFPCML_NO_BUFFER)]
-            self.add_flow(datapath=dp,priority=1,match=match,actions=actions)
-
-    
-
-    #drop packet for udp 68
-    def disable_dhcp(self,datapath):
-        ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
-        match_dhcp = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ip_proto=in_proto.IPPROTO_UDP,udp_src=68,udp_dst=67)
-        instruction = [
-            parser.OFPInstructionActions(ofproto.OFPIT_CLEAR_ACTIONS,[])
-        ]
-        mod = parser.OFPFlowMod(datapath,priority=1,match=match_dhcp,instructions=instruction)
-        datapath.send_msg(mod)
-    
+        req = parser.OFPBarrierRequest(datapath,xid)
+        datapath.send_msg(req)
+        print("i've sent xid barrier" + str(xid))
+
+        if(not self.xid_find_flow or (not self.xid_find_flow.get(xid))):
+            self.xid_find_flow[xid] = [flow_id]
+        else:
+            self.xid_find_flow[xid].append(flow_id)
+
+
+        self.flows[flow_id].barrs_wait.append(xid)
+        print(self.flows['10.0.0.110.0.0.25001'].barrs_wait)
+        print(self.xid_find_flow)
+
+
     def remove_flow(self, datapath, priority, match):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
@@ -232,59 +325,66 @@ class LocalController(app_manager.RyuApp):
         datapath.send_msg(mod)
 
 
-    def send_back(self,pkg,dpid,in_port):
-        datapath = self.datapaths[dpid]
-        parser = datapath.ofproto_parser
-        ofproto = datapath.ofproto
-        actions = [parser.OFPActionOutput(port=ofproto.OFPP_TABLE)]
-        req = parser.OFPPacketOut(datapath,in_port=in_port,buffer_id=ofproto.OFP_NO_BUFFER,actions=actions,data=pkg)
-        datapath.send_msg(req)
-        # print("sent back")
 
-
-    @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
-    def _features_handler(self,ev):
-        msg = ev.msg
-        datapath = msg.datapath
+    def add_flow(self,datapath,priority,match,actions):
+        self.logger.info(match)
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
-        dpid = datapath.id     
-        self.datapaths[dpid]=datapath
-        print("haha"+str(self.datapaths))
-        actions = [parser.OFPActionOutput(port=ofproto.OFPP_CONTROLLER,max_len=ofproto.OFPCML_NO_BUFFER)]
-        inst = [parser.OFPInstructionActions(type_=ofproto.OFPIT_APPLY_ACTIONS,actions=actions)]
-        mod = parser.OFPFlowMod(datapath=datapath,priority=0,match=parser.OFPMatch(),instructions=inst)
+        buffer_id = ofproto.OFP_NO_BUFFER
+        inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,actions)]
+        mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
+                                    match=match, instructions=inst)
         datapath.send_msg(mod)
 
+
+#methods for experiment
+    #drop packet for udp 68
+    def disable_dhcp(self,datapath):
+        ofproto = datapath.ofproto
+        parser = datapath.ofproto_parser
+        match_dhcp = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ip_proto=in_proto.IPPROTO_UDP,udp_src=68,udp_dst=67)
+        instruction = [
+            parser.OFPInstructionActions(ofproto.OFPIT_CLEAR_ACTIONS,[])
+        ]
+        mod = parser.OFPFlowMod(datapath,priority=1,match=match_dhcp,instructions=instruction)
+        datapath.send_msg(mod)
+
+    def install(self):
+        umbf =  UpdateMessageByFlow("10.0.0.110.0.0.25001",consts.BUF,consts.BUF_ADD)
+        umbf.to_add = [(1,1,1)]
+        self.any_up_msg(umbf)
     
-    
-    def identify_pkg(self,pkt_in):
-        (src,dst,dst_port,dpid,pkg) = ("","",None,None,None)
-        dpid = pkt_in.datapath.id
-        pkg = packet.Packet(pkt_in.data)
-        # pkg = pkt_in.data
-        ipkg = pkg.get_protocol(ipv4.ipv4)
-        if(ipkg):
-            src = ipkg.src
-            dst = ipkg.dst
-            upkg = pkg.get_protocol(udp.udp) or pkg.get_protocol(tcp.tcp) #udp and tcp are not seperated
-            if(upkg):
-                dst_port = upkg.dst_port
-        # print(ipkg)
-        return src,dst,dst_port,dpid,pkg
+
+#methods for demo
+    def run_server(self):
+        wsgi.server(eventlet.listen(('', 8800)), self.wsgi_app, max_size=50)
+
+    def run_experiment(self):
+        eventlet.monkey_patch(socket=True, thread=True)
+        self.run_server()
 
 
-    def add_flow(self,datapath,priority,match):
-        pass
+    def wsgi_app(self, env, start_response):
+        # print "Get finished msg"
+        input = env['wsgi.input']
+        request_body = input.read(int(env.get("CONTENT_LENGTH",0)))#post
+        data_feedback = "no request"
+        try:
+            data_feedback = json.loads(request_body)
+        except Exception as e:
+            pass
+        print(data_feedback)
 
-    def start_update(self):
-        old = [0,1,2]
-        new = [0,3,2]
-        src = 0
-        dst = 2
-        self.cal_update(src,dst,old,new)
+        # self.install(self.datapaths[1])
+        self.install()
 
- 
+        response_headers = [('Content-type', 'application/json'),
+                        ('Access-Control-Allow-Origin', '*'),
+                        ('Access-Control-Allow-Methods', 'POST'),
+                        ('Access-Control-Allow-Headers', 'x-requested-with,content-type'),
+                        ]  # json
+        start_response('200 OK', response_headers)
+        return ["zuomieya\r\n"]
             
 
 

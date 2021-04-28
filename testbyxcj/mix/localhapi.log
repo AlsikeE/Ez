@@ -1,0 +1,3 @@
+ryu.base.app_manager: instantiating app ryu.controller.ofp_handler of OFPHandler
+local: opguonai
+local: <bricks.message.UpdateMessageByFlow object at 0x7f25b55583d0>
