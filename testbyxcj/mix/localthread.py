@@ -8,6 +8,7 @@ from time import time
 import time
 import cPickle as pickle
 import json
+import struct
 from ryu.base import app_manager
 from ryu.controller import ofp_event
 from ryu.controller.handler import MAIN_DISPATCHER, DEAD_DISPATCHER
@@ -19,10 +20,11 @@ from ryu.lib import hub
 
 import eventlet
 from eventlet import wsgi
+from eventlet.green import socket
 from bricks.flow_des import FlowDes
-from bricks.message import InfoMessage,UpdateMessageByFlow
+from bricks.message import InfoMessage,UpdateMessageByFlow,FeedbackMessge
 import consts
-
+import tools
 import logging
 import logger as logger
 
@@ -34,6 +36,7 @@ class LocalController(app_manager.RyuApp):
         logger.init('./localhapi.log',logging.INFO)
         self.logger=logger.getLogger('local',logging.INFO)
 
+        self.local_id = 0 #remember change me !
         self.topo = {}
         self.time = 0
         self.datapaths={}
@@ -42,7 +45,6 @@ class LocalController(app_manager.RyuApp):
         self.hosts = {"10.0.0.1":1,
                       "10.0.0.2":2}#ip:port
         # self.flows_final = False
-        
         self.packts_buffed = 0 #temp for update trigger
 
         self.pool = redis.ConnectionPool(host='localhost',port=6379)
@@ -54,7 +56,10 @@ class LocalController(app_manager.RyuApp):
         self.flows = {"10.0.0.110.0.0.25001":flowdes0} # flow_id(src,dst,dst_port):{src,dst,dst_port,update_type:"BUF",xids=[],doing="BUF_DEL"}
         self.xid_find_flow = {} #xid:[flow_id]
 
-        hub.spawn(self.run_experiment)
+        self.conn_with_global = socket.socket()
+        hub.spawn_after(5,self.conn_with_global.connect,('127.0.0.1',9999))
+
+        hub.spawn(self.run_server)
 #methods for buffer
     def get_from_buffer(self,key):
         msg = self.rds.lpop(key)    
@@ -131,6 +136,7 @@ class LocalController(app_manager.RyuApp):
         datapath.send_msg(mod) 
 
         self.disable_dhcp(datapath)
+        
         # self.install(datapath)
 
     @set_ev_cls(ofp_event.EventOFPBarrierReply, MAIN_DISPATCHER)
@@ -140,7 +146,7 @@ class LocalController(app_manager.RyuApp):
         xid = ev.msg.xid
         flows_move_on = self.get_flows_move_on(xid)
 
-        #maybe should be move to global
+        #both global and local need this operation
         for f in flows_move_on:
             if(f.up_type == consts.BUF and f.up_step == consts.BUF_ADD):
                 pop_key = f.flow_id
@@ -148,16 +154,17 @@ class LocalController(app_manager.RyuApp):
                 f.barrs_wait = []
                 f.barrs_ok = 0
                 self.xid_find_flow[xid].remove(pop_key)
-            
+                fb_msg = FeedbackMessge(f.flow_id,self.local_id)
+                self.send_fb_to_global(fb_msg)
             # elif(f.up_type == consts.BUF and f.up_step == consts.BUF_DEL):
             # elif (f.up_step)
-
         # datapath = ev.msg.datapath
         # pop_key = "10.0.0.110.0.0.25001"
         # hub.spawn(self.get_from_buffer,pop_key)
       
 
     #get the flows move on
+    #should be in global
     def get_flows_move_on(self,xid):
         flows = self.xid_find_flow[xid]
         flows_move_on = []
@@ -168,34 +175,10 @@ class LocalController(app_manager.RyuApp):
                 flows_move_on.append(f)
         return flows_move_on    
 
-    # def install(self,datapath):
-    #     # time.sleep(2)
-    #     ofproto = datapath.ofproto
-    #     parser = datapath.ofproto_parser
-    #     priority = 2
-    #     buffer_id = ofproto.OFP_NO_BUFFER
-    #     # match = parser.OFPMatch(in_port=1)
-    #     match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ip_proto=in_proto.IPPROTO_UDP,ipv4_dst='10.0.0.2',ipv4_src='10.0.0.1',udp_dst=5001)
-    #     actions = [parser.OFPActionOutput(2)]
-    #     inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,actions)]
-    #     mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
-    #                                 match=match, instructions=inst)
-    #     datapath.send_msg(mod)
-        
-    #     # match = parser.OFPMatch(in_port=2)
-    #     # match = parser.OFPMatch(eth_type=ether_types.ETH_TYPE_IP,ip_proto=in_proto.IPPROTO_UDP,ipv4_dst='10.0.0.1',ipv4_src='10.0.0.2',udp_src=5001)
-    #     # actions = [parser.OFPActionOutput(1)]
-    #     # inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS,actions)]
-    #     # mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
-    #     #                             match=match, instructions=inst)
-    #     # datapath.send_msg(mod)
-
-
-    #     # req = parser.OFPBarrierRequest(datapath,xid=1)
-    #     # datapath.send_msg(req)
-    #     self.send_barrier(datapath,consts.BUF_ADD,'10.0.0.110.0.0.25001')
-
-
+    def ana_new_flows(self,new_flows):
+        for nf in new_flows:
+            #should be from global to local
+            self.flows.update({nf.flow_id:nf})
 
     def any_up_msg(self,up_msg):
         f = self.flows[up_msg.flow_id]
@@ -264,6 +247,9 @@ class LocalController(app_manager.RyuApp):
             self.send_barrier(self.datapaths[dpid],f.up_step,f.flow_id)
 
     def process_info_msg(self,info_msg):
+        new_flows = info_msg.new_flows
+        if(len(new_flows)):
+            self.ana_new_flows(new_flows)
         for up_msg in info_msg.ums:
             self.any_up_msg(up_msg)
     
@@ -287,12 +273,6 @@ class LocalController(app_manager.RyuApp):
         self.save_to_buffer(pkt_in)
 
 #methods for update
-    def recieving_update_flow(self,flow_id,old,new,up_type):
-        flow_des = FlowDes(flow_id,old,new,up_type)
-        self.flows[flow_id] = flow_des
-        pass
-
-
     def send_barrier(self,datapath,up_step,flow_id):
         if(not self.xid_find_flow):
             xid = 1
@@ -314,7 +294,6 @@ class LocalController(app_manager.RyuApp):
         print(self.flows['10.0.0.110.0.0.25001'].barrs_wait)
         print(self.xid_find_flow)
 
-
     def remove_flow(self, datapath, priority, match):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
@@ -323,8 +302,6 @@ class LocalController(app_manager.RyuApp):
                                 out_port=ofproto.OFPP_ANY, out_group=ofproto.OFPG_ANY,
                                 match=match, priority=priority)
         datapath.send_msg(mod)
-
-
 
     def add_flow(self,datapath,priority,match,actions):
         self.logger.info(match)
@@ -336,6 +313,12 @@ class LocalController(app_manager.RyuApp):
                                     match=match, instructions=inst)
         datapath.send_msg(mod)
 
+#methods for comm with global
+    def send_fb_to_global(self,fb_msg):
+        str_message = pickle.dumps(fb_msg)
+        msg_len = len(str_message)
+        data = struct.pack('L', msg_len) + str_message
+        self.conn_with_global.sendall(data)
 
 #methods for experiment
     #drop packet for udp 68
@@ -349,43 +332,28 @@ class LocalController(app_manager.RyuApp):
         mod = parser.OFPFlowMod(datapath,priority=1,match=match_dhcp,instructions=instruction)
         datapath.send_msg(mod)
 
-    def install(self):
-        umbf =  UpdateMessageByFlow("10.0.0.110.0.0.25001",consts.BUF,consts.BUF_ADD)
-        umbf.to_add = [(1,1,1)]
-        self.any_up_msg(umbf)
-    
-
 #methods for demo
+    def connection_handler(self,fd):
+        self.logger.info("--------------a connection-------------------")
+        while True:
+            data = fd.recv(8)
+            print("thisis " + data)
+            if(len(data) == 0):
+                fd.close()
+                return
+            msg_len = struct.unpack('L',data)[0]
+            self.logger.info(msg_len)
+            more_msg = tools.recv_size(fd,msg_len)
+            msg = pickle.loads(more_msg)
+            hub.spawn(self.process_info_msg,msg)
+    
     def run_server(self):
-        wsgi.server(eventlet.listen(('', 8800)), self.wsgi_app, max_size=50)
-
-    def run_experiment(self):
-        eventlet.monkey_patch(socket=True, thread=True)
-        self.run_server()
-
-
-    def wsgi_app(self, env, start_response):
-        # print "Get finished msg"
-        input = env['wsgi.input']
-        request_body = input.read(int(env.get("CONTENT_LENGTH",0)))#post
-        data_feedback = "no request"
-        try:
-            data_feedback = json.loads(request_body)
-        except Exception as e:
-            pass
-        print(data_feedback)
-
-        # self.install(self.datapaths[1])
-        self.install()
-
-        response_headers = [('Content-type', 'application/json'),
-                        ('Access-Control-Allow-Origin', '*'),
-                        ('Access-Control-Allow-Methods', 'POST'),
-                        ('Access-Control-Allow-Headers', 'x-requested-with,content-type'),
-                        ]  # json
-        start_response('200 OK', response_headers)
-        return ["zuomieya\r\n"]
-            
+        server = eventlet.listen(('127.0.0.1', 6000 + self.local_id))
+        # server = eventlet.listen(('127.0.0.1', 8700 + self.switch_id))
+        while True:
+            fd, addr = server.accept()  #accept returns (conn,address) so fd is a connection
+            self.logger.info("receive a connection")
+            self.connection_handler(fd)            
 
 
 

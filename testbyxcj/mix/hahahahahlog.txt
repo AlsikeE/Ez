@@ -1182,3 +1182,93 @@
 2021-04-28 21:18:03,873 - simulator.datasender - INFO - iperf -s -u -p 5001 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalallalaa2.txt&
 2021-04-28 21:18:03,876 - simulator.datasender - INFO - operf -s -p 5001
 2021-04-28 21:18:03,877 - simulator.datasender - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-29 14:54:30,227 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 14:54:30,228 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 14:54:30,228 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=108143> , <Host h1: h1-eth0:10.0.0.1 pid=108140> )
+2021-04-29 14:54:30,228 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 14:54:30,228 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 14:54:30,228 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=108143> , <Host h1: h1-eth0:10.0.0.1 pid=108140> )
+2021-04-29 14:54:40,239 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-29 14:54:40,240 - simulator.datasender - INFO - iperf -s -u -p 5002 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalalallal1.txt&
+2021-04-29 14:54:40,242 - simulator.datasender - INFO - operf -s -p 5002
+2021-04-29 14:54:40,243 - simulator.datasender - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-29 14:54:40,243 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-29 14:54:40,243 - simulator.datasender - INFO - iperf -s -u -p 5001 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalallalaa2.txt&
+2021-04-29 14:54:40,244 - simulator.datasender - INFO - operf -s -p 5001
+2021-04-29 14:54:40,245 - simulator.datasender - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-29 14:56:12,583 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 14:56:12,583 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 14:56:12,583 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=109003> , <Host h1: h1-eth0:10.0.0.1 pid=109000> )
+2021-04-29 14:56:12,584 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 14:56:12,584 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 14:56:12,584 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=109003> , <Host h1: h1-eth0:10.0.0.1 pid=109000> )
+2021-04-29 15:17:39,583 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:17:39,584 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 15:17:39,584 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=112601> , <Host h1: h1-eth0:10.0.0.1 pid=112598> )
+2021-04-29 15:17:39,584 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:17:39,584 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 15:17:39,584 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=112601> , <Host h1: h1-eth0:10.0.0.1 pid=112598> )
+2021-04-29 15:17:49,595 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:17:49,595 - simulator.datasender - INFO - iperf -s -u -p 5002 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalalallal1.txt&
+2021-04-29 15:17:49,597 - simulator.datasender - INFO - operf -s -p 5002
+2021-04-29 15:17:49,598 - simulator.datasender - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-29 15:17:49,598 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:17:49,598 - simulator.datasender - INFO - iperf -s -u -p 5001 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalallalaa2.txt&
+2021-04-29 15:17:49,599 - simulator.datasender - INFO - operf -s -p 5001
+2021-04-29 15:17:49,600 - simulator.datasender - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-29 15:19:57,037 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:19:57,037 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 15:19:57,038 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=113554> , <Host h1: h1-eth0:10.0.0.1 pid=113551> )
+2021-04-29 15:19:57,038 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:19:57,038 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 15:19:57,038 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=113554> , <Host h1: h1-eth0:10.0.0.1 pid=113551> )
+2021-04-29 15:20:07,050 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:20:07,050 - simulator.datasender - INFO - iperf -s -u -p 5002 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalalallal1.txt&
+2021-04-29 15:20:07,051 - simulator.datasender - INFO - operf -s -p 5002
+2021-04-29 15:20:07,052 - simulator.datasender - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-29 15:20:07,052 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:20:07,052 - simulator.datasender - INFO - iperf -s -u -p 5001 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalallalaa2.txt&
+2021-04-29 15:20:07,053 - simulator.datasender - INFO - operf -s -p 5001
+2021-04-29 15:20:07,055 - simulator.datasender - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-29 15:21:56,901 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:21:56,901 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 15:21:56,902 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=114507> , <Host h1: h1-eth0:10.0.0.1 pid=114504> )
+2021-04-29 15:21:56,902 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:21:56,902 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 15:21:56,902 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=114507> , <Host h1: h1-eth0:10.0.0.1 pid=114504> )
+2021-04-29 15:22:06,919 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:22:06,931 - simulator.datasender - INFO - iperf -s -u -p 5002 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalalallal1.txt&
+2021-04-29 15:22:06,932 - simulator.datasender - INFO - operf -s -p 5002
+2021-04-29 15:22:06,933 - simulator.datasender - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-29 15:22:06,933 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:22:06,933 - simulator.datasender - INFO - iperf -s -u -p 5001 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalallalaa2.txt&
+2021-04-29 15:22:06,934 - simulator.datasender - INFO - operf -s -p 5001
+2021-04-29 15:22:06,935 - simulator.datasender - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-29 15:22:33,336 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:22:33,336 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 15:22:33,336 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=115209> , <Host h1: h1-eth0:10.0.0.1 pid=115206> )
+2021-04-29 15:22:33,336 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:22:33,336 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-29 15:22:33,336 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=115209> , <Host h1: h1-eth0:10.0.0.1 pid=115206> )
+2021-04-29 15:22:43,346 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:22:43,346 - simulator.datasender - INFO - iperf -s -u -p 5002 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalalallal1.txt&
+2021-04-29 15:22:43,348 - simulator.datasender - INFO - operf -s -p 5002
+2021-04-29 15:22:43,349 - simulator.datasender - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-29 15:22:43,350 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-29 15:22:43,350 - simulator.datasender - INFO - iperf -s -u -p 5001 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalallalaa2.txt&
+2021-04-29 15:22:43,351 - simulator.datasender - INFO - operf -s -p 5001
+2021-04-29 15:22:43,352 - simulator.datasender - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-30 14:01:33,679 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-30 14:01:33,679 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-30 14:01:33,679 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=11782> , <Host h1: h1-eth0:10.0.0.1 pid=11779> )
+2021-04-30 14:01:33,679 - simulator.datasender - INFO - hhhhhhhhhhhhhhhhhhhhhhhhhhh
+2021-04-30 14:01:33,680 - simulator.datasender - INFO - ['1', ' 0']
+2021-04-30 14:01:33,680 - simulator.datasender - INFO - (<Host h2: h2-eth0:10.0.0.2 pid=11782> , <Host h1: h1-eth0:10.0.0.1 pid=11779> )
+2021-04-30 14:01:43,698 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-30 14:01:43,698 - simulator.datasender - INFO - iperf -s -u -p 5002 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalalallal1.txt&
+2021-04-30 14:01:43,700 - simulator.datasender - INFO - operf -s -p 5002
+2021-04-30 14:01:43,701 - simulator.datasender - INFO - iperf -p 5002 -u -t 20 -c 10.0.0.2 -b 18.028623M 
+2021-04-30 14:01:43,701 - simulator.datasender - INFO - mxdhhhhhhhhhhhhhhhhhhh
+2021-04-30 14:01:43,701 - simulator.datasender - INFO - iperf -s -u -p 5001 -i 1 > /root/ez-segway/logs/iperflogs/server/serverlalalalallalaa2.txt&
+2021-04-30 14:01:43,702 - simulator.datasender - INFO - operf -s -p 5001
+2021-04-30 14:01:43,703 - simulator.datasender - INFO - iperf -p 5001 -u -t 20 -c 10.0.0.2 -b 18.028623M 

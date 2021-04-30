@@ -1,0 +1,7 @@
+local: {0: {'10.0.0.110.0.0.25001': {'to_add': [(1, 1, 1)], 'to_del': []}}}
+local: here is aggre_dict
+local: {0: {'10.0.0.110.0.0.25001': {'to_add': [(1, 1, 1)], 'to_del': []}}}
+local: {'to_add': [(1, 1, 1)], 'to_del': []}
+local: <bricks.message.UpdateMessageByFlow object at 0x7f1f681707d0>
+local: global receives a connection
+local: --------------a connection-------------------

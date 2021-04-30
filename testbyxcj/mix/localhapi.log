@@ -1,3 +1,26 @@
 ryu.base.app_manager: instantiating app ryu.controller.ofp_handler of OFPHandler
+local: receive a connection
+local: --------------a connection-------------------
+local: 645
 local: opguonai
-local: <bricks.message.UpdateMessageByFlow object at 0x7f25b55583d0>
+local: <bricks.message.UpdateMessageByFlow object at 0x7fe87bb24790>
+local: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_dst': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.2', 'ipv4_src': '10.0.0.1'})
+local: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_src': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.2'})
+local: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_dst': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.2', 'ipv4_src': '10.0.0.1'})
+local: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_src': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.2'})
+ryu.base.app_manager: LocalController: Exception occurred during handler processing. Backtrace from offending handler [_packet_in_handler] servicing event [EventOFPPacketIn] follows.
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/ryu/base/app_manager.py", line 290, in _event_loop
+    handler(ev)
+  File "/root/ez-segway/testbyxcj/mix/localthread.py", line 297, in _packet_in_handler
+    self.install()
+AttributeError: 'LocalController' object has no attribute 'install'
+ryu.base.app_manager: LocalController: Exception occurred during handler processing. Backtrace from offending handler [_packet_in_handler] servicing event [EventOFPPacketIn] follows.
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/ryu/base/app_manager.py", line 290, in _event_loop
+    handler(ev)
+  File "/root/ez-segway/testbyxcj/mix/localthread.py", line 300, in _packet_in_handler
+    self.save_to_buffer(pkt_in)
+  File "/root/ez-segway/testbyxcj/mix/localthread.py", line 81, in save_to_buffer
+    "in_port":in_port
+KeyboardInterrupt

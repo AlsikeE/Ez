@@ -1,6 +1,8 @@
 class InfoMessage(object):
     def __init__(self,ctrl_id=1):
         self.ctrl_id = ctrl_id
+        self.new_flows = [] # tell local new flows occure
+        # self.del_flows = [] # tell local some flows go
         self.ums = []
 
 
@@ -11,3 +13,8 @@ class UpdateMessageByFlow(object):
         self.up_step = up_step
         self.to_add = [] #dplast,dp,dpnext
         self.to_del = []#dp_last_old,dp,dp_next_old
+
+class FeedbackMessge(object):
+    def __init__(self,flow_id,ctrl_id):
+        self.flow_id = flow_id
+        self.ctrl_id = ctrl_id
