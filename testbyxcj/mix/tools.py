@@ -22,6 +22,7 @@ def _put_all_in_tuple(path_to_deal):
         i += 1
     return target
 
+
 def _find_dif_str(path_old,path_new):
     i = 0
     lo = len(path_old)
@@ -51,41 +52,44 @@ def diff_old_new(path_old,path_new):
     elif(path_new == [] and path_old != []):
         to_del = _put_all_in_tuple(path_old)
     elif(path_new!=[] and path_old!=[]):
-        po,pn = _find_dif_str(path_new,path_old)
+        po,pn = _find_dif_str(path_old,path_new)
         to_add = _put_all_in_tuple(pn)
         to_del = _put_all_in_tuple(po)
     print(to_add,to_del)
     return to_add,to_del
 
-def flowkey_to_dpkey(target,flow_id,to_add,to_del):
-    for tup in to_add:
-        dplast,dp,dpnext = tup
-        if(target.has_key(dp)):
-            if(not target[dp].has_key(flow_id)):
-                target[dp].update({flow_id:{}})
-                target[dp][flow_id].update({'to_del':[],'to_add':[]})
-            target[dp][flow_id]['to_add'].append(tup)
-        else:
-            target.update({dp:{}})
-            target[dp].update({flow_id:{}})
-            target[dp][flow_id].update({'to_del':[],'to_add':[]})
-            target[dp][flow_id]['to_add'].append(tup)
-    for tup in to_del:
-        dplast,dp,dpnext = tup
-        if(target.has_key(dp)):
-            if(not target[dp].has_key(flow_id)):
-                target[dp].update({flow_id:{}})
-                target[dp][flow_id].update({'to_del':[],'to_add':[]})
-            target[dp][flow_id]['to_add'].append(tup)
-        else:
-            target.update({dp:{}})
-            target[dp].update({flow_id:{}})
-            target[dp][flow_id].update({'to_del':[],'to_add':[]})
-            target[dp][flow_id]['to_del'].append(tup)
-    return target
+# def flowkey_to_dpkey(target,flow_id,to_add,to_del):
+#     for tup in to_add:
+#         dplast,dp,dpnext = tup
+#         if(target.has_key(dp)):
+#             if(not target[dp].has_key(flow_id)):
+#                 target[dp].update({flow_id:{}})
+#                 target[dp][flow_id].update({'to_del':[],'to_add':[]})
+#             target[dp][flow_id]['to_add'].append(tup)
+#         else:
+#             target.update({dp:{}})
+#             target[dp].update({flow_id:{}})
+#             target[dp][flow_id].update({'to_del':[],'to_add':[]})
+#             target[dp][flow_id]['to_add'].append(tup)
+#     for tup in to_del:
+#         dplast,dp,dpnext = tup
+#         if(target.has_key(dp)):
+#             if(not target[dp].has_key(flow_id)):
+#                 target[dp].update({flow_id:{}})
+#                 target[dp][flow_id].update({'to_del':[],'to_add':[]})
+#             target[dp][flow_id]['to_add'].append(tup)
+#         else:
+#             target.update({dp:{}})
+#             target[dp].update({flow_id:{}})
+#             target[dp][flow_id].update({'to_del':[],'to_add':[]})
+#             target[dp][flow_id]['to_del'].append(tup)
+#     return target
 
 def flowkey_to_ctrlkey(target,dp_to_ctrl,flow_id,to_add,to_del):
+    print(str(to_add) + "!!!!!!!!!!!!!!!")
     for tup in to_add:
+        if(not tup):
+            break
         dplast,dp,dpnext = tup
         ctrl = dp_to_ctrl[dp]
         if(target.has_key(ctrl)):
@@ -99,13 +103,15 @@ def flowkey_to_ctrlkey(target,dp_to_ctrl,flow_id,to_add,to_del):
             target[ctrl][flow_id].update({'to_del':[],'to_add':[]})
             target[ctrl][flow_id]['to_add'].append(tup)
     for tup in to_del:
+        if(not tup):
+            break
         dplast,dp,dpnext = tup
         ctrl = dp_to_ctrl[dp]
         if(target.has_key(ctrl)):
             if(not target[ctrl].has_key(flow_id)):
                 target[ctrl].update({flow_id:{}})
                 target[ctrl][flow_id].update({'to_del':[],'to_add':[]})
-            target[ctrl][flow_id]['to_add'].append(tup)
+            target[ctrl][flow_id]['to_del'].append(tup)
         else:
             target.update({ctrl:{}})
             target[ctrl].update({flow_id:{}})
@@ -114,10 +120,20 @@ def flowkey_to_ctrlkey(target,dp_to_ctrl,flow_id,to_add,to_del):
     print(target)
     return target
 
+def str_to_list(lstr):
+    l = lstr.strip('[').strip(']')
+    l_split = l.split(',')
+    result = []
+    if l:
+        result = [int(i)for i in l_split]
+    return result
 
 if __name__ == "__main__":
+
+    print(_find_dif_str([1,2,3,4],[1,2,4]))
     diff_old_new([1,2,3,4],[1,2,4])
-    target1 = flowkey_to_ctrlkey({},{1:233,2:888},'flow1',[(1,1,1),(1,2,2)],[(2,1,3)])
-    target2 = flowkey_to_ctrlkey(target1,{1:233,2:888},'flow1',[(3,1,5)],[(2,2,2)])
-    target3 = flowkey_to_ctrlkey(target1,{1:233,2:888},'flow2',[(3,1,5)],[(2,2,2)])
+    diff_old_new([1,2],[])
+    target1 = flowkey_to_ctrlkey({},{1:233,2:888},'flow1',[],[])
+    # target2 = flowkey_to_ctrlkey(target1,{1:233,2:888},'flow1',[(3,1,5)],[(2,2,2)])
+    # target3 = flowkey_to_ctrlkey(target1,{1:233,2:888},'flow2',[(3,1,5)],[(2,2,2)])
     

@@ -13,6 +13,8 @@ class UpdateMessageByFlow(object):
         self.up_step = up_step
         self.to_add = [] #dplast,dp,dpnext
         self.to_del = []#dp_last_old,dp,dp_next_old
+        self.version_tag = None
+        self.if_reverse =False#fanxiang tag for <-- flows
 
 class FeedbackMessge(object):
     def __init__(self,flow_id,ctrl_id):

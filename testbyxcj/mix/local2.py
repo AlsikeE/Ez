@@ -1,5 +1,4 @@
 import sys
-import os
 sys.path.append("../")
 import logging
 import redis
@@ -35,21 +34,16 @@ class LocalController(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(LocalController, self).__init__(*args, **kwargs)
         logger.init('./localhapi.log',logging.INFO)
-        
-        
-        self.local_id = int(os.environ.get("LOCAL_ID", 0))
-        self.logger=logger.getLogger('local' + str(self.local_id),logging.INFO)
+        self.logger=logger.getLogger('local',logging.INFO)
 
-        # self.topo_input = os.environ.get("TOPO_INPUT", 1)
-        self.local_id = 0 #remember change me !
+        self.local_id = 1 #remember change me !
         self.topo = {}
         self.time = 0
         self.datapaths={}
 
-        self.neighbors = {1:{2:3}}#dpid:port
-        self.hosts = {1:{"10.0.0.1":1,
-                      "10.0.0.2":2}}#ip:port
-
+        self.neighbors = {2:{1:2}}#port:dpid
+        self.hosts = {2:{"10.0.0.3":1}}#ip:port
+        # self.flows_final = False
         self.packts_buffed = 0 #temp for update trigger
 
         self.pool = redis.ConnectionPool(host='localhost',port=6379)
@@ -129,7 +123,6 @@ class LocalController(app_manager.RyuApp):
         f.up_step = up_msg.up_step
         to_barr_dp = []
         self.logger.info("----------in any up msg buf-------------")
-        self.logger.info(self.datapaths)
         self.logger.info(str(up_msg))
         if(f.up_step == consts.BUF_DEL and len(up_msg.to_del) == 0):
             fb_msg = FeedbackMessge(f.flow_id,self.local_id)
@@ -443,17 +436,15 @@ class LocalController(app_manager.RyuApp):
         pkt_in = ev.msg
         datapath = pkt_in.datapath
         ofproto = datapath.ofproto
-        parser = datapath.ofproto_parser
         in_port = pkt_in.match["in_port"]
         print(in_port)
         src,dst,dst_port,dpid,pkg = self.identify_pkg(pkt_in)
         key = src + dst + str(dst_port)
         if(self.flows.has_key(key) and self.flows[key].up_type == consts.BUF):
-            self.logger.info("buffffffffffff")
             self.save_to_buffer(pkt_in)
         self.logger.info("--------------in packet in---------------") 
-        # self.logger.info(self.flows[key].up_type)
-        # self.logger.info(self.flows[key].up_step)   
+        self.logger.info(self.flows[key].up_type)
+        self.logger.info(self.flows[key].up_step)   
         if(self.flows.has_key(key) and self.flows[key].up_type == consts.TAG and self.flows[key].up_step > consts.TAG_ADD):
             self.logger.info("yes tagged now go back and enjoy your tour")
             actions = [parser.OFPActionOutput(port=ofproto.OFPP_TABLE)]
