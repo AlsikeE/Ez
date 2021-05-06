@@ -1,44 +1,5 @@
 ryu.base.app_manager: instantiating app ryu.controller.ofp_handler of OFPHandler
-local: ------------in features----------
-local: {2: <ryu.controller.controller.Datapath object at 0x7f15ddad2f90>}
-local: receive a connection
-local: --------------a connection-------------------
-local: 729
-local: <bricks.flow_des.FlowDes object at 0x7f15ddad2d50>
-local: 3
-local: add flows
-local: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.3', 'ipv4_src': '10.0.0.1', 'vlan_vid': 4098})
-local: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.3', 'vlan_vid': 4098})
-local: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.3', 'ipv4_src': '10.0.0.1', 'vlan_vid': 4098})
-local: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.3', 'vlan_vid': 4098})
-local: [2]
-local: i've sent xid barrier1for tag 3
-local: hello this is reply for xid1
-local: {1: [u'10.0.0.110.0.0.3None']}
-local: [<bricks.flow_des.FlowDes object at 0x7f15ddad2d50>]
-local: sent a fb msg 
-local: 399
-local: 4
-local: -----------in tag tag
-local: ---------in add tag for pkts--------
-local: 2
-local: reverse add tag
-local: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.3'})
-local: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.3', 'ipv4_src': '10.0.0.1', 'vlan_vid': 4098})
-local: i've sent xid barrier2for tag 4
-local: sent a barrier for tag pks
-local: hello this is reply for xid2
-local: {1: [], 2: [u'10.0.0.110.0.0.3None']}
-local: [<bricks.flow_des.FlowDes object at 0x7f15ddad2d50>]
-local: sent a fb msg 
-local: 381
-local: 6
-local: --------in tag mod------
-ocal0: {1: [], 2: [u'10.0.0.110.0.0.3None']}
-local0: [<bricks.flow_des.FlowDes object at 0x7f39b8a37b10>]
-local0: sent a fb msg 
-local0: 381
-local0: 5
-local0: 381
-local0: 6
-local0: --------in tag mod------
+local0: ------------in features----------
+local0: {1: <ryu.controller.controller.Datapath object at 0x7ff9b7fa4f90>lolocal0: ------------in features----------
+local0: {1: <ryu.controller.controller.Datapath object at 0x7ff9b7fa4f90>, 2: <ryu.controller.controller.Datapath object at 0x7ff9b7f3305local: receive a connection
+locallocal0: --------------a connection-------------------

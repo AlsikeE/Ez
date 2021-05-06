@@ -380,8 +380,8 @@ class GlobalController(object):
         if (input_data):
             self.ana_input(input_data)
 
-        # self.auto_install(consts.ONLY_BUF)
-        self.auto_install(consts.ONLY_TAG)
+        self.auto_install(consts.ONLY_BUF)
+        # self.auto_install(consts.ONLY_TAG)
         # self.auto_install(consts.ONLY_RAW)
 
 
