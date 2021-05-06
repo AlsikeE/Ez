@@ -24,6 +24,7 @@ from eventlet import wsgi
 from eventlet.green import socket
 from bricks.flow_des import FlowDes
 from bricks.message import InfoMessage,UpdateMessageByFlow,FeedbackMessge
+from multi_controller_topo import get_local_neighbors,get_local_hosts
 import consts
 import tools
 import logging
@@ -38,17 +39,25 @@ class LocalController(app_manager.RyuApp):
         
         
         self.local_id = int(os.environ.get("LOCAL_ID", 0))
-        self.logger=logger.getLogger('local' + str(self.local_id),logging.INFO)
+        topofile = os.environ.get("TOPO", './data/topo.intra')
+        local_dpfile = os.environ.get('LOCAL_DP','./data/local_dp.intra')
+        dp_hostfile = os.environ.get('DP_HOST','./data/dp_host.intra')
 
+        self.logger=logger.getLogger('local' + str(self.local_id),logging.INFO)
+        self.topo = None
         # self.topo_input = os.environ.get("TOPO_INPUT", 1)
-        self.local_id = 0 #remember change me !
-        self.topo = {}
+        # self.local_id = 0 #remember change me !
+        self.neighbors = get_local_neighbors(topofile,local_dpfile,self.local_id)
+        self.hosts = get_local_hosts(self.neighbors,dp_hostfile)
+        
+        self.logger.info(self.neighbors)
+        self.logger.info(self.hosts)
         self.time = 0
         self.datapaths={}
 
-        self.neighbors = {1:{2:3}}#dpid:port
-        self.hosts = {1:{"10.0.0.1":1,
-                      "10.0.0.2":2}}#ip:port
+        # self.neighbors = {1:{2:3}}#dpid:port
+        # self.hosts = {1:{"10.0.0.1":1,
+        #               "10.0.0.2":2}}#ip:port
 
         self.packts_buffed = 0 #temp for update trigger
 

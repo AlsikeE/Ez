@@ -26,6 +26,59 @@ def read_mapping_from_file(file):
             result.update({int(a):map(lambda x: int(x),objs)})
     return result
 
+#for global get dp-local
+def get_reverse_mapping_from_file(file):
+    result = {}
+    with open(file) as f:
+        for line in f:
+            a,b = line.split(':')
+            objs = b.split(',')
+            target = int(a)
+            for key in objs:
+                result.update({int(key):target})
+    return result
+
+#for local get neighbor dp-port
+def get_local_neighbors(topofile,mapfile,local_id):
+    local_dp = read_mapping_from_file(mapfile)
+    to_get = local_dp[local_id]
+    result = {}
+    i = 1
+    with open (topofile) as f:
+        for line in f:
+            if i in to_get:
+                dp_port = {}
+                neighbors = line.strip().split(' ')
+                port = 1
+                for j in range(0,len(neighbors)):
+                    if neighbors[j] == '1':
+                        dp_port.update({j+1:port})
+                        port+=1
+                result.update({i:dp_port})
+            i+=1
+    return result
+
+#for local get host host-port
+def get_local_hosts(dp_port_map,dp_host_file):
+    dp_to_max = {}
+    print(dp_port_map)
+    result = {}
+    for (dp,nbrs) in dp_port_map.items():
+        dp_to_max.update({dp:max(nbrs.values()) + 1})
+    print(dp_to_max)
+    with open(dp_host_file) as f:
+        for line in f:
+            dpstr,hoststr = line.split(':')
+            hosts = hoststr.strip().split(',')
+            dp = int(dpstr)
+            if(dp_to_max.has_key(dp)):
+                host_to_port = {}
+                for h in hosts:
+                    host_to_port.update({'10.0.0.'+h: dp_to_max[dp]})
+                    dp_to_max[dp] += 1
+                result.update({dp:host_to_port})
+    return result
+
 class Multi(BaseTopo):
     "Random topology by me haha."
 
@@ -116,5 +169,13 @@ if __name__ == "__main__":
     start_net(args.matrix,args.latmatrix,args.localdp,args.dphost,args.baseport)
     # local_dp = read_mapping_from_file(args.localdp)
     # dp_host = read_mapping_from_file(args.dphost)
+    # dp_local = get_reverse_mapping_from_file(args.localdp)
+    # host_dp = get_reverse_mapping_from_file(args.dphost)
+    # print(dp_local)
+    # print(host_dp)
     # print(local_dp)
     # print(dp_host)
+    # a = get_local_neighbors(args.matrix,args.localdp,2)
+    # b = get_local_hosts(a,args.dphost)
+    # print(a)
+    # print(b)

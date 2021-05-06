@@ -1,5 +1,65 @@
-ryu.base.app_manager: instantiating app ryu.controller.ofp_handler of OFPHandler
-local0: ------------in features----------
-local0: {1: <ryu.controller.controller.Datapath object at 0x7ff9b7fa4f90>lolocal0: ------------in features----------
-local0: {1: <ryu.controller.controller.Datapath object at 0x7ff9b7fa4f90>, 2: <ryu.controller.controller.Datapath object at 0x7ff9b7f3305local: receive a connection
-locallocal0: --------------a connection-------------------
+local2: {3: {1: 1, 2: 2, 4: 3, 5: 4}, 4: {2: 1, 3: 2, 5: 3}, 5: {2: 1, 3: 2, 4: 3}}
+local2: {3: {'10.0.0.4': 5}, 4: {'10.0.0.5': 4, '10.0.0.6': 5}, 5: {'10.0.0.7': 4}}
+ryu.base.app_manager: instantiatlocal1: ------------in features----------
+local1:local2: ------------in features----------
+local2: {4: <ryu.controllelocal1: ------------in features----------
+local1:local2: ------------in features----------
+local2: {4: <ryu.controller.controller.Datapath object at 0x7f2fd3f4dc50>, 5: <ryu.controllelocal1: receive a connection
+local1: --------------a connection-------------------
+local1: 733
+local1: <bricks.flow_des.FlowDes object at 0x7f5e78835c10>
+local1: 3
+local1: add flows
+local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1', 'vlan_vid': 4098})
+local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6', 'vlan_vid': 4098})
+local1: OFPMatch(oxm_fields={'ip_proto':local2: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'iplocal1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6', 'vlan_vid': 4098})
+local1: [1]
+local1: i've sent xid barrier1for tag 3
+local1: hello this is reply for xid1
+local1: {1: [u'10.0.0.110.0.0.6None']}
+local1: [<bricks.flow_des.FlowDes object at 0x7f5e78835c10>]
+local1: sent a fb msg 
+local1: 397
+local1: 4
+local1: -----------in tag tag
+local1: ---------in add tag for pkts--------
+local1: 2
+local1: normal add tag
+local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
+local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6', 'vlan_vid': 4098})
+local1: i've sent xid barrier2for tag 4
+local1: sent a barrier for tag pks
+local1: hello this is reply for xid2
+local1: {1: [], 2: [u'10.0.0.110.0.0.6None']}
+local1: [<bricks.flow_des.FlowDes object at 0x7f5e78835c10>]
+local1: sent a fb msg 
+local1: 381
+local1: 5
+local1: 381
+local1: 6
+local1: --------in tag mod------
+r tag 3
+local2: hello this is reply for xid1
+local2: {1: [u'10.0.0.110.0.0.6None'], 2: [u'10.0.0.110.0.0.6None']}
+local2: []
+local2: hello this is reply for xid2
+local2: {1: [u'10.0.0.110.0.0.6None'], 2: [u'10.0.0.110.0.0.6None']}
+local2: [<bricks.flow_des.FlowDes object at 0x7f2fd3ce0e50>]
+local2: sent a fb msg 
+local2: 399
+local2: 4
+local2: -----------in tag tag
+local2: ---------in add tag for pkts--------
+local2: 2
+local2: reverse add tag
+local2: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
+local2: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1', 'vlan_vid': 4098})
+local2: i've sent xid barrier3for tag 4
+local2: sent a barrier for tag pks
+local2: hello this is reply for xid3
+local2: {1: [], 2: [], 3: [u'10.0.0.110.0.0.6None']}
+local2: [<bricks.flow_des.FlowDes object at 0x7f2fd3ce0e50>]
+local2: sent a fb msg 
+local2: 381
+local2: 6
+local2: --------in tag mod------

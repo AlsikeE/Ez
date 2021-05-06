@@ -7,19 +7,26 @@ from eventlet.green import socket
 
 from bricks.flow_des import FlowDesGlobal,FlowDes
 from bricks.message import InfoMessage,UpdateMessageByFlow
+from multi_controller_topo import read_mapping_from_file,get_reverse_mapping_from_file
 import consts
 import tools
-
+import argparse
 import logging
 import logger as logger
 class GlobalController(object):
-    def __init__(self,topo):
+    # def __init__(self,topo):
+    def __init__(self,local_mapping_file):
         logger.init('./globalhapi.log',logging.INFO)
         self.logger=logger.getLogger('global',logging.INFO)
-        self.topo = topo
-        self.locals = [0,1] #{0:"bala"}
+        # self.topo = topo
+        # self.locals = [0,1] #{0:"bala"}
+        # self.dp_to_local = {1:0,2:1}
+        self.locals = read_mapping_from_file(local_mapping_file).keys()
+        self.dp_to_local = get_reverse_mapping_from_file(local_mapping_file)
+        self.logger.info(self.locals)
+        self.logger.info(self.dp_to_local)
         self.sockets = {}
-        self.dp_to_local = {1:0,2:1}
+        
         # self.dp_to_local = {1:0,2:0,3:1,4:1}#for lineartopo2
         self.flows = {}
         self.flows_new = {}
@@ -380,8 +387,8 @@ class GlobalController(object):
         if (input_data):
             self.ana_input(input_data)
 
-        self.auto_install(consts.ONLY_BUF)
-        # self.auto_install(consts.ONLY_TAG)
+        # self.auto_install(consts.ONLY_BUF)
+        self.auto_install(consts.ONLY_TAG)
         # self.auto_install(consts.ONLY_RAW)
 
 
@@ -395,5 +402,10 @@ class GlobalController(object):
 
 
 if __name__ == "__main__":
-    gl_ctrl = GlobalController('FourHosts')
+    # gl_ctrl = GlobalController('FourHosts')
+    parser = argparse.ArgumentParser(description='mix global')
+    parser.add_argument('--localdp',nargs='?',
+                        type = str,default='./data/local_dp.intra')
+    args = parser.parse_args()
+    gl_ctrl = GlobalController(args.localdp)
     gl_ctrl.run_experiment()

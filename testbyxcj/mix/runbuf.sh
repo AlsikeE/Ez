@@ -14,14 +14,15 @@ tmux send-keys -t $N:99 "python multi_controller_topo.py " Enter
 # tmux send-keys -t $N:99 "python topo3.py " Enter
 sleep 1
 
-tmux new-window -t $N:1 -n "controller0" 
+tmux new-window -t $N:1 -n "controller1" 
 
 # tmux send-keys -t $N:1 "ryu-manager --verbose --ofp-tcp-listen-port 6666 buf.py" Enter
 # tmux send-keys -t $N:1 "ryu-manager --verbose --ofp-tcp-listen-port 6666 localthread.py ryu.app.ofctl_rest" Enter
-tmux send-keys -t $N:1 "LOCAL_ID=0 ryu-manager --verbose --ofp-tcp-listen-port 6667 localthread.py" Enter
+tmux send-keys -t $N:1 "LOCAL_ID=1 ryu-manager --verbose --ofp-tcp-listen-port 6667 localthread.py" Enter
 
-tmux new-window -t $N:2 -n "controller1" 
-tmux send-keys -t $N:2 "LOCAL_ID=1 ryu-manager --verbose --ofp-tcp-listen-port 6668 local2.py" Enter
+tmux new-window -t $N:2 -n "controller2" 
+# tmux send-keys -t $N:2 "LOCAL_ID=1 ryu-manager --verbose --ofp-tcp-listen-port 6668 local2.py" Enter
+tmux send-keys -t $N:2 "LOCAL_ID=2 ryu-manager --verbose --ofp-tcp-listen-port 6668 localthread.py" Enter
 sleep 2
 # tmux send-keys -t $N:99 "h1 ping h2 -s 1460 -i 0.01 -c 100 " Enter
 # tmux send-keys -t $N:99 "h1 ping h2 -s 64 -i 0.01 -c 100 " Enter
