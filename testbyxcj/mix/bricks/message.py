@@ -4,6 +4,7 @@ class InfoMessage(object):
         self.new_flows = [] # tell local new flows occure
         # self.del_flows = [] # tell local some flows go
         self.ums = []
+        self.statusAsk = False
 
 
 class UpdateMessageByFlow(object):
@@ -20,3 +21,5 @@ class FeedbackMessge(object):
     def __init__(self,flow_id,ctrl_id):
         self.flow_id = flow_id
         self.ctrl_id = ctrl_id
+        self.statusAnswer = False
+        self.status = None

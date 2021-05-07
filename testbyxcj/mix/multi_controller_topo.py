@@ -78,6 +78,21 @@ def get_local_hosts(dp_port_map,dp_host_file):
                     dp_to_max[dp] += 1
                 result.update({dp:host_to_port})
     return result
+#for global get links_bw
+def get_link_bw(topofile):
+    result = {}
+    i = 1
+    with open (topofile) as f:
+        for line in f:
+            neighbors = line.strip().split(' ')
+            port = 1
+            dp_bw = {}
+            for j in range(0,len(neighbors)):
+                if neighbors[j] == '1':
+                    dp_bw.update({j+1:1000})
+            result.update({i:dp_bw})
+            i+=1
+    return result
 
 class Multi(BaseTopo):
     "Random topology by me haha."
@@ -151,6 +166,9 @@ def start_net(topo_file, latency_file, local_dp_file, dp_host_file,baseport):
     if net.waitConn:
         net.waitConnected( net.waitConn )
     net.disable_ipv6()
+
+        # s.vsctl('--id=@ft create Flow_Table flow_limit=1 overflow_policy=refuse -- set Bridge s1 flow_tables=0=@ft')
+    
     CLI( net )
     net.stop()
 if __name__ == "__main__":
@@ -165,6 +183,9 @@ if __name__ == "__main__":
                         type=str, default='./data/dp_host.intra')
     parser.add_argument('--baseport',nargs='?',
                         type = int,default='6666')
+    parser.add_argument('--tcamfile',nargs='?',
+                        type=str,default='./data/dp_tcam.intra')
+
     args = parser.parse_args()
     start_net(args.matrix,args.latmatrix,args.localdp,args.dphost,args.baseport)
     # local_dp = read_mapping_from_file(args.localdp)
@@ -179,3 +200,4 @@ if __name__ == "__main__":
     # b = get_local_hosts(a,args.dphost)
     # print(a)
     # print(b)
+    # print(get_link_bw(args.matrix))

@@ -3,6 +3,7 @@ import sys
 import networkx as nx
 import fnss
 
+sys.path.append('../')
 from misc import logger, constants
 from sphere import Sphere
 
@@ -195,10 +196,17 @@ class Topology:
         node_color = range(len(self.graph.nodes()))
 
         pos = nx.spring_layout(self.graph,iterations=200)
-        nx.draw(self.graph,pos,node_color=node_color,
-                node_size=[100*(nx.degree(self.graph,x)**1.25) for x in self.graph.nodes()],
-                edge_color=['blue' for x,y,z in self.graph.edges(data=True)],
-                edge_cmap=plt.cm.Blues,
-                with_labels=True,
-                cmap=plt.cm.Blues)
-        plt.show()
+        # nx.draw(self.graph,pos,node_color=node_color,
+        #         node_size=[100*(nx.degree(self.graph,x)**1.25) for x in self.graph.nodes()],
+        #         edge_color=['blue' for x,y,z in self.graph.edges(data=True)],
+        #         edge_cmap=plt.cm.Blues,
+        #         with_labels=True,
+        #         cmap=plt.cm.Blues)
+        f = plt.figure() 
+        nx.draw(self.graph, ax=f.add_subplot(111))
+        plt.savefig('./haha.jpg')
+        # plt.show()
+
+if __name__ == "__main__":
+    topo = Topology.read_adjacency('../../testbyxcj/mix/data/topo.intra')
+    topo.draw()

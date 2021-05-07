@@ -4,21 +4,229 @@ global: global receives a connection
 global: --------------a connection-------------------
 global: global receives a connection
 global: --------------a connection-------------------
-global: {u'flow': u'10.0.0.1 10.0.0.6 None [] [1,3,4] icmp'}
+global: {u'flows': [u'10.0.0.1 10.0.0.6 None [] [1,2,4] icmp 1 23', u'10.0.0.1 10.0.0.2 None [] [1] icmp 1 28', u'10.0.0.1 10.0.0.6 5001 [] [1,3,4] udp 1 255']}
 global: in ana_input
-global: [1, 3, 4]
-global: [1, 3, 4]
+global: [1, 2, 4]
+global: [1, 2, 4]
 global: icmp
-global: {u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7fdc7c864b50>}
-global: {1: {u'10.0.0.110.0.0.6None': {'to_add': [(1, 1, 3)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.6None': {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': []}}}
+global: [1]
+global: [1]
+global: icmp
+global: [1, 3, 4]
+global: [1, 3, 4]
+global: udp
+global: {u'10.0.0.110.0.0.2None': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bacb50>, u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bacd10>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bca5d0>}
+global: 1620412651553
+global: sent Ask to local1
+global: sent Ask to local2
+global: []
+global: to buf is
+global: (1, 1, 1)
+global: []
+global: to buf is
+global: (1, 1, 2)
+global: []
+global: to buf is
+global: (1, 1, 3)
+global: {1: {u'10.0.0.110.0.0.2None': {'to_add': [], 'to_del': [(1, 1, 1)]}, u'10.0.0.110.0.0.6None': {'to_add': [], 'to_del': [(1, 1, 2)]}, u'10.0.0.110.0.0.65001': {'to_add': [], 'to_del': [(1, 1, 3)]}}}
 global: here is aggre_dict
-global: {1: {u'10.0.0.110.0.0.6None': {'to_add': [(1, 1, 3)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.6None': {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': []}}}
+global: {1: {u'10.0.0.110.0.0.2None': {'to_add': [], 'to_del': [(1, 1, 1)]}, u'10.0.0.110.0.0.6None': {'to_add': [], 'to_del': [(1, 1, 2)]}, u'10.0.0.110.0.0.65001': {'to_add': [], 'to_del': [(1, 1, 3)]}}}
+global: {'to_add': [], 'to_del': [(1, 1, 1)]}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bca610>
+global: {'to_add': [], 'to_del': [(1, 1, 2)]}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bca790>
+global: {'to_add': [], 'to_del': [(1, 1, 3)]}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bca8d0>
+global: global get the fb len
+global: 253
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I01
+sS'status'
+p7
+(dp8
+S'buffer_remain'
+p9
+I10000
+sS'tcam_remain'
+p10
+(dp11
+I1
+I100
+sI2
+I100
+sssS'ctrl_id'
+p12
+I1
+sS'flow_id'
+p13
+I-1
+sb.
+global: global get the fb len
+global: 262
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I01
+sS'status'
+p7
+(dp8
+S'buffer_remain'
+p9
+I10000
+sS'tcam_remain'
+p10
+(dp11
+I3
+I100
+sI4
+I100
+sI5
+I100
+sssS'ctrl_id'
+p12
+I2
+sS'flow_id'
+p13
+I-1
+sb.
+global: {'buffer_remain': 10000, 'tcam_remain': {1: 100, 2: 100}}
+global: ---------get a statusAnswer
+global: {1: 10000}
+global: {1: 100, 2: 100}
+global: {'buffer_remain': 10000, 'tcam_remain': {3: 100, 4: 100, 5: 100}}
+global: ---------get a statusAnswer
+global: {1: 10000, 2: 10000}
+global: {1: 100, 2: 100, 3: 100, 4: 100, 5: 100}
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.2None
+p10
+sb.
+global: hey buf feedback
+global: 0
+global: buf del over
+global: {1: {u'10.0.0.110.0.0.2None': {'to_add': [(1, 1, 1)], 'to_del': []}}}
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.2None': {'to_add': [(1, 1, 1)], 'to_del': []}}}
+global: {'to_add': [(1, 1, 1)], 'to_del': []}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bca650>
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.6None
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: hey buf feedback
+global: 0
+global: buf del over
+global: {1: {u'10.0.0.110.0.0.6None': {'to_add': [(1, 1, 2), (1, 2, 4)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.6None': {'to_add': [(2, 4, 4)], 'to_del': []}}}
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.6None': {'to_add': [(1, 1, 2), (1, 2, 4)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.6None': {'to_add': [(2, 4, 4)], 'to_del': []}}}
+global: {'to_add': [(1, 1, 2), (1, 2, 4)], 'to_del': []}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bca890>
+global: {'to_add': [(2, 4, 4)], 'to_del': []}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bcaa10>
+global: hey buf feedback
+global: 0
+global: buf del over
+global: {1: {u'10.0.0.110.0.0.65001': {'to_add': [(1, 1, 3)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.65001': {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': []}}}
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.65001': {'to_add': [(1, 1, 3)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.65001': {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': []}}}
 global: {'to_add': [(1, 1, 3)], 'to_del': []}
-global: <bricks.message.UpdateMessageByFlow object at 0x7fdc7c87e4d0>
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bca790>
 global: {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': []}
-global: <bricks.message.UpdateMessageByFlow object at 0x7fdc7c8b41d0>
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bca610>
 global: global get the fb len
-global: 157
+global: 197
 global: ccopy_reg
 _reconstructor
 p1
@@ -30,18 +238,24 @@ object
 p3
 NtRp4
 (dp5
-S'ctrl_id'
+S'statusAnswer'
 p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
 I1
 sS'flow_id'
-p7
-V10.0.0.110.0.0.6None
-p8
+p9
+V10.0.0.110.0.0.2None
+p10
 sb.
-global: in tag fb
-global: 3
+global: hey buf feedback
+global: 1
+global: buf add over
 global: global get the fb len
-global: 157
+global: 197
 global: ccopy_reg
 _reconstructor
 p1
@@ -53,20 +267,115 @@ object
 p3
 NtRp4
 (dp5
-S'ctrl_id'
+S'statusAnswer'
 p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.6None
+p10
+sb.
+global: hey buf feedback
+global: 1
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: hey buf feedback
+global: 1
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.2None
+p10
+sb.
+global: hey buf feedback
+global: 2
+global: 10.0.0.110.0.0.2None
+global: updated over by buf
+global: ---in move new to flow
+global: {u'10.0.0.110.0.0.2None': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bacb50>}
+global: {u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bacd10>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bca5d0>}
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1620412651577
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
 I2
 sS'flow_id'
-p7
+p9
 V10.0.0.110.0.0.6None
-p8
+p10
 sb.
-global: in tag fb
-global: 3
-global: tag add finished
-global: [1, 2]
+global: hey buf feedback
+global: 1
+global: buf add over
 global: global get the fb len
-global: 157
+global: 197
 global: ccopy_reg
 _reconstructor
 p1
@@ -78,18 +387,65 @@ object
 p3
 NtRp4
 (dp5
-S'ctrl_id'
+S'statusAnswer'
 p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.6None
+p10
+sb.
+global: hey buf feedback
+global: 2
+global: 10.0.0.110.0.0.6None
+global: updated over by buf
+global: ---in move new to flow
+global: {u'10.0.0.110.0.0.2None': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bacb50>, u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bacd10>}
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bca5d0>}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 977, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: {1: {2: 977, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1620412651583
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
 I2
 sS'flow_id'
-p7
-V10.0.0.110.0.0.6None
-p8
+p9
+V10.0.0.110.0.0.65001
+p10
 sb.
-global: in tag fb
-global: 4
+global: hey buf feedback
+global: 1
+global: buf add over
 global: global get the fb len
-global: 157
+global: 197
 global: ccopy_reg
 _reconstructor
 p1
@@ -101,20 +457,75 @@ object
 p3
 NtRp4
 (dp5
-S'ctrl_id'
+S'statusAnswer'
 p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
 I1
 sS'flow_id'
-p7
-V10.0.0.110.0.0.6None
-p8
+p9
+V10.0.0.110.0.0.65001
+p10
 sb.
-global: in tag fb
-global: 4
-global: tag tag finished
-global: tag_del sent
+global: hey buf feedback
+global: 2
+global: 10.0.0.110.0.0.65001
+global: updated over by buf
+global: ---in move new to flow
+global: {u'10.0.0.110.0.0.2None': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bacb50>, u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bacd10>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bca5d0>}
+global: {}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 977, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 977, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 977, 3: 745}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 3
+global: {1: {2: 977, 3: 745}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 745, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1620412651586
+global: {u'flows': [u'10.0.0.1 10.0.0.6 None [] [1,2,4] icmp 1 23', u'10.0.0.1 10.0.0.2 None [] [1] icmp 1 28', u'10.0.0.1 10.0.0.6 5001 [] [1,3,4] tcp 1 255']}
+global: in ana_input
+global: [1, 2, 4]
+global: [1, 2, 4]
+global: icmp
+global: [1]
+global: [1]
+global: icmp
+global: [1, 3, 4]
+global: [1, 3, 4]
+global: tcp
+global: {u'10.0.0.110.0.0.2None': <bricks.flow_des.FlowDesGlobal object at 0x7f60873882d0>, u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7f6087388750>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7f6088b58090>}
+global: 1620412713703
+global: sent Ask to local1
+global: sent Ask to local2
+global: []
+global: to buf is
+global: (1, 1, 1)
+global: []
+global: to buf is
+global: (1, 1, 2)
+global: []
+global: to buf is
+global: (1, 1, 3)
+global: {1: {u'10.0.0.110.0.0.2None': {'to_add': [], 'to_del': [(1, 1, 1)]}, u'10.0.0.110.0.0.6None': {'to_add': [], 'to_del': [(1, 1, 2)]}, u'10.0.0.110.0.0.65001': {'to_add': [], 'to_del': [(1, 1, 3)]}}}
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.2None': {'to_add': [], 'to_del': [(1, 1, 1)]}, u'10.0.0.110.0.0.6None': {'to_add': [], 'to_del': [(1, 1, 2)]}, u'10.0.0.110.0.0.65001': {'to_add': [], 'to_del': [(1, 1, 3)]}}}
+global: {'to_add': [], 'to_del': [(1, 1, 1)]}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bca550>
+global: {'to_add': [], 'to_del': [(1, 1, 2)]}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bca950>
+global: {'to_add': [], 'to_del': [(1, 1, 3)]}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bcaa50>
 global: global get the fb len
-global: 157
+global: 251
 global: ccopy_reg
 _reconstructor
 p1
@@ -126,14 +537,462 @@ object
 p3
 NtRp4
 (dp5
-S'ctrl_id'
+S'statusAnswer'
 p6
+I01
+sS'status'
+p7
+(dp8
+S'buffer_remain'
+p9
+I9997
+sS'tcam_remain'
+p10
+(dp11
+I1
+I100
+sI2
+I98
+sssS'ctrl_id'
+p12
 I1
 sS'flow_id'
-p7
-V10.0.0.110.0.0.6None
-p8
+p13
+I-1
 sb.
-global: in tag fb
-global: 5
-global: tag del finished
+global: global get the fb len
+global: 260
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I01
+sS'status'
+p7
+(dp8
+S'buffer_remain'
+p9
+I10000
+sS'tcam_remain'
+p10
+(dp11
+I3
+I98
+sI4
+I96
+sI5
+I100
+sssS'ctrl_id'
+p12
+I2
+sS'flow_id'
+p13
+I-1
+sb.
+global: {'buffer_remain': 9997, 'tcam_remain': {1: 100, 2: 98}}
+global: ---------get a statusAnswer
+global: {1: 9997, 2: 10000}
+global: {1: 100, 2: 98, 3: 100, 4: 100, 5: 100}
+global: {'buffer_remain': 10000, 'tcam_remain': {3: 98, 4: 96, 5: 100}}
+global: ---------get a statusAnswer
+global: {1: 9997, 2: 10000}
+global: {1: 100, 2: 98, 3: 98, 4: 96, 5: 100}
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.2None
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.6None
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: hey buf feedback
+global: 0
+global: buf del over
+global: {1: {u'10.0.0.110.0.0.2None': {'to_add': [(1, 1, 1)], 'to_del': []}}}
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.2None': {'to_add': [(1, 1, 1)], 'to_del': []}}}
+global: {'to_add': [(1, 1, 1)], 'to_del': []}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bcaad0>
+global: hey buf feedback
+global: 0
+global: buf del over
+global: {1: {u'10.0.0.110.0.0.6None': {'to_add': [(1, 1, 2), (1, 2, 4)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.6None': {'to_add': [(2, 4, 4)], 'to_del': []}}}
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.6None': {'to_add': [(1, 1, 2), (1, 2, 4)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.6None': {'to_add': [(2, 4, 4)], 'to_del': []}}}
+global: {'to_add': [(1, 1, 2), (1, 2, 4)], 'to_del': []}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bcaad0>
+global: {'to_add': [(2, 4, 4)], 'to_del': []}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bcab50>
+global: hey buf feedback
+global: 0
+global: buf del over
+global: {1: {u'10.0.0.110.0.0.65001': {'to_add': [(1, 1, 3)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.65001': {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': []}}}
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.65001': {'to_add': [(1, 1, 3)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.65001': {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': []}}}
+global: {'to_add': [(1, 1, 3)], 'to_del': []}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bca690>
+global: {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': []}
+global: <bricks.message.UpdateMessageByFlow object at 0x7f6086bca590>
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.2None
+p10
+sb.
+global: hey buf feedback
+global: 1
+global: buf add over
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.6None
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.2None
+p10
+sb.
+global: hey buf feedback
+global: 1
+global: hey buf feedback
+global: 1
+global: hey buf feedback
+global: 2
+global: 10.0.0.110.0.0.2None
+global: updated over by buf
+global: ---in move new to flow
+global: {u'10.0.0.110.0.0.2None': <bricks.flow_des.FlowDesGlobal object at 0x7f60873882d0>, u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bacd10>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bca5d0>}
+global: {u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7f6087388750>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7f6088b58090>}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 977, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 977, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 977, 3: 745}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 3
+global: {1: {2: 977, 3: 745}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 745, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1620412713736
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.6None
+p10
+sb.
+global: hey buf feedback
+global: 1
+global: buf add over
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: hey buf feedback
+global: 1
+global: buf add over
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.6None
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: hey buf feedback
+global: 2
+global: 10.0.0.110.0.0.6None
+global: updated over by buf
+global: ---in move new to flow
+global: {u'10.0.0.110.0.0.2None': <bricks.flow_des.FlowDesGlobal object at 0x7f60873882d0>, u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7f6087388750>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7f6086bca5d0>}
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7f6088b58090>}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 977, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 977, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 977, 3: 745}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 3
+global: {1: {2: 977, 3: 745}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 745, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1620412713740
+global: hey buf feedback
+global: 2
+global: 10.0.0.110.0.0.65001
+global: updated over by buf
+global: ---in move new to flow
+global: {u'10.0.0.110.0.0.2None': <bricks.flow_des.FlowDesGlobal object at 0x7f60873882d0>, u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7f6087388750>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7f6088b58090>}
+global: {}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 977, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 977, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 977, 3: 745}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 3
+global: {1: {2: 977, 3: 745}, 2: {1: 1000, 3: 1000, 4: 977, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 745, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1620412713741

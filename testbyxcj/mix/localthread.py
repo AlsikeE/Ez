@@ -42,14 +42,17 @@ class LocalController(app_manager.RyuApp):
         topofile = os.environ.get("TOPO", './data/topo.intra')
         local_dpfile = os.environ.get('LOCAL_DP','./data/local_dp.intra')
         dp_hostfile = os.environ.get('DP_HOST','./data/dp_host.intra')
+        self.buf_size = os.environ.get('BUF_SIZE',10000)
+        dp_tcamfile = os.environ.get('TCAM_SIZE','./data/dp_tcam.intra')
 
+        
         self.logger=logger.getLogger('local' + str(self.local_id),logging.INFO)
         self.topo = None
         # self.topo_input = os.environ.get("TOPO_INPUT", 1)
         # self.local_id = 0 #remember change me !
         self.neighbors = get_local_neighbors(topofile,local_dpfile,self.local_id)
         self.hosts = get_local_hosts(self.neighbors,dp_hostfile)
-        
+        self.dp_tcam_size = self.read_dp_tcam(dp_tcamfile)
         self.logger.info(self.neighbors)
         self.logger.info(self.hosts)
         self.time = 0
@@ -75,10 +78,21 @@ class LocalController(app_manager.RyuApp):
         hub.spawn_after(5,self.conn_with_global.connect,('127.0.0.1',9999))
 
         hub.spawn(self.run_server)
+
+    def read_dp_tcam(self,file):
+        result = {}
+        with open(file) as f:
+            for line in f:
+                a,b = line.split(':')
+                if(int(a) in self.neighbors.keys()):
+                    result[int(a)] = int(b)
+        return result
+    
 #methods for buffer
     def get_from_buffer(self,key):
         msg = self.rds.lpop(key)    
         while(msg):
+            self.buf_size += 1
             obj = pickle.loads(msg)
             pkg = obj["pkg"]
             dpid = obj["dpid"]
@@ -96,6 +110,7 @@ class LocalController(app_manager.RyuApp):
             "in_port":in_port
         })
         self.rds.rpush(key,value)
+        self.buf_size -= 1
     
     def make_buf_key(self,src,dst,dst_port):
         return src + dst + str(dst_port)
@@ -247,6 +262,7 @@ class LocalController(app_manager.RyuApp):
         elif(f.up_step == consts.TAG_UNTAG):
             pass
         
+        
     def add_tag_for_packets(self,f,up_msg):
         
         dplast,dpid,dpnext = up_msg.to_add[0]
@@ -337,8 +353,14 @@ class LocalController(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
         dpid = datapath.id     
-        self.datapaths[dpid]=datapath
+        
+        
         self.logger.info("------------in features----------")
+        self.logger.info(str(msg))
+
+        if(dpid in self.datapaths.keys()):
+            return
+        self.datapaths[dpid]=datapath
         self.logger.info(self.datapaths)
         print(ofproto.OFPP_CONTROLLER)
         actions = [parser.OFPActionOutput(port=ofproto.OFPP_CONTROLLER,max_len=ofproto.OFPCML_NO_BUFFER)]
@@ -350,6 +372,17 @@ class LocalController(app_manager.RyuApp):
         self.disable_dhcp(datapath)
         
         # self.install(datapath)
+
+    @set_ev_cls(ofp_event.EventOFPSwitchFeatures, MAIN_DISPATCHER)
+    def _features_handler(self, ev):
+        msg = ev.msg
+        datapath = msg.datapath
+        ofproto = datapath.ofproto
+        parser = datapath.ofproto_parser
+        dpid = datapath.id     
+        self.logger.info("------------in features----------")
+        self.logger.info(str(msg))
+
 
     @set_ev_cls(ofp_event.EventOFPBarrierReply, MAIN_DISPATCHER)
     def _barrier_reply_handler(self,ev):
@@ -440,6 +473,18 @@ class LocalController(app_manager.RyuApp):
             self.any_up_msg_RAW(f,up_msg)
 
     def process_info_msg(self,info_msg):
+        if(info_msg.statusAsk):
+            self.logger.info("---------get an Ask")
+            fb_msg = FeedbackMessge(-1,self.local_id)
+            fb_msg.statusAnswer = True
+            fb_msg.status = ({
+                "buffer_remain":self.buf_size,
+                "tcam_remain":self.dp_tcam_size
+            })
+            self.logger.info(fb_msg)
+            self.send_fb_to_global(fb_msg)
+            self.logger.info("sent to global")
+            return
         new_flows = info_msg.new_flows
         if(len(new_flows)):
             self.ana_new_flows(new_flows)
@@ -506,6 +551,8 @@ class LocalController(app_manager.RyuApp):
                                 out_port=ofproto.OFPP_ANY, out_group=ofproto.OFPG_ANY,
                                 match=match, priority=priority)
         datapath.send_msg(mod)
+        dpid = {value: key for key, value in self.datapaths.items()}[datapath]
+        self.dp_tcam_size[dpid] += 1
 
     def add_flow(self,datapath,priority,match,actions):
         self.logger.info(match)
@@ -516,6 +563,8 @@ class LocalController(app_manager.RyuApp):
         mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
                                     match=match, instructions=inst)
         datapath.send_msg(mod)
+        dpid = {value: key for key, value in self.datapaths.items()}[datapath]
+        self.dp_tcam_size[dpid] -= 1
 
 
 #methods for comm with global

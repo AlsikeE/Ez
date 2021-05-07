@@ -7,6 +7,9 @@ tmux new-session -d -s $N
 tmux ls
 
 mn -c
+# tmux new-window -t $N:222 -n "topogui" 
+# tmux send-keys -t $N:222 "ryu-manager ~/ryucode/ryu-4.20/ryu/app/gui_topology/gui_topology.py" Enter
+
 tmux new-window -t $N:99 -n "mn" 
 # tmux send-keys -t $N:99 "mn --topo=single,4 --arp --controller=remote,ip=127.0.0.1,port=6666" Enter
 # tmux send-keys -t $N:99 "python topo.py --iperf 1 --filepath ./data/flowdes.intra" Enter

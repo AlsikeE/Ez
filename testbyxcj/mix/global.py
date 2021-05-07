@@ -7,12 +7,16 @@ from eventlet.green import socket
 
 from bricks.flow_des import FlowDesGlobal,FlowDes
 from bricks.message import InfoMessage,UpdateMessageByFlow
-from multi_controller_topo import read_mapping_from_file,get_reverse_mapping_from_file
+from multi_controller_topo import read_mapping_from_file,get_reverse_mapping_from_file,get_link_bw
 import consts
 import tools
 import argparse
 import logging
 import logger as logger
+import time
+
+nowTime = lambda:int(round(time.time() * 1000))
+
 class GlobalController(object):
     # def __init__(self,topo):
     def __init__(self,local_mapping_file):
@@ -27,19 +31,45 @@ class GlobalController(object):
         self.logger.info(self.dp_to_local)
         self.sockets = {}
         
+        self.link_bw = {}
+        self.local_to_buf_size = {}
+        self.dp_to_tcam_size = {}
         # self.dp_to_local = {1:0,2:0,3:1,4:1}#for lineartopo2
-        self.flows = {}
-        self.flows_new = {}
+        self.flows = {}# all flows now
+        self.flows_new = {} #flows to update
         # self.flows_new = {"10.0.0.110.0.0.25001":flowdes0}
         self.flows_move_on = {}
 
         eventlet.spawn(self.run_fd_server)
+
+# tools
+    def finished_update_to_flows(self,f):
+        self.flows_new.pop(f.flow_id)
+        self.flows.update({f.flow_id:f})
+        self.logger.info("---in move new to flow")
+        self.logger.info(self.flows)
+        self.logger.info(self.flows_new)
+        self.cal_remain_bw()
+        self.logger.info(self.link_bw)
 #for calculating updates    
 
     def schedule(self):
         for flow_id,f in self.flows_new.items():
             f.up_type = BUF
     
+    #cal_remain_bandwidth
+    def cal_remain_bw(self):
+        for dp,linkto in self.link_bw.items():
+            for dpnext,v in linkto.items():
+                self.link_bw[dp][dpnext] = 1000
+        for f in self.flows.values():
+            path = f.new
+            if(path):
+                for i in range(0,len(path)-1):
+                    self.logger.info(i)
+                    self.logger.info(self.link_bw)
+                    self.logger.info(path[i])
+                    self.link_bw[path[i]][path[i+1]] -= f.bw
 
     #from aggre_dict to InfoMessage
     def make_and_send_info(self,aggre_dict):
@@ -116,6 +146,8 @@ class GlobalController(object):
                 f.ctrl_buf = None
                 self.logger.info(f.flow_id)
                 self.logger.info("updated over by buf")
+                self.finished_update_to_flows(f)
+                self.logger.info(nowTime())
         else:
             print("something wrong")
 
@@ -199,6 +231,7 @@ class GlobalController(object):
                 self.logger.info("tag_del sent")
             elif(f.up_step == consts.TAG_DEL):
                 self.logger.info("tag del finished")
+                self.logger.info(nowTime())
                 f.up_step = consts.TAG_MOD
                 # l,dpid,n = self.find_packet_tag_dp(f)
                 # f.ctrl_tag = self.dp_to_local[dpid]
@@ -215,7 +248,7 @@ class GlobalController(object):
 
                 f.ctrl_wait.append(f.ctrl_tag)
                 f.ctrl_wait.append(f.ctrl_tag_reverse)
-
+    #from here should be rewrited
             elif(f.up_step == consts.TAG_MOD):
                 self.logger.info("tag notag finished")
                 f.up_step = consts.TAG_UNTAG
@@ -233,6 +266,7 @@ class GlobalController(object):
                 f.ctrl_tag =None
                 self.logger.info(f.flow_id)
                 self.logger.info("updated over by tag")
+                finished_update_to_flows(f)
             else:
                 self.logger.info("what type?")
 
@@ -245,6 +279,7 @@ class GlobalController(object):
             to_add, to_del = tools.diff_old_new(f.old,f.new)
             aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f_id,to_add,to_del)
             self.make_and_send_info(aggre_dict)
+
     def raw_fb_process(self,f_id):
         f = self.flows_new[f_id]
         f.ctrl_ok += 1
@@ -253,7 +288,9 @@ class GlobalController(object):
             f.ctrl_wait = []
             f.ctrl_ok = 0
             if(f.up_step == consts.RAW_INSTALL):
+                self.logger.info(nowTime())
                 self.logger.info("up over by raw")
+                finished_update_to_flows(f)
 
            
 #for communicate with local
@@ -300,6 +337,15 @@ class GlobalController(object):
     #here to start next step
     def process_fd_msg(self,fd_msg):
         print(fd_msg)
+        if(fd_msg.statusAnswer):
+            status = fd_msg.status
+            self.logger.info(status)
+            self.local_to_buf_size.update({fd_msg.ctrl_id:status["buffer_remain"]})
+            self.dp_to_tcam_size.update(status["tcam_remain"])
+            self.logger.info("---------get a statusAnswer")
+            self.logger.info(self.local_to_buf_size)
+            self.logger.info(self.dp_to_tcam_size)
+            return
         flow_id = fd_msg.flow_id
         ctrl_id = fd_msg.ctrl_id
         f = self.flows_new[flow_id]
@@ -355,23 +401,38 @@ class GlobalController(object):
     
     def ana_input(self,input_data):
         self.logger.info("in ana_input")
-        args = input_data['flow'].split(' ')
-        src = args[0]
-        dst = args[1]
-        try:
-            port = int(args[2])
-        except:
-            port = None
-        old = tools.str_to_list(args[3])
-        new = tools.str_to_list(args[4])
-        self.logger.info(new)
-        trans_type = args[5]
-        flow  = FlowDesGlobal(src,dst,port,old,new,None,trans_type)
-        self.logger.info(flow.new)
-        self.logger.info(flow.trans_type)
-        self.flows_new.update({src+dst+str(port):flow})
-        self.logger.info(self.flows_new)
+        flows = input_data['flows']
+        for flow in flows:
+            args = flow.split(' ')
+            src = args[0]
+            dst = args[1]
+            try:
+                port = int(args[2])
+            except:
+                port = None
+            old = tools.str_to_list(args[3])
+            new = tools.str_to_list(args[4])
+            self.logger.info(new)
+            trans_type = args[5]
+            ratio = float(args[6])
+            bw = int(args[7])
+            flow  = FlowDesGlobal(src,dst,port,old,new,None,trans_type)
+            flow.ratio = ratio
+            flow.bw = bw
 
+            self.logger.info(flow.new)
+            self.logger.info(flow.trans_type)
+            self.flows_new.update({src+dst+str(port):flow})
+        self.logger.info(self.flows_new)
+        self.logger.info(nowTime())
+
+    def fetch_status_info(self):
+        for l in self.locals:
+            info = InfoMessage(l)
+            info.statusAsk = True
+            self.send_to_local(l,info)
+            self.logger.info("sent Ask to local" + str(l))
+        
     def wsgi_app(self, env, start_response):
         # print "Get finished msg"
         input = env['wsgi.input']
@@ -386,12 +447,13 @@ class GlobalController(object):
         self.logger.info(input_data)
         if (input_data):
             self.ana_input(input_data)
+        
+        self.fetch_status_info()
 
-        # self.auto_install(consts.ONLY_BUF)
-        self.auto_install(consts.ONLY_TAG)
+        #should be in feedback handler 
+        self.auto_install(consts.ONLY_BUF)
+        # self.auto_install(consts.ONLY_TAG)
         # self.auto_install(consts.ONLY_RAW)
-
-
         response_headers = [('Content-type', 'application/json'),
                         ('Access-Control-Allow-Origin', '*'),
                         ('Access-Control-Allow-Methods', 'POST'),
@@ -406,6 +468,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='mix global')
     parser.add_argument('--localdp',nargs='?',
                         type = str,default='./data/local_dp.intra')
+    parser.add_argument('--matrix',nargs='?',
+                        type=str,default='./data/topo.intra')
     args = parser.parse_args()
     gl_ctrl = GlobalController(args.localdp)
+    gl_ctrl.link_bw = get_link_bw(args.matrix)
     gl_ctrl.run_experiment()
