@@ -7,7 +7,8 @@ from eventlet.green import socket
 
 from bricks.flow_des import FlowDesGlobal,FlowDes
 from bricks.message import InfoMessage,UpdateMessageByFlow
-from multi_controller_topo import read_mapping_from_file,get_reverse_mapping_from_file,get_link_bw
+from scheduler.scheduler import Scheduler,PolicyUtil
+from multi_controller_topo import read_mapping_from_file,get_reverse_mapping_from_file,get_link_bw,get_link_ltcy
 import consts
 import tools
 import argparse
@@ -31,15 +32,18 @@ class GlobalController(object):
         self.logger.info(self.dp_to_local)
         self.sockets = {}
         
-        self.link_bw = {}
+        self.link_bw = {}#outer layer 
+        self.link_ltcy = {}
         self.local_to_buf_size = {}
         self.dp_to_tcam_size = {}
         # self.dp_to_local = {1:0,2:0,3:1,4:1}#for lineartopo2
         self.flows = {}# all flows now
-        self.flows_new = {} #flows to update
+        self.flows_new = {} #flows updating
+        self.flows_to_schedule = {} #flow to update
+        self.status_num = 0 #for start update
         # self.flows_new = {"10.0.0.110.0.0.25001":flowdes0}
-        self.flows_move_on = {}
 
+        self.scheduler = Scheduler()
         eventlet.spawn(self.run_fd_server)
 
 # tools
@@ -51,11 +55,59 @@ class GlobalController(object):
         self.logger.info(self.flows_new)
         self.cal_remain_bw()
         self.logger.info(self.link_bw)
+    
+    def started_update_to_flows_new(self,f):
+        self.flows_to_schedule.pop(f.flow_id)
+        self.flows_new.update({f.flow_id:f})
+        self.logger.info("---in move new to flow")
+        self.logger.info(self.flows_new)
+        self.logger.info(self.flows_to_schedule)
+
+    def make_schedule_topo_for_schedule(self):
+        topo = {}
+        for dpid,nbr_info in self.link_bw.items():
+            dpentry = {}
+            for dpnext,bw in nbr_info.items():
+                dpentry[dpnext] = {}
+                dpentry.update({dpnext:{"bandwidth":bw,"latency":self.link_ltcy[dpid][dpnext]}})
+            topo.update({dpid:dpentry})
+        return topo
+    
+    def make_dp_dict_for_schedule(self):
+        dp_dict = {}
+        for dpid,local_id in self.dp_to_local.items():
+            dpentry = {"flowspace":self.dp_to_tcam_size[dpid],"ctrl":self.dp_to_local[dpid]}
+            dp_dict.update({dpid:dpentry})
+        return dp_dict
+
 #for calculating updates    
 
-    def schedule(self):
-        for flow_id,f in self.flows_new.items():
-            f.up_type = BUF
+    def schedule_and_update(self):
+        self.logger.info("________in schedule--------------")
+        topo = self.make_schedule_topo_for_schedule()
+        flows = self.flows_to_schedule
+        ctrl_dict = self.local_to_buf_size
+        dp_dict = self.make_dp_dict_for_schedule()
+        self.logger.info("topo:")
+        self.logger.info(topo)
+        self.logger.info("flows:")
+        self.logger.info(flows)
+        self.logger.info("ctrl_dict:")
+        self.logger.info(ctrl_dict)
+        self.logger.info("dp_dict:")
+        self.logger.info(dp_dict)
+        flows_method,prices = self.scheduler.schedule(topo,flows,ctrl_dict,dp_dict)
+        flows_buf = {}
+        flows_tag = {}
+        for f_id,method in flows_method.items():
+            if method  == PolicyUtil.TAG:
+                flows_tag.update({f:self.flows_to_schedule[f_id]})
+            elif method == PolicyUtil.BUFFER:
+                flows_buf.update({f:self.flows_to_schedule[f_id]})
+        
+        self.buf_del(flows_buf)
+        self.tag_add(flows_tag)
+
     
     #cal_remain_bandwidth
     def cal_remain_bw(self):
@@ -111,6 +163,10 @@ class GlobalController(object):
             l,dp,n = to_buf
             f.ctrl_buf = self.dp_to_local[dp]
             aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f_id,[],[to_buf])
+            self.logger.info("her is buf del")
+            self.logger.info(self.flows_to_schedule)
+            self.started_update_to_flows_new(f)
+
         self.logger.info(aggre_dict)
         self.make_and_send_info(aggre_dict)
  
@@ -166,6 +222,7 @@ class GlobalController(object):
             f.version_tag = self.find_version_tag(f)
             to_add, to_del = tools.diff_old_new(f.old,f.new)
             aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f_id,to_add,[])
+            self.started_update_to_flows_new(f)
         self.logger.info(aggre_dict)
         self.make_and_send_info(aggre_dict)
 
@@ -339,12 +396,16 @@ class GlobalController(object):
         print(fd_msg)
         if(fd_msg.statusAnswer):
             status = fd_msg.status
+            self.status_num += 1
             self.logger.info(status)
             self.local_to_buf_size.update({fd_msg.ctrl_id:status["buffer_remain"]})
             self.dp_to_tcam_size.update(status["tcam_remain"])
             self.logger.info("---------get a statusAnswer")
             self.logger.info(self.local_to_buf_size)
             self.logger.info(self.dp_to_tcam_size)
+            if(self.status_num == len(self.locals)):
+                self.schedule_and_update()
+            # self.scheduler.schedule(topo,self.flows_to_schedule,self.local_to_buf_size,self.dp_to_local,self.dp_to_tcam_size)
             return
         flow_id = fd_msg.flow_id
         ctrl_id = fd_msg.ctrl_id
@@ -354,7 +415,6 @@ class GlobalController(object):
             self.buf_fb_process(flow_id)
         elif(f.up_type == consts.TAG):
             self.tag_fb_process(flow_id)
-                # self.flows_move_on.append(f.flow_id)
                 #here should be next step
         elif(f.up_type == consts.RAW):
             self.raw_fb_process(flow_id)
@@ -385,11 +445,11 @@ class GlobalController(object):
     def auto_install(self,methname):
         #put something in flow_new
         if(methname == consts.ONLY_BUF):
-            self.buf_del(self.flows_new)
+            self.buf_del(self.flows_to_schedule)
         elif(methname == consts.ONLY_TAG):
-            self.tag_add(self.flows_new)
+            self.tag_add(self.flows_to_schedule)
         elif(methname == consts.ONLY_RAW):
-            self.raw_update(self.flows_new)
+            self.raw_update(self.flows_to_schedule)
 #for input
     def run_server(self):
         wsgi.server(eventlet.listen(('', 8800)), self.wsgi_app, max_size=50)
@@ -422,8 +482,8 @@ class GlobalController(object):
 
             self.logger.info(flow.new)
             self.logger.info(flow.trans_type)
-            self.flows_new.update({src+dst+str(port):flow})
-        self.logger.info(self.flows_new)
+            self.flows_to_schedule.update({src+dst+str(port):flow})
+        self.logger.info(self.flows_to_schedule)
         self.logger.info(nowTime())
 
     def fetch_status_info(self):
@@ -451,7 +511,7 @@ class GlobalController(object):
         self.fetch_status_info()
 
         #should be in feedback handler 
-        self.auto_install(consts.ONLY_BUF)
+        # self.auto_install(consts.ONLY_BUF)
         # self.auto_install(consts.ONLY_TAG)
         # self.auto_install(consts.ONLY_RAW)
         response_headers = [('Content-type', 'application/json'),
@@ -470,7 +530,10 @@ if __name__ == "__main__":
                         type = str,default='./data/local_dp.intra')
     parser.add_argument('--matrix',nargs='?',
                         type=str,default='./data/topo.intra')
+    parser.add_argument('--latencies',nargs='?',
+                        type=str,default='./data/latencies.intra')
     args = parser.parse_args()
     gl_ctrl = GlobalController(args.localdp)
     gl_ctrl.link_bw = get_link_bw(args.matrix)
+    gl_ctrl.link_ltcy = get_link_ltcy(args.latencies)
     gl_ctrl.run_experiment()

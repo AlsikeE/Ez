@@ -94,6 +94,21 @@ def get_link_bw(topofile):
             i+=1
     return result
 
+def get_link_ltcy(latencyfile):
+    result = {}
+    i = 1
+    with open (latencyfile) as f:
+        for line in f:
+            neighbors = line.strip().split(' ')
+            port = 1
+            dp_ltcy = {}
+            for j in range(0,len(neighbors)):
+                if neighbors[j] != '0':
+                    dp_ltcy.update({j+1:float(neighbors[j])})
+            result.update({i:dp_ltcy})
+            i+=1
+    return result
+
 class Multi(BaseTopo):
     "Random topology by me haha."
 

@@ -1,192 +1,22 @@
 local2: {3: {1: 1, 2: 2, 4: 3, 5: 4}, 4: {2: 1, 3: 2, 5: 3}, 5: {2: 1, 3: 2, 4: 3}}
 local2: {3: {'10.0.0.4': 5}, 4: {'10.0.0.5': 4, '10.0.0.6': 5}, 5: {'10.0.0.7': 4}}
-ryu.base.app_manager: instantiatlocal1: ------------in features----------
-local1:local2: ------------in features----------
-local2: version=0x4,msg_type=0x6,msg_len=0x20,xid=0x3119e5e7,OFPSwitchFeatures(auxiliary_id=0,capabilities=79,datapath_id=3,n_buffers=0,n_tables=254)
-local2: {3: <ryu.controllelocal1: ------------in features----------
-local1: version=0x4,msg_type=0x6,msg_len=0x20,xid=0xdb5b4372,OFPSwitchFeatures(auxiliary_id=0,capabilities=79,datapath_id=2,n_buffers=0,n_tables=254)
-local1: {1: <ryu.controller.controller.Datapath object at 0x7f279021d0d0>, 2: <ryu.controller.controller.Datapath object at 0x7f279021d150>}
-local1: receive a connection
+ryu.base.app_manager: instantiating app ryu.controller.ofp_handler of OFPHandler
+local2: ------------in features----------
+local2: version=0x4,msg_type=0x6,msg_len=0x20,xid=0xa09dfe35,OFPSwitchFeatures(auxiliary_id=0,capabilities=79,datapath_id=4,n_buffers=0,n_tables=254)
+local2: {4: <ryu.controller.controller.Datapath object at 0x7f995c133110>}
+local2: ------------in features----------
+local2: version=0x4,msg_type=0x6,msg_len=0x20,xid=0x731bb385,OFPSwitchFeatures(auxiliary_id=0,capabilities=79,datapath_id=3,n_buffers=0,n_tables=254)
+local2: {3: <ryu.controller.controller.Datapath object at 0x7f995c133190>, 4: <ryu.controlllocal1: receive a connection
 local1: --------------a connection-------------------
 local1: 175
 local1: ---------get an Ask
-local1: <bricks.message.FeedbackMessge object at 0x7f279021dcd0>
+local1: <bricks.message.FeedbackMessge object at 0x7fca11a62c50>
 local1: sent to global
-local1: 1547
-local1: <bricks.flow_des.FlowDes object at 0x7f279021de10>
-local1: <bricks.flow_des.FlowDes object at 0x7f279021d710>
-local1: <bricks.flow_des.FlowDes object at 0x7f279021dcd0>
-local1: in buf del or add
-local1: ----------in any up msg buf-------------
-local1: {1: <ryu.controller.controller.Datapath object at 0x7f279021d0d0>, 2: <ryu.controller.controller.Datapath object at 0x7f279021d150>}
-local1: <bricks.message.UpdateMessageByFlolocal2: 833
-local2: <bricks.flow_des.FlowDes object at 0x7fc1beb80710>
-local2: in buf del or add
-local2: ----------in any up msg buf-------------
-local2: {3: <ryu.controller.controller.Datapath object at 0x7fc1beb80150>, 4: <ryu.controller.controller.Datapath object at 0x7fc1beb800d0>, 5: <ryu.controller.controller.Datapath object at 0x7fc1beb80210>}
-local2: <bricks.message.UpdateMessageByFlow object at 0x7fc1beb807d0>
-local2: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local2: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local2: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local2: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local2: i've sent xid barrier1for tag 1
-local2: 853
-local2: <bricks.flow_des.FlowDes object at 0x7fc1beb80dd0>
-local2: in buf del or add
-local2: ----------in any up msg buf-------------
-local2: {3: <ryu.controller.controller.Datapath object at 0x7fc1beb80150>, 4: <ryu.controller.controller.Datapath object at 0x7fc1beb800d0>, 5: <ryu.controller.controller.Datapath object at 0x7fc1beb80210>}
-local2: <bricks.message.UpdateMessageByFlow object at 0x7fc1beb80b90>
-local2: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_dst': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local2: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_src': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local2: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_dst': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local2: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_src': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local2: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_dst': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local2: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_src': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local2: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_dst': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local2: OFPMatch(oxm_fields={'ip_proto': 17, 'udp_src': 5001, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local2: i've sent xid barrier2for tag 1
-local2: i've sent xid barrier3for tag 1
-local2: hello this is reply for xid1
-local2: {1: [u'10.0.0.110.0.0.6None'], 2: [u'10.0.0.110.0.0.65001'], 3: [u'10.0.0.110.0.0.65001']}
-local2: [<bricks.flow_des.FlowDes object at 0x7fc1beb80710>]
-local2: sent a fb msg 
-local2: hello this is reply for xid2
-local2: {1: [], 2: [u'10.0.0.110.0.0.65001'], 3: [u'10.0.0.110.0.0.65001']}
-local2: []
-local2: hello this is reply for xid3
-local2: {1: [], 2: [u'10.0.0.110.0.0.65001'], 3: [u'10.0.0.110.0.0.65001']}
-local2: [<bricks.flow_des.FlowDes object at 0x7fc1beb80dd0>]
-local2: sent a fb msg 
+id=5,n_buffers=0,n_tables=254)
+local2: {3: <ryu.controller.controller.Datapath object at 0x7f995c133190>, 4: <ryu.controller.controller.Datapath object at 0x7f995c133110>, 5: <ryu.controller.controller.Datapath object at 0x7f995c133250>}
+local2: receive a connection
+local2: --------------a connection-------------------
 local2: 175
 local2: ---------get an Ask
-local2: <bricks.message.FeedbackMessge object at 0x7fc1beb8f390>
+local2: <bricks.message.FeedbackMessge object at 0x7f995c143350>
 local2: sent to global
-local2: 833
-local2: <bricks.flow_des.FlowDes object at 0x7fc1beb80810>
-local2: in buf del or add
-local2: ----------in any up msg buf-------------
-local2: {3: <ryu.controller.controller.Datapath object at 0x7fc1beb80150>, 4: <ryu.controller.controller.Datapath object at 0x7fc1beb800d0>, 5: <ryu.controller.controller.Datapath object at 0x7fc1beb80210>}
-local2: <bricks.message.UpdateMessageByFlow object at 0x7fc1beb8f590>
-local2: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local2: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local2: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local2: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local2: i've sent xid barrier4for tag 1
-local2: 853
-local2: <bricks.flow_des.FlowDes object at 0x7fc1beb80710>
-local2: in buf del or add
-local2: ----------in any up msg buf-------------
-local2: {3: <ryu.controller.controller.Datapath object at 0x7fc1beb80150>, 4: <ryu.controller.controller.Datapath object at 0x7fc1beb800d0>, 5: <ryu.controller.controller.Datapath object at 0x7fc1beb80210>}
-local2: <bricks.message.UpdateMessageByFlow object at 0x7fc1beb80cd0>
-local2: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1', 'tcp_dst': 5001})
-local2: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6', 'tcp_src': 5001})
-local2: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1', 'tcp_dst': 5001})
-local2: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6', 'tcp_src': 5001})
-local2: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1', 'tcp_dst': 5001})
-local2: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6', 'tcp_src': 5001})
-local2: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1', 'tcp_dst': 5001})
-local2: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6', 'tcp_src': 5001})
-local2: i've sent xid barrier5for tag 1
-local2: i've sent xid barrier6for tag 1
-local2: hello this is reply for xid4
-local2: {1: [], 2: [], 3: [], 4: [u'10.0.0.110.0.0.6None'], 5: [u'10.0.0.110.0.0.65001'], 6: [u'10.0.0.110.0.0.65001']}
-local2: [<bricks.flow_des.FlowDes object at 0x7fc1beb80810>]
-local2: sent a fb msg 
-local2: hello this is reply for xid5
-local2: {1: [], 2: [], 3: [], 4: [], 5: [u'10.0.0.110.0.0.65001'], 6: [u'10.0.0.110.0.0.65001']}
-local2: []
-local2: hello this is reply for xid6
-local2: {1: [], 2: [], 3: [], 4: [], 5: [u'10.0.0.110.0.0.65001'], 6: [u'10.0.0.110.0.0.65001']}
-local2: [<bricks.flow_des.FlowDes object at 0x7fc1beb80710>]
-local2: sent a fb msg 
-eMessageByFlow object at 0x7f2790237410>
-local1: i've sent xid barrier8for tag 0
-local1: in buf del or add
-local1: ----------in any up msg buf-------------
-local1: {1: <ryu.controller.controller.Datapath object at 0x7f279021d0d0>, 2: <ryu.controller.controller.Datapath object at 0x7f279021d150>}
-local1: <bricks.message.UpdateMessageByFlow object at 0x7f2790237690>
-local1: i've sent xid barrier9for tag 0
-local1: in buf del or add
-local1: ----------in any up msg buf-------------
-local1: {1: <ryu.controller.controller.Datapath object at 0x7f279021d0d0>, 2: <ryu.controller.controller.Datapath object at 0x7f279021d150>}
-local1: <bricks.message.UpdateMessageByFlow object at 0x7f2790237290>
-local1: i've sent xid barrier10for tag 0
-local1: hello this is reply for xid8
-local1: {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [u'10.0.0.110.0.0.2None'], 9: [u'10.0.0.110.0.0.6None'], 10: [u'10.0.0.110.0.0.65001']}
-local1: [<bricks.flow_des.FlowDes object at 0x7f279021de10>]
-local1: sent a fb msg 
-local1: hello this is reply for xid9
-local1: {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [u'10.0.0.110.0.0.6None'], 10: [u'10.0.0.110.0.0.65001']}
-local1: [<bricks.flow_des.FlowDes object at 0x7f27902376d0>]
-local1: sent a fb msg 
-local1: hello this is reply for xid10
-local1: {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [u'10.0.0.110.0.0.65001']}
-local1: [<bricks.flow_des.FlowDes object at 0x7f27902374d0>]
-local1: sent a fb msg 
-local1: 825
-local1: <bricks.flow_des.FlowDes object at 0x7f2790488850>
-local1: in buf del or add
-local1: ----------in any up msg buf-------------
-local1: {1: <ryu.controller.controller.Datapath object at 0x7f279021d0d0>, 2: <ryu.controller.controller.Datapath object at 0x7f279021d150>}
-local1: <bricks.message.UpdateMessageByFlow object at 0x7f279021dbd0>
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.2', 'ipv4_src': '10.0.0.1'})
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.2'})
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.2', 'ipv4_src': '10.0.0.1'})
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.2'})
-local1: i've sent xid barrier11for tag 1
-local1: 849
-local1: <bricks.flow_des.FlowDes object at 0x7f279021d6d0>
-local1: in buf del or add
-local1: ----------in any up msg buf-------------
-local1: {1: <ryu.controller.controller.Datapath object at 0x7f279021d0d0>, 2: <ryu.controller.controller.Datapath object at 0x7f279021d150>}
-local1: <bricks.message.UpdateMessageByFlow object at 0x7f279021da90>
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1'})
-local1: OFPMatch(oxm_fields={'ip_proto': 1, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6'})
-local1: i've sent xid barrier12for tag 1
-local1: i've sent xid barrier13for tag 1
-local1: 837
-local1: <bricks.flow_des.FlowDes object at 0x7f279021de10>
-local1: in buf del or add
-local1: ----------in any up msg buf-------------
-local1: {1: <ryu.controller.controller.Datapath object at 0x7f279021d0d0>, 2: <ryu.controller.controller.Datapath object at 0x7f279021d150>}
-local1: <bricks.message.UpdateMessageByFlow object at 0x7f279021dbd0>
-local1: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1', 'tcp_dst': 5001})
-local1: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6', 'tcp_src': 5001})
-local1: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.6', 'ipv4_src': '10.0.0.1', 'tcp_dst': 5001})
-local1: OFPMatch(oxm_fields={'ip_proto': 6, 'eth_type': 2048, 'ipv4_dst': '10.0.0.1', 'ipv4_src': '10.0.0.6', 'tcp_src': 5001})
-local1: i've sent xid barrier14for tag 1
-local1: hello this is reply for xid11
-local1: {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [u'10.0.0.110.0.0.2None'], 12: [u'10.0.0.110.0.0.6None'], 13: [u'10.0.0.110.0.0.6None'], 14: [u'10.0.0.110.0.0.65001']}
-local1: [<bricks.flow_des.FlowDes object at 0x7f2790488850>]
-local1: sent a fb msg 
-local1: hello this is reply for xid12
-local1: {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [u'10.0.0.110.0.0.6None'], 13: [u'10.0.0.110.0.0.6None'], 14: [u'10.0.0.110.0.0.65001']}
-local1: []
-local1: hello this is reply for xid13
-local1: {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [u'10.0.0.110.0.0.6None'], 13: [u'10.0.0.110.0.0.6None'], 14: [u'10.0.0.110.0.0.65001']}
-local1: [<bricks.flow_des.FlowDes object at 0x7f279021d6d0>]
-local1: sent a fb msg 
-local1: hello this is reply for xid14
-local1: {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [], 13: [], 14: [u'10.0.0.110.0.0.65001']}
-local1: [<bricks.flow_des.FlowDes object at 0x7f279021de10>]
-local1: sent a fb msg 
-local1: 403
-local1: in rls
-local1: 403
-local1: in rls
-local1: 403
-local1: in rls
-local1: --------------in packet in---------------
-local1: --------------in packet in---------------
-local1: --------------in packet in---------------
-local1: --------------in packet in---------------
-local1: --------------in packet in---------------
-local1: --------------in packet in---------------
-local1: --------------in packet in---------------
-local1: --------------in packet in---------------

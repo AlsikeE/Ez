@@ -93,12 +93,12 @@ class Scheduler(object):
                 self.link2bw_dict[(s1,s2)] = link_bw
 
         # prepare flow_dict & policies & link2flow_dict
-        for f in flows:
+        for f_id,f in flows.items():
             # flow_dict -> {id: info}
             info = {}
-            info["rate"] = f.rate
-            info["loss"] = f.loss
-            info["latency"] = f.latency
+            info["rate"] = f.ratio
+            info["loss"] = f.target_loss
+            info["latency"] = f.target_latency
             info["instance"] = f
             info["old_path"] = f.old
             info["new_path"] = f.new
