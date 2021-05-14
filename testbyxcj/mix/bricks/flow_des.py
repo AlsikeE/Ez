@@ -12,7 +12,8 @@ class BaseFlow(object):
         # self.src_port = src_port
         self.dst_port = dst_port
         self.flow_id = src + dst + str(dst_port)
-        self.version_tag = None
+        self.old_version_tag = None
+        self.new_version_tag = None
         self.ratio = 1
         self.target_latency = 0
         self.target_loss = 0

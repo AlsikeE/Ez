@@ -1,6 +1,10 @@
 # from mininet import Topo
 from collections import defaultdict
 import itertools
+import sys
+sys.path.append('../')
+import logging
+import logger as logger
 
 class PolicyUtil():
     def __init__(self):
@@ -9,8 +13,9 @@ class PolicyUtil():
     policy_count = 2
     BUFFER = 100
     TAG = 101
+    RAW = 102
 
-    BUFFER_PRICE = 1
+    BUFFER_PRICE = 10
     FLOW_ENTRY_PRICE = 1
     BANDWIDTH_PRICE = 1
 
@@ -60,6 +65,12 @@ class Scheduler(object):
         # self.ctrl2buffspace_dict = {}
         self.ctrl2bufferspace_dict = None
 
+        self.created_flow_index = []
+        self.removed_flow_index = []
+
+        logger.init('./globalhapi.log',logging.INFO)
+        self.logger=logger.getLogger('scheduler',logging.INFO)
+
     def prepare_data(self, topo, flows, ctrl_dict, sw_dict):
         self.link2flow_dict.clear()
         self.link2bw_dict.clear()
@@ -69,17 +80,18 @@ class Scheduler(object):
         # self.ctrl2buffspace_dict.clear()
         self.policies.clear()
         self.flow_dict.clear()
+        self.created_flow_index = []
+        self.removed_flow_index = []
 
         self.ctrl2bufferspace_dict = ctrl_dict
 
         for dpid, dp_info in sw_dict.items():
             ctrl_id = dp_info["ctrl"]
+            assert ctrl_id
             flowspace = dp_info["flowspace"]
+            assert flowspace >= 0
             self.dpid2ctrl_dict[dpid] = ctrl_id
             self.dpid2flowspace_dict[dpid] = flowspace
-
-
-
         # update the refs
         self.topo = topo
         self.flows = flows
@@ -91,12 +103,16 @@ class Scheduler(object):
                 link_bw = s1_s2_link["bandwidth"]
                 link_latency = s1_s2_link["latency"]
                 self.link2bw_dict[(s1,s2)] = link_bw
+                assert link_bw >= 0
 
         # prepare flow_dict & policies & link2flow_dict
         for f_id,f in flows.items():
             # flow_dict -> {id: info}
             info = {}
-            info["rate"] = f.ratio
+            assert f.ratio >= 0
+            assert f.target_loss >= 0
+            assert f.target_latency >= 0
+            info["rate"] = f.ratio            
             info["loss"] = f.target_loss
             info["latency"] = f.target_latency
             info["instance"] = f
@@ -121,6 +137,18 @@ class Scheduler(object):
             common, new, old = [],[],[]
             # for i in range(0,len(old_path)):
             i = 0
+
+            # handle flow creation remove, empty old/new paths
+            if(not old_path or not new_path):
+                if(not old_path):
+                    self.created_flow_index.append(fid)
+                    # f_info[]
+                else:
+                    self.removed_flow_index.append(fid)
+
+                continue
+
+
             while(old_path[i] == new_path[i]):
                 # common.append(old_path[i])
                 i += 1
@@ -144,6 +172,14 @@ class Scheduler(object):
             f_info["new_only_nodes"] = new
             f_info["diverge_point"] = old_path[diverge_point]
             f_info["converge_point"] = old_path[converge_point]
+            
+            
+            # f_info["old_links"] =  []
+            # for i in range(0,len(old_path)-1):
+            #     f_info["old_links"].append(old_path[i],old_path[i+1])
+            # f_info["new_links"] = []
+            # for i in range(0,len(old_path))
+
 
     def schedule(self, topo, flows, ctrl_dict, dp_dict):
         # flow_dict = {} #{flow_id: info}  info{rate, loss, latency, instance}
@@ -156,6 +192,12 @@ class Scheduler(object):
         # return policies
 
         # prepare
+        self.logger.info("mxd input parameters===")
+        self.logger.info(flows)
+        self.logger.info(ctrl_dict)
+        self.logger.info(dp_dict)
+
+
         self.prepare_data(topo, flows, ctrl_dict, dp_dict)
         self.find_common_diff_switch_for_flows()
 
@@ -184,7 +226,11 @@ class Scheduler(object):
             policy_entry = {} #{fid:policy}
             temp = zip(self.flow_dict.keys(), policy)
             for(fid,p) in temp:
-                policy_entry[fid] = p
+                #handle flow creation or delete
+                if(fid in self.created_flow_index or fid in self.removed_flow_index):
+                    policy_entry[fid] = PolicyUtil.RAW
+                else:
+                    policy_entry[fid] = p
             potential_policies.append(policy_entry)
         # lambda: x,y: potential_policies[x] = y
 
@@ -202,9 +248,9 @@ class Scheduler(object):
         for index_of_policy in range(len(potential_policies)):
             policy = potential_policies[index_of_policy]
             # calculate demanded_flow_space & demanded_buffer_space
-            demanded_flowspace_dict = defaultdict(int)
-            demanded_bufferspace_dict = defaultdict(int)
-            demanded_bandwidth_dict = defaultdict(int)
+            demanded_flowspace_dict = defaultdict(float)
+            demanded_bufferspace_dict = defaultdict(float)
+            demanded_bandwidth_dict = defaultdict(float)
 
             # case 1 : no dependency, i.e., no_common_node
             for fid, f_info in self.flow_dict.items():
@@ -212,7 +258,20 @@ class Scheduler(object):
                 # 1.1 PolicyConst.TAG check switch flowspace
 
                 # if(self.policies[fid] == PolicyUtil.TAG):
-                if (policy[fid] == PolicyUtil.TAG):
+
+                # handle flow creation or remove
+                if (policy[fid] == PolicyUtil.RAW):
+                    if(fid in self.removed_flow_index):
+                        # do nothing
+                        pass
+                    elif(fid in self.created_flow_index):
+                        # calculate the bandwidth value
+                        new_path = f_info["new_path"]
+                        for i in range(0,len(new_path)-1):
+                            demanded_bandwidth_dict[(new_path[i],new_path[i+1])] += f_info["rate"]
+                        
+
+                elif (policy[fid] == PolicyUtil.TAG):
                     # **diverge_point** **converge_point**
                     # denote **new_switch** as the ones appear only in new path.
                     # assume 4 extra flow entries on **diverge_point** / **converge_point** and 2 extra flow entries
@@ -232,14 +291,25 @@ class Scheduler(object):
                     old_path = f_info["old_path"]
                     new_path = f_info["new_path"]
                     # update bandwidth demand
+                    old_link_list = []
+                    new_link_list = []
                     for i in range(0,len(old_path)-1):
-                        demanded_bandwidth_dict[(old_path[i],old_path[i+1])] += f_info["rate"]
+                        old_link_list.append((old_path[i],old_path[i+1]))
                     for i in range(0,len(new_path)-1):
-                        demanded_bandwidth_dict[(new_path[i],new_path[i+1])] += f_info["rate"]
+                        new_link_list.append((new_path[i],new_path[i+1]))
+                    link_array = list(set(old_link_list + new_link_list))
+                    for link in link_array:
+                        demanded_bandwidth_dict[link] += f_info["rate"]
+
+                    # for i in range(0,len(old_path)-1):
+                    #     demanded_bandwidth_dict[(old_path[i],old_path[i+1])] += f_info["rate"]
+                    # for i in range(0,len(new_path)-1):
+                    #     demanded_bandwidth_dict[(new_path[i],new_path[i+1])] += f_info["rate"]
 
                 # 1.2 PolicyConst.BUFFER check controller bufferspace
 
                 # elif(self.policies[fid] == PolicyUtil.BUFFER):
+
                 elif (policy[fid] == PolicyUtil.BUFFER):
                     flow_rate = f_info["rate"]
                     _TIME_TO_UPDATE_ONE_SWITCH = 0.005 #second
@@ -248,7 +318,17 @@ class Scheduler(object):
                     # _TIME_TO_UPDATE_ONE_SWITCH
                     # buffer_time = _TIME_TO_UPDATE_ONE_SWITCH * switch_count
                     estimated_buffer_time = 30.00 / 1000 #ms
-                    estimated_cache_size = flow_rate * estimated_buffer_time  #MB
+
+                    self.logger.info("estimated_buffer_time")
+                    self.logger.info(estimated_buffer_time)
+
+                    self.logger.info("flow_rate")
+                    self.logger.info(flow_rate)
+
+                    estimated_cache_size = 1.00 * flow_rate * estimated_buffer_time  #MB
+                    
+                    self.logger.info("estimated_cache_size")
+                    self.logger.info(estimated_cache_size)
 
                     dpid = f_info["diverge_point"]
                     controller_id = self.dpid2ctrl_dict[dpid]
@@ -264,6 +344,11 @@ class Scheduler(object):
                 if(grade > best_performance[1] or violation_count < best_performance[2]):
                     best_choice = index_of_policy
                     best_performance = [violation_ratio, grade, violation_count]
+        self.logger.info("scheduling results ============")
+        self.logger.info("potential_policies[best_choice]")
+        self.logger.info(potential_policies[best_choice])
+        self.logger.info("best_performance")
+        self.logger.info(best_performance)
         return potential_policies[best_choice], best_performance
 
 
@@ -276,9 +361,9 @@ class Scheduler(object):
         # self.link2bw_dict
         # self.link2latency_dict
 
-        total_buffer_demand = 0
-        total_fs_demand = 0
-        total_bw_demand = 0
+        total_buffer_demand = 0.00
+        total_fs_demand = 0.00
+        total_bw_demand = 0.00
 
         # 1 first_filtering : check remaining resources
         # 1.1 bandwidth
@@ -291,20 +376,24 @@ class Scheduler(object):
 
         for link,bandwidth_demand in demanded_bw_dict.items():
             total_bw_demand += bandwidth_demand
+            assert bandwidth_demand > 0
             if(bandwidth_demand > self.link2bw_dict[link]):
+                self.logger.info("bandwidth violation happens")
                 violate_bw_count += 1
                 violate_bw_percent += 1.00 * (bandwidth_demand -
-                                                     self.link2bw_dict[link])/self.link2bw_dict[link]
+                                                     self.link2bw_dict[link])/(self.link2bw_dict[link]+0.0001)
 
         # 1.2 flow_space
         violate_fs_count = 0
         violate_fs_percent = 0.00
         for dpid,flow_space_demand in demanded_flowspace_dict.items():
             total_fs_demand += flow_space_demand
+            assert flow_space_demand > 0
             if(flow_space_demand > self.dpid2flowspace_dict[dpid]):
+                self.logger.info("fs violation happens")
                 violate_fs_count += 1
                 violate_fs_percent += 1.00 * (flow_space_demand -
-                                                     self.dpid2flowspace_dict[dpid])/self.dpid2flowspace_dict[dpid]
+                                                     self.dpid2flowspace_dict[dpid])/(self.dpid2flowspace_dict[dpid]+0.0001)
 
         # 1.3 buffer_space
         violate_buffer_count = 0
@@ -312,10 +401,18 @@ class Scheduler(object):
 
         for ctrl_id, buffer_space_demand in demanded_bufferspace_dict.items():
             total_buffer_demand += buffer_space_demand
-            if(buffer_space_demand > self.ctrl2bufferspace_dict[ctrl_id]):
+            # self.logger.info("in scheduler")
+            self.logger.info(self.ctrl2bufferspace_dict[ctrl_id])
+            self.logger.info("buffer_space_demand")
+            self.logger.info(buffer_space_demand)
+            assert buffer_space_demand > 0
+            if(buffer_space_demand > float(self.ctrl2bufferspace_dict[ctrl_id])):
+                self.logger.info("buffer violation happens")
+                self.logger.info("total_buffer_demand")
+                self.logger.info(total_buffer_demand)
                 violate_buffer_count += 1
                 violate_buffer_percent += 1.00 * (buffer_space_demand -
-                                                       self.ctrl2bufferspace_dict[ctrl_id])/self.ctrl2bufferspace_dict[ctrl_id]
+                                                       float(self.ctrl2bufferspace_dict[ctrl_id]))/(float(self.ctrl2bufferspace_dict[ctrl_id])+0.0001)
 
         total_violation_count = violate_buffer_count + violate_fs_count + violate_bw_count
         total_violation_ratio = violate_bw_percent + violate_fs_percent + violate_buffer_percent
@@ -335,7 +432,13 @@ class Scheduler(object):
 
         # 3. grade the policies :
         policy_price = total_buffer_price + total_fs_price + total_bw_price
-        grade = 1.00 / policy_price
+        grade = 1.00 / (policy_price+0.0001)
+        self.logger.info("when evaluation policies=================")
+        self.logger.info("total_violation_ratio")
+        self.logger.info("grade")
+        self.logger.info(grade)
+        self.logger.info("total_violation_count")
+        self.logger.info(total_violation_count)
 
         return grade, total_violation_ratio, total_violation_count
     # def construct_topo(self, topo):

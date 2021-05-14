@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Mix{% endblock %}
+
+{% block content%}
+
+<div class="container">
+    <div class="page-header">
+        <h1>混合更新Mix <small>update flow path by methods</small></h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">更新操作</h3>
+                  </div>
+                  <div class="panel-body">
+                    <form>
+                        <div class="form-group">
+                          <!-- <label for="flowInput">更新流命令</label> -->
+                          <textarea  type="text" class="form-control" rows=6 id="flows" placeholder="flows to update"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-default" onclick='send_to_update()'>Submit</button>
+                      </form>
+                    </textarea>
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">输出日志</h3>
+                  </div>
+                  <div class="panel-body">
+                    <textarea  type="text" class="form-control" rows=6 id="flows_update" placeholder="flows to update"></textarea>                    
+                    </textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="well">
+                <img src="../static/topo.png" class="img-responsive"/>
+                <div class="h4 text-center">示例网络拓扑结构</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6" id='log'>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">日志</h3>
+                </div>
+                <div class="panel-body">
+                  <textarea ></textarea>
+                </div>
+              </div>
+        </div>
+        <div class="col-md-6" id='flows_new'>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">参数配置</h3>
+                  </div>
+                  <div class="panel-body">
+                    <form>
+                        <div class="form-group">
+                          <label for="tcam">TCAM空间设置</label>
+                          <input  type="number" class="form-control" id="tcam" value=25 placeholder="20--1000"></input>
+                        </div>
+                        <div class="form-group">
+                            <label for="buff">Buffer空间设置</label>
+                            <input  type="number" class="form-control" id="buff" value=1000 placeholder="0--1000"></input>
+                          </div>
+                        <button type="submit" class="btn btn-default" onclick='startall()'>启动网络</button>
+                        <button type="submit" class="btn btn-default" onclick='stopall()'>停止运行</button>
+                      </form>  
+                    </textarea>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+</div>
+
+{%endblock%}
+
+
+{%block scripts%}
+{{super()}}
+<script src={{ url_for('static',filename='actions.js') }}></script>
+{%endblock%}

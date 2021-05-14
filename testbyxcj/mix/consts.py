@@ -26,3 +26,15 @@ MIX = 3
 
 #for ports occupied
 GLOBAL_FB_PORT = 9999
+
+#for new tag up_step
+TAG_CYCLE = [1,2,3,4,5,6,7,8,9]
+TAG_POP_ADD = 1
+TAG_PUSH_OLD = 2
+TAG_OLD_TAG = 3
+TAG_NEW_TAG = 4
+TAG_PUSH_NEW = 5
+TAG_DEL_OLD = 6
+TAG_MOD_NEW = 7
+TAG_PUSH_OLD_DEL = 8
+TAG_POP_DEL = 9

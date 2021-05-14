@@ -44,22 +44,29 @@ class GlobalController(object):
         # self.flows_new = {"10.0.0.110.0.0.25001":flowdes0}
 
         self.scheduler = Scheduler()
+        self.tag_flows_temp = {}
+        self.schedule_result = {}
         eventlet.spawn(self.run_fd_server)
 
 # tools
     def finished_update_to_flows(self,f):
+        self.logger.info("---in move updating flow in flows")
         self.flows_new.pop(f.flow_id)
         self.flows.update({f.flow_id:f})
-        self.logger.info("---in move new to flow")
+        
         self.logger.info(self.flows)
         self.logger.info(self.flows_new)
         self.cal_remain_bw()
         self.logger.info(self.link_bw)
     
     def started_update_to_flows_new(self,f):
+        self.logger.info("---in move to scd flow to flows_new")
+        self.logger.info("before")
+        self.logger.info(self.flows_new)
+        self.logger.info(self.flows_to_schedule)
         self.flows_to_schedule.pop(f.flow_id)
         self.flows_new.update({f.flow_id:f})
-        self.logger.info("---in move new to flow")
+        self.logger.info("after")
         self.logger.info(self.flows_new)
         self.logger.info(self.flows_to_schedule)
 
@@ -97,16 +104,25 @@ class GlobalController(object):
         self.logger.info("dp_dict:")
         self.logger.info(dp_dict)
         flows_method,prices = self.scheduler.schedule(topo,flows,ctrl_dict,dp_dict)
+        self.schedule_result = {'methods':flows_method,'prices':prices}
         flows_buf = {}
         flows_tag = {}
+        flows_raw = {}
+        self.logger.info("hahahahha let's see jason bug")
+        self.logger.info(flows_method)
+        self.logger.info("prices")
+        self.logger.info(prices)
         for f_id,method in flows_method.items():
             if method  == PolicyUtil.TAG:
-                flows_tag.update({f:self.flows_to_schedule[f_id]})
+                flows_tag.update({f_id:self.flows_to_schedule[f_id]})
             elif method == PolicyUtil.BUFFER:
-                flows_buf.update({f:self.flows_to_schedule[f_id]})
+                flows_buf.update({f_id:self.flows_to_schedule[f_id]})
+            elif method == PolicyUtil.RAW:
+                flows_raw.update({f_id:self.flows_to_schedule[f_id]})
         
+        self.raw_update(flows_raw)
         self.buf_del(flows_buf)
-        self.tag_add(flows_tag)
+        self.tag0(flows_tag)
 
     
     #cal_remain_bandwidth
@@ -124,19 +140,22 @@ class GlobalController(object):
                     self.link_bw[path[i]][path[i+1]] -= f.bw
 
     #from aggre_dict to InfoMessage
-    def make_and_send_info(self,aggre_dict):
+    def make_and_send_info(self,aggre_dict,old):
         self.logger.info("here is aggre_dict")
         self.logger.info(aggre_dict)
         for (ctrl_id,ups) in aggre_dict.items():
             info = InfoMessage(ctrl_id)
             for (flow_id,up) in ups.items():
-                self.logger.info(up)
-                f = self.flows_new[flow_id]
+                # self.logger.info(up)
+                try:
+                    f = self.flows_to_schedule[flow_id]
+                except:
+                    f = self.flows_new[flow_id]
                 f.ctrl_wait.append(ctrl_id)
                 up_msg = UpdateMessageByFlow(flow_id,f.up_type,f.up_step)
                 up_msg.to_add = up['to_add']
                 up_msg.to_del = up['to_del']
-                up_msg.version_tag = f.version_tag
+                up_msg.version_tag = f.old_version_tag if old else f.new_version_tag
                 info.ums.append(up_msg)
                 self.logger.info(up_msg)
                 f_des = FlowDes(f.src,f.dst,f.dst_port,f.old,f.new,f.up_type,f.trans_type)
@@ -148,7 +167,11 @@ class GlobalController(object):
         to_add, to_del = tools.diff_old_new(f.old,f.new)
         self.logger.info(to_del)
         to_add_bak,to_del_bak = tools.diff_old_new(f.new,[])
-        return to_del[0] if to_del else to_del_bak[0]    
+        self.logger.info("where to buf")
+        
+        where_to_buf =  to_del[0] if to_del else to_del_bak[0]  
+        self.logger.info(where_to_buf)  
+        return where_to_buf
     
     #BUF  step 1
     def buf_del(self,flows={}):
@@ -158,24 +181,27 @@ class GlobalController(object):
             f.up_type = consts.BUF
             f.up_step = consts.BUF_DEL
             to_buf = self.find_buf_dp(f)
-            self.logger.info("to buf is")
-            self.logger.info(to_buf)
             l,dp,n = to_buf
             f.ctrl_buf = self.dp_to_local[dp]
+            self.logger.info("flow_id"+str(f.flow_id))
+            self.logger.info("ctrl_buf" + str(f.ctrl_buf))
             aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f_id,[],[to_buf])
             self.logger.info("her is buf del")
             self.logger.info(self.flows_to_schedule)
             self.started_update_to_flows_new(f)
 
         self.logger.info(aggre_dict)
-        self.make_and_send_info(aggre_dict)
+        self.make_and_send_info(aggre_dict,False)
  
     #BUF step 2 and 3
     def buf_fb_process(self,f_id):
         aggre_dict = {}
         f = self.flows_new[f_id]
         f.ctrl_ok += 1
+        self.logger.info("-------in buf fb process")
         self.logger.info(f.up_step)
+        self.logger.info("ctrl_ok" + str(f.ctrl_ok))
+        self.logger.info("ctrl_wait" + str(f.ctrl_wait))
         if(len(f.ctrl_wait) == f.ctrl_ok):
             f.ctrl_wait = []
             f.ctrl_ok = 0
@@ -184,17 +210,25 @@ class GlobalController(object):
                 f.up_step = consts.BUF_ADD
                 to_add, to_del = tools.diff_old_new(f.old,f.new)
                 aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f_id,to_add,to_del)
-                self.logger.info(aggre_dict)
-                self.make_and_send_info(aggre_dict)
+                # self.logger.info(aggre_dict)
+                self.make_and_send_info(aggre_dict,False)
                 
             elif(f.up_step == consts.BUF_ADD):
                 self.logger.info("buf add over")
                 f.up_step = consts.BUF_RLS
-                info = InfoMessage(f.ctrl_buf)
-                um = UpdateMessageByFlow(f_id,f.up_type,f.up_step)
-                info.ums.append(um)
-                self.send_to_local(f.ctrl_buf,info)
-                f.ctrl_wait.append(f.ctrl_buf)
+                #firstly we send cmd to the ctrls who bufed,but why?? why some buffed from other dps?
+                # info = InfoMessage(f.ctrl_buf)
+                # um = UpdateMessageByFlow(f_id,f.up_type,f.up_step)
+                # info.ums.append(um)
+                # self.send_to_local(f.ctrl_buf,info)
+                # f.ctrl_wait.append(f.ctrl_buf)
+                #now we let all ctrls to sendback,but why????
+                for ctrl in self.locals:
+                    info = InfoMessage(ctrl)
+                    um = UpdateMessageByFlow(f_id,f.up_type,f.up_step)
+                    info.ums.append(um)
+                    self.send_to_local(ctrl,info)
+                    f.ctrl_wait.append(ctrl)
 
             elif(f.up_step == consts.BUF_RLS):
                 f.up_step = None
@@ -203,15 +237,228 @@ class GlobalController(object):
                 self.logger.info(f.flow_id)
                 self.logger.info("updated over by buf")
                 self.finished_update_to_flows(f)
+                self.logger.info("------------------------buf over time--------------")
                 self.logger.info(nowTime())
-        else:
-            print("something wrong")
+
 
 #for tag
     #more to do for find a version tag such as for conflicts
     def find_version_tag(self,f):
-        return 2
+        # if(f.new_version_tag == 2 and f.old_version_tag == 1):
+        #     return 3,4
+        return 1,2
 
+
+    def send_mod_packet_vid_cmd(self,f,dp_tup,old,ifr):
+        self.logger.info("--------------in send mod vid ----------------")
+        info = InfoMessage(f.ctrl_tag)
+        l,dpid,n = dp_tup
+        um = UpdateMessageByFlow(f.flow_id,f.up_type,f.up_step)
+        
+        um.version_tag = f.old_version_tag if old else f.new_version_tag
+        self.logger.info(um.up_step)
+        send_ctrl = self.dp_to_local[dpid]
+        if(ifr):
+            um.if_reverse = True
+            um.to_add.append((n,dpid,l))
+            self.logger.info(um.to_add)
+            f.ctrl_tag_reverse = send_ctrl
+        else:
+            um.to_add.append(dp_tup)
+            f.ctrl_tag = send_ctrl
+        info.ums.append(um)
+        self.send_to_local(send_ctrl,info)
+        if(send_ctrl not in f.ctrl_wait):
+            f.ctrl_wait.append(send_ctrl)
+
+    #TAG NEW step 0: tell every local flows come
+    def tag0(self,flows={}):
+        aggre_dict = {}
+        for f_id, f in flows.items():
+            f.up_type = consts.TAG
+            f.up_step = 0
+            f.old_version_tag,f.new_version_tag = self.find_version_tag(f)
+            to_add,to_del = tools.diff_old_new(f.old,f.new)
+            aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f_id,to_add,to_del)
+            # self.make_and_send_info(aggre_dict,False)
+            left,right = {},{}
+            try:
+                right.update({'old':to_del[-1]})
+                to_del.pop(-1)
+            except:
+                self.logger.info("right old wrong")
+            
+            try:
+                right.update({'new':to_add[-1]})
+                to_add.pop(-1)
+            except:
+                self.logger.info("right new wrong")
+            
+            try:
+                left.update({'old':to_del[0]})
+                to_del.pop(0)
+            except:
+                self.logger.info("left old wrong")
+            
+            try:
+                left.update({'new':to_add[0]})
+                to_add.pop(0)
+            except:
+                self.logger.info("left new wrong")
+            
+            self.tag_flows_temp.update({f_id:{'to_add':to_add,'to_del':to_del,'left':left,'right':right}})
+            
+        self.make_and_send_info(aggre_dict,False)
+        self.started_update_to_flows_new(f)
+
+    #TAG new step 1: add popvlan id in start for reverse and end for normal
+
+    def tag1_pop_add(self,f):    
+        f.up_step = consts.TAG_POP_ADD
+        up_infos = self.tag_flows_temp[f.flow_id]
+        nothing_flag = True
+        if(up_infos['left'].has_key('old')):
+            self.send_mod_packet_vid_cmd(f,up_infos['left']['old'],True,False)
+            nothing_flag = False
+        
+        if(up_infos['left'].has_key('new')):
+            self.send_mod_packet_vid_cmd(f,up_infos['left']['new'],False,False)
+            nothing_flag = False
+        
+        if(up_infos['right'].has_key('old')):
+            self.send_mod_packet_vid_cmd(f,up_infos['right']['old'],True,True)
+            nothing_flag = False
+        
+        if(up_infos['right'].has_key('new')):
+            self.send_mod_packet_vid_cmd(f,up_infos['right']['new'],False,True)
+            nothing_flag = False
+        
+        if(nothing_flag):
+            self.tag2_push_old(f)
+        
+
+    def tag2_push_old(self,f):
+        f_id = f.flow_id
+        f.up_step = consts.TAG_PUSH_OLD
+        up_info = self.tag_flows_temp[f_id]
+        try:
+            self.send_mod_packet_vid_cmd(f,up_info['left']['old'],True,False)
+        except:
+            self.logger.info("no old")
+        try:
+            self.send_mod_packet_vid_cmd(f,up_info['right']['old'],True,True)
+        except:
+            self.logger.info("no old")
+            self.tag3_tag_old(f)
+    
+    def tag3_tag_old(self,f):
+        aggre_dict = {}
+        f.up_step = consts.TAG_OLD_TAG
+        to_del = self.tag_flows_temp[f.flow_id]['to_del']
+        if(len(to_del) == 0):
+            self.tag4_tag_new(f)
+            return
+        aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f.flow_id,to_del,[])
+        self.make_and_send_info(aggre_dict,True)
+    
+    def tag4_tag_new(self,f):
+        aggre_dict = {}
+        f.up_step = consts.TAG_NEW_TAG
+        to_add = self.tag_flows_temp[f.flow_id]['to_add']
+        if(len(to_add) == 0):
+            self.tag5_push_new(f)
+            return
+        aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f.flow_id,to_add,[])
+        self.make_and_send_info(aggre_dict,False)
+
+    def tag5_push_new(self,f):
+        self.logger.info("!!!!!!!!!!!!!!!!!!in tag 5")
+        f.up_step = consts.TAG_PUSH_NEW
+        up_infos = self.tag_flows_temp[f.flow_id]
+        if('new' not in up_infos['right'].keys() and 'new' not in up_infos['left'].keys()):
+            self.logger.info("no new")
+            self.tag6_del_old(f)
+            return 
+        try:
+            self.send_mod_packet_vid_cmd(f,up_infos['left']['new'],False,False)
+        except:
+            self.logger.info("no new")
+        try:
+            self.send_mod_packet_vid_cmd(f,up_infos['right']['new'],False,True)
+        except:
+            self.logger.info("no new")
+    
+    def tag6_del_old(self,f):
+        f.up_step = consts.TAG_DEL_OLD
+        aggre_dict = {}
+        to_del = self.tag_flows_temp[f.flow_id]['to_del']
+        if(len(to_del) == 0):
+            self.tag7_mod_new(f)
+            return
+        aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f.flow_id,[],to_del)
+        self.make_and_send_info(aggre_dict,True)
+
+    def tag7_mod_new(self,f):
+        f.up_step = consts.TAG_MOD_NEW
+        aggre_dict = {}
+        to_add = self.tag_flows_temp[f.flow_id]['to_add']
+        if(len(to_add) == 0):
+            self.tag8_push_old_del(f)
+            return
+        aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f.flow_id,to_add,[])
+        self.make_and_send_info(aggre_dict,False)
+
+    def tag8_push_old_del(self,f):
+        pass
+
+    def tag9_pop_del(self,f):
+        pass
+
+    def tag_fb_process_new(self,f_id):
+        self.logger.info("in tag fb")
+        f = self.flows_new[f_id]
+        f.ctrl_ok += 1
+        self.logger.info(f.up_step)
+        aggre_dict = {}
+        if(len(f.ctrl_wait) == f.ctrl_ok):
+            f.ctrl_wait = []
+            f.ctrl_ok = 0
+            if(f.up_step == 0):
+                self.logger.info("tag info telled every one")
+                self.tag1_pop_add(f)
+            elif(f.up_step == consts.TAG_POP_ADD):
+                self.logger.info("tag pop add finished")
+                self.tag2_push_old(f)
+            elif(f.up_step == consts.TAG_PUSH_OLD):
+                self.logger.info("tag push old finished")
+                self.tag3_tag_old(f)
+            elif(f.up_step == consts.TAG_OLD_TAG):
+                self.logger.info("tag old tag finished")
+                self.tag4_tag_new(f)
+            elif(f.up_step == consts.TAG_NEW_TAG):
+                self.logger.info("tag new tag finished")
+                self.tag5_push_new(f)
+            elif(f.up_step == consts.TAG_PUSH_NEW):
+                self.logger.info("tag push new finished")
+                self.logger.info("update over by tag")
+                self.logger.info(nowTime())
+                # self.tag6_del_old(f)
+            # elif(f.up_step == consts.TAG_DEL_OLD):
+            #     self.logger.info("update over by tag")
+            #     self.logger.info(nowTime())
+            #     self.tag7_mod_new(f)
+            # elif(f.up_step == consts.TAG_MOD_NEW):
+            #     self.logger.info("tag mod new finished")
+            #     self.tag8_push_old_del(f)
+            # elif(f.up_step == consts.TAG_PUSH_OLD_DEL):
+            #     self.logger.info("tag push old del finished")
+            #     self.tag9_pop_del(f)
+            # elif(f.up_step == consts.TAG_POP_DEL):
+            #     self.logger.info("update over by tag")
+            # elif(f.up_step == consts.TAG_PUSH_NEW):
+            #     self.logger.info("tag push new finished")
+            #     self.tag6_del_old(f)
+ ################################################################           
     #TAG step 1
     def tag_add(self, flows={}):
         aggre_dict = {}
@@ -221,10 +468,11 @@ class GlobalController(object):
             f.up_step = consts.TAG_ADD
             f.version_tag = self.find_version_tag(f)
             to_add, to_del = tools.diff_old_new(f.old,f.new)
+           
             aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f_id,to_add,[])
             self.started_update_to_flows_new(f)
-        self.logger.info(aggre_dict)
-        self.make_and_send_info(aggre_dict)
+        # self.logger.info(aggre_dict)
+        self.make_and_send_info(aggre_dict,False)
 
     def find_packet_tag_dp(self,f):
         to_add, to_del = tools.diff_old_new(f.old,f.new)
@@ -257,6 +505,7 @@ class GlobalController(object):
         f = self.flows_new[f_id]
         f.ctrl_ok += 1
         self.logger.info(f.up_step)
+        aggre_dict = {}
         if(len(f.ctrl_wait) == f.ctrl_ok):
             f.ctrl_wait = []
             f.ctrl_ok = 0
@@ -276,9 +525,11 @@ class GlobalController(object):
                 self.logger.info("tag tag finished")
                 f.up_step = consts.TAG_DEL
                 to_add, to_del = tools.diff_old_new(f.old,f.new)
+                self.logger.info(to_add)
+                self.logger.info(to_del)
                 if(len(to_del) > 0):
                     aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f_id,[],to_del)
-                    self.make_and_send_info(aggre_dict)
+                    self.make_and_send_info(aggre_dict,False)
                 else:
                     info = InfoMessage(f.ctrl_tag)
                     um = UpdateMessageByFlow(f_id,f.up_type,f.up_step)
@@ -307,6 +558,8 @@ class GlobalController(object):
                 f.ctrl_wait.append(f.ctrl_tag_reverse)
     #from here should be rewrited
             elif(f.up_step == consts.TAG_MOD):
+                pass
+                return
                 self.logger.info("tag notag finished")
                 f.up_step = consts.TAG_UNTAG
                 # l,dpid,n = self.find_packet_tag_dp(f)
@@ -323,7 +576,7 @@ class GlobalController(object):
                 f.ctrl_tag =None
                 self.logger.info(f.flow_id)
                 self.logger.info("updated over by tag")
-                finished_update_to_flows(f)
+                self.finished_update_to_flows(f)
             else:
                 self.logger.info("what type?")
 
@@ -334,8 +587,12 @@ class GlobalController(object):
             f.up_type = consts.RAW
             f.up_step = consts.RAW_INSTALL
             to_add, to_del = tools.diff_old_new(f.old,f.new)
+            self.logger.info("let's see raw update bug")
+            self.logger.info(to_add)
+            self.logger.info(to_del)
             aggre_dict = tools.flowkey_to_ctrlkey(aggre_dict,self.dp_to_local,f_id,to_add,to_del)
-            self.make_and_send_info(aggre_dict)
+            self.make_and_send_info(aggre_dict,False)
+            self.started_update_to_flows_new(f)
 
     def raw_fb_process(self,f_id):
         f = self.flows_new[f_id]
@@ -345,9 +602,9 @@ class GlobalController(object):
             f.ctrl_wait = []
             f.ctrl_ok = 0
             if(f.up_step == consts.RAW_INSTALL):
-                self.logger.info(nowTime())
                 self.logger.info("up over by raw")
-                finished_update_to_flows(f)
+                self.logger.info(nowTime())
+                self.finished_update_to_flows(f)
 
            
 #for communicate with local
@@ -403,18 +660,32 @@ class GlobalController(object):
             self.logger.info("---------get a statusAnswer")
             self.logger.info(self.local_to_buf_size)
             self.logger.info(self.dp_to_tcam_size)
-            if(self.status_num == len(self.locals)):
+            if(self.status_num >= len(self.locals)):
+                self.logger.info("---------------------schedule start")
+                self.logger.info(nowTime())
                 self.schedule_and_update()
+                self.status_num = 0
             # self.scheduler.schedule(topo,self.flows_to_schedule,self.local_to_buf_size,self.dp_to_local,self.dp_to_tcam_size)
             return
         flow_id = fd_msg.flow_id
         ctrl_id = fd_msg.ctrl_id
+        self.logger.info(flow_id)
+        self.logger.info(ctrl_id)
+        self.logger.info(fd_msg)
+        self.logger.info("!!!!!!feedback to find flow")
+        self.logger.info(self.flows_new)
         f = self.flows_new[flow_id]
+        # try:
+        #     f = self.flows_new[flow_id]
+        #     self.logger.info("mingzhong")
+        # except:
+        #     self.logger.info(str(flow_id) + " was finished longlong ago")
+        #     return
         if(f.up_type == consts.BUF):
             self.logger.info("hey buf feedback")
             self.buf_fb_process(flow_id)
         elif(f.up_type == consts.TAG):
-            self.tag_fb_process(flow_id)
+            self.tag_fb_process_new(flow_id)
                 #here should be next step
         elif(f.up_type == consts.RAW):
             self.raw_fb_process(flow_id)
@@ -447,7 +718,7 @@ class GlobalController(object):
         if(methname == consts.ONLY_BUF):
             self.buf_del(self.flows_to_schedule)
         elif(methname == consts.ONLY_TAG):
-            self.tag_add(self.flows_to_schedule)
+            self.tag0(self.flows_to_schedule)
         elif(methname == consts.ONLY_RAW):
             self.raw_update(self.flows_to_schedule)
 #for input
@@ -484,6 +755,7 @@ class GlobalController(object):
             self.logger.info(flow.trans_type)
             self.flows_to_schedule.update({src+dst+str(port):flow})
         self.logger.info(self.flows_to_schedule)
+        self.logger.info("---------------------start!---------------------")
         self.logger.info(nowTime())
 
     def fetch_status_info(self):
@@ -514,13 +786,14 @@ class GlobalController(object):
         # self.auto_install(consts.ONLY_BUF)
         # self.auto_install(consts.ONLY_TAG)
         # self.auto_install(consts.ONLY_RAW)
+
         response_headers = [('Content-type', 'application/json'),
                         ('Access-Control-Allow-Origin', '*'),
                         ('Access-Control-Allow-Methods', 'POST'),
                         ('Access-Control-Allow-Headers', 'x-requested-with,content-type'),
                         ]  # json
         start_response('200 OK', response_headers)
-        return ["zuomieya\r\n"]
+        return ['zuomieya\r\n']
 
 
 if __name__ == "__main__":

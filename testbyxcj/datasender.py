@@ -55,10 +55,12 @@ class DataSender(object):
         server, client = hosts
         if((server,port) not in self.srv_ports):
             self.srv_ports.append((server,port))
-            server.cmd('iperf -s -u -p %d -i 1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
+            server.cmd('iperf3 -s -p %d -i 1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
+            # server.cmd('iperf3 -s -u -p %d -i 1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
+
             logger.info('operf -s -p %d' %port)
 
-        iperfArgs = 'iperf -p %d ' % port
+        iperfArgs = 'iperf3 -p %d ' % port
         bwArgs = ''
         if l4Type == 'UDP':
             iperfArgs += '-u '

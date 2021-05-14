@@ -1,26 +1,28 @@
-global: [1, 2]
-global: {1: 1, 2: 1, 3: 2, 4: 2, 5: 2}
+global: global receives a connection
 global: global receives a connection
 global: --------------a connection-------------------
-global: global receives a connection
 global: --------------a connection-------------------
-global: {u'flows': [u'10.0.0.1 10.0.0.6 None [] [1,3,4] icmp 1 23', u'10.0.0.1 10.0.0.2 None [] [1] icmp 1 23', u'10.0.0.1 10.0.0.6 5001 [] [1,2,4] tcp 1 23']}
+global: {u'flows': [u'10.0.0.1 10.0.0.6 5002 [] [1,2,4] udp 1 49', u'10.0.0.1 10.0.0.6 5001 [] [1,3,4] udp 1 49', u'10.0.0.1 10.0.0.4 5002 [] [1,3] udp 1 49', u'10.0.0.1 10.0.0.4 5001 [] [1,2,3] udp 1 49']}
 global: in ana_input
-global: [1, 3, 4]
-global: [1, 3, 4]
-global: icmp
-global: [1]
-global: [1]
-global: icmp
 global: [1, 2, 4]
 global: [1, 2, 4]
-global: tcp
-global: {u'10.0.0.110.0.0.2None': <bricks.flow_des.FlowDesGlobal object at 0x7fa11933dbd0>, u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7fa119394390>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa11933dc10>}
-global: 1620453597353
+global: udp
+global: [1, 3, 4]
+global: [1, 3, 4]
+global: udp
+global: [1, 3]
+global: [1, 3]
+global: udp
+global: [1, 2, 3]
+global: [1, 2, 3]
+global: udp
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: ---------------------start!---------------------
+global: 1620919850982
 global: sent Ask to local1
 global: sent Ask to local2
 global: global get the fb len
-global: 253
+global: 255
 global: ccopy_reg
 _reconstructor
 p1
@@ -40,25 +42,485 @@ p7
 (dp8
 S'buffer_remain'
 p9
-I10000
-sS'tcam_remain'
+S'100'
 p10
-(dp11
+sS'tcam_remain'
+p11
+(dp12
 I1
-I100
+I25
 sI2
-I100
+I25
 sssS'ctrl_id'
-p12
+p13
 I1
 sS'flow_id'
-p13
+p14
 I-1
 sb.
-global: {'buffer_remain': 10000, 'tcam_remain': {1: 100, 2: 100}}
+global: {'buffer_remain': '100', 'tcam_remain': {1: 25, 2: 25}}
 global: ---------get a statusAnswer
-global: {1: 10000}
-global: {1: 100, 2: 100}
+global: {1: '100'}
+global: {1: 25, 2: 25}
+global: global get the fb len
+global: 263
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I01
+sS'status'
+p7
+(dp8
+S'buffer_remain'
+p9
+S'100'
+p10
+sS'tcam_remain'
+p11
+(dp12
+I3
+I25
+sI4
+I25
+sI5
+I25
+sssS'ctrl_id'
+p13
+I2
+sS'flow_id'
+p14
+I-1
+sb.
+global: {'buffer_remain': '100', 'tcam_remain': {3: 25, 4: 25, 5: 25}}
+global: ---------get a statusAnswer
+global: {1: '100', 2: '100'}
+global: {1: 25, 2: 25, 3: 25, 4: 25, 5: 25}
+global: ---------------------schedule start
+global: 1620919850986
+global: ________in schedule--------------
+global: topo:
+global: {1: {2: {'latency': 7.2, 'bandwidth': 100}, 3: {'latency': 2.52, 'bandwidth': 100}}, 2: {1: {'latency': 9.75, 'bandwidth': 100}, 3: {'latency': 4.21, 'bandwidth': 100}, 4: {'latency': 4.22, 'bandwidth': 100}, 5: {'latency': 6.36, 'bandwidth': 100}}, 3: {1: {'latency': 3.62, 'bandwidth': 100}, 2: {'latency': 9.47, 'bandwidth': 100}, 4: {'latency': 6.38, 'bandwidth': 100}, 5: {'latency': 1.04, 'bandwidth': 100}}, 4: {2: {'latency': 1.56, 'bandwidth': 100}, 3: {'latency': 7.46, 'bandwidth': 100}, 5: {'latency': 6.95, 'bandwidth': 100}}, 5: {2: {'latency': 3.42, 'bandwidth': 100}, 3: {'latency': 4.73, 'bandwidth': 100}, 4: {'latency': 9.0, 'bandwidth': 100}}}
+global: flows:
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: ctrl_dict:
+global: {1: '100', 2: '100'}
+global: dp_dict:
+global: {1: {'flowspace': 25, 'ctrl': 1}, 2: {'flowspace': 25, 'ctrl': 1}, 3: {'flowspace': 25, 'ctrl': 2}, 4: {'flowspace': 25, 'ctrl': 2}, 5: {'flowspace': 25, 'ctrl': 2}}
+scheduler: mxd input parameters===
+scheduler: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+scheduler: {1: '100', 2: '100'}
+scheduler: {1: {'flowspace': 25, 'ctrl': 1}, 2: {'flowspace': 25, 'ctrl': 1}, 3: {'flowspace': 25, 'ctrl': 2}, 4: {'flowspace': 25, 'ctrl': 2}, 5: {'flowspace': 25, 'ctrl': 2}}
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.14285510207
+scheduler: total_violation_count
+scheduler: 0
+scheduler: scheduling results ============
+scheduler: potential_policies[best_choice]
+scheduler: {u'10.0.0.110.0.0.45002': 102, u'10.0.0.110.0.0.45001': 102, u'10.0.0.110.0.0.65001': 102, u'10.0.0.110.0.0.65002': 102}
+scheduler: best_performance
+scheduler: [0.0, 0.14285510206997043, 0]
+global: hahahahha let's see jason bug
+global: {u'10.0.0.110.0.0.45002': 102, u'10.0.0.110.0.0.45001': 102, u'10.0.0.110.0.0.65001': 102, u'10.0.0.110.0.0.65002': 102}
+global: prices
+global: [0.0, 0.14285510206997043, 0]
+global: let's see raw update bug
+global: [(1, 1, 3), (1, 3, 3)]
+global: []
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.45002': {'to_add': [(1, 1, 3)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.45002': {'to_add': [(1, 3, 3)], 'to_del': []}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2b90>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2cd0>
+global: ---in move to scd flow to flows_new
+global: before
+global: {}
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>}
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: let's see raw update bug
+global: [(1, 1, 2), (1, 2, 3), (2, 3, 3)]
+global: []
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.45002': {'to_add': [(1, 1, 3)], 'to_del': []}, u'10.0.0.110.0.0.45001': {'to_add': [(1, 1, 2), (1, 2, 3)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.45002': {'to_add': [(1, 3, 3)], 'to_del': []}, u'10.0.0.110.0.0.45001': {'to_add': [(2, 3, 3)], 'to_del': []}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2bd0>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2c50>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2bd0>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2d10>
+global: ---in move to scd flow to flows_new
+global: before
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>}
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>}
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: let's see raw update bug
+global: [(1, 1, 3), (1, 3, 4), (3, 4, 4)]
+global: []
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.45002': {'to_add': [(1, 1, 3)], 'to_del': []}, u'10.0.0.110.0.0.45001': {'to_add': [(1, 1, 2), (1, 2, 3)], 'to_del': []}, u'10.0.0.110.0.0.65001': {'to_add': [(1, 1, 3)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.45002': {'to_add': [(1, 3, 3)], 'to_del': []}, u'10.0.0.110.0.0.45001': {'to_add': [(2, 3, 3)], 'to_del': []}, u'10.0.0.110.0.0.65001': {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': []}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2d50>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2bd0>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2d90>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2d50>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2dd0>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2c50>
+global: ---in move to scd flow to flows_new
+global: before
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>}
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>}
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: let's see raw update bug
+global: [(1, 1, 2), (1, 2, 4), (2, 4, 4)]
+global: []
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.45002': {'to_add': [(1, 1, 3)], 'to_del': []}, u'10.0.0.110.0.0.45001': {'to_add': [(1, 1, 2), (1, 2, 3)], 'to_del': []}, u'10.0.0.110.0.0.65001': {'to_add': [(1, 1, 3)], 'to_del': []}, u'10.0.0.110.0.0.65002': {'to_add': [(1, 1, 2), (1, 2, 4)], 'to_del': []}}, 2: {u'10.0.0.110.0.0.45002': {'to_add': [(1, 3, 3)], 'to_del': []}, u'10.0.0.110.0.0.45001': {'to_add': [(2, 3, 3)], 'to_del': []}, u'10.0.0.110.0.0.65001': {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': []}, u'10.0.0.110.0.0.65002': {'to_add': [(2, 4, 4)], 'to_del': []}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2d90>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2d50>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2c10>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2e10>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2d90>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2e50>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2c10>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2bd0>
+global: ---in move to scd flow to flows_new
+global: before
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>}
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: {}
+global: {}
+global: here is aggre_dict
+global: {}
+global: here is aggre_dict
+global: {}
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: 10.0.0.110.0.0.45001
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa4541c2950>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: 8
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: 10.0.0.110.0.0.65001
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa4541c2a10>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: 8
+global: 10.0.0.110.0.0.45001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177bd0>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: 8
+global: 10.0.0.110.0.0.65001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177c50>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: 8
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: 10.0.0.110.0.0.65002
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa456143090>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: 8
+global: 10.0.0.110.0.0.65002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177c90>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: 8
+global: up over by raw
+global: 1620919851034
+global: ---in move updating flow in flows
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: {1: {2: 951, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: {u'flows': [u'10.0.0.1 10.0.0.6 5002 [1,2,4] [1,3,4] udp 1 49', u'10.0.0.1 10.0.0.6 5001 [1,3,4] [1,2,4] udp 1 49', u'10.0.0.1 10.0.0.4 5002 [1,3] [1,2,3] udp 1 49', u'10.0.0.1 10.0.0.4 5001 [1,2,3] [1,3] udp 1 49']}
+global: in ana_input
+global: [1, 3, 4]
+global: [1, 3, 4]
+global: udp
+global: [1, 2, 4]
+global: [1, 2, 4]
+global: udp
+global: [1, 2, 3]
+global: [1, 2, 3]
+global: udp
+global: [1, 3]
+global: [1, 3]
+global: udp
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: ---------------------start!---------------------
+global: 1620919853881
+global: sent Ask to local1
+global: sent Ask to local2
 global: global get the fb len
 global: 262
 global: ccopy_reg
@@ -80,16 +542,1937 @@ p7
 (dp8
 S'buffer_remain'
 p9
-I10000
+S'100'
+p10
+sS'tcam_remain'
+p11
+(dp12
+I3
+I7
+sI4
+I19
+sI5
+I25
+sssS'ctrl_id'
+p13
+I2
+sS'flow_id'
+p14
+I-1
+sb.
+global: {'buffer_remain': '100', 'tcam_remain': {3: 7, 4: 19, 5: 25}}
+global: ---------get a statusAnswer
+global: {1: '100', 2: '100'}
+global: {1: 25, 2: 25, 3: 7, 4: 19, 5: 25}
+global: ---------------------schedule start
+global: 1620919853886
+global: ________in schedule--------------
+global: topo:
+global: {1: {2: {'latency': 7.2, 'bandwidth': 951}, 3: {'latency': 2.52, 'bandwidth': 1000}}, 2: {1: {'latency': 9.75, 'bandwidth': 1000}, 3: {'latency': 4.21, 'bandwidth': 1000}, 4: {'latency': 4.22, 'bandwidth': 951}, 5: {'latency': 6.36, 'bandwidth': 1000}}, 3: {1: {'latency': 3.62, 'bandwidth': 1000}, 2: {'latency': 9.47, 'bandwidth': 1000}, 4: {'latency': 6.38, 'bandwidth': 1000}, 5: {'latency': 1.04, 'bandwidth': 1000}}, 4: {2: {'latency': 1.56, 'bandwidth': 1000}, 3: {'latency': 7.46, 'bandwidth': 1000}, 5: {'latency': 6.95, 'bandwidth': 1000}}, 5: {2: {'latency': 3.42, 'bandwidth': 1000}, 3: {'latency': 4.73, 'bandwidth': 1000}, 4: {'latency': 9.0, 'bandwidth': 1000}}}
+global: flows:
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: ctrl_dict:
+global: {1: '100', 2: '100'}
+global: dp_dict:
+global: {1: {'flowspace': 25, 'ctrl': 1}, 2: {'flowspace': 25, 'ctrl': 1}, 3: {'flowspace': 7, 'ctrl': 2}, 4: {'flowspace': 19, 'ctrl': 2}, 5: {'flowspace': 25, 'ctrl': 2}}
+scheduler: mxd input parameters===
+scheduler: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+scheduler: {1: '100', 2: '100'}
+scheduler: {1: {'flowspace': 25, 'ctrl': 1}, 2: {'flowspace': 25, 'ctrl': 1}, 3: {'flowspace': 7, 'ctrl': 2}, 4: {'flowspace': 19, 'ctrl': 2}, 5: {'flowspace': 25, 'ctrl': 2}}
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.12
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.833263894675
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.09
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0671136435326
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.09
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0671136435326
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0349649127101
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.09
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0840329072865
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0390623474127
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0390623474127
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.03
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0254452278747
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.09
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0719419284753
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0362317527835
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0362317527835
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.03
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0242130164334
+scheduler: total_violation_count
+scheduler: 0
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: fs violation happens
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0406502412592
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: fs violation happens
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.03
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0261095924032
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: fs violation happens
+scheduler: 100
+scheduler: buffer_space_demand
+scheduler: 0.03
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0261095924032
+scheduler: total_violation_count
+scheduler: 1
+scheduler: fs violation happens
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0192307322486
+scheduler: total_violation_count
+scheduler: 1
+scheduler: scheduling results ============
+scheduler: potential_policies[best_choice]
+scheduler: {u'10.0.0.110.0.0.45002': 100, u'10.0.0.110.0.0.45001': 100, u'10.0.0.110.0.0.65001': 100, u'10.0.0.110.0.0.65002': 100}
+scheduler: best_performance
+scheduler: [0.0, 0.8332638946754437, 0]
+global: hahahahha let's see jason bug
+global: {u'10.0.0.110.0.0.45002': 100, u'10.0.0.110.0.0.45001': 100, u'10.0.0.110.0.0.65001': 100, u'10.0.0.110.0.0.65002': 100}
+global: prices
+global: [0.0, 0.8332638946754437, 0]
+global: [(1, 1, 3), (1, 3, 3)]
+global: where to buf
+global: (1, 1, 3)
+global: flow_id10.0.0.110.0.0.45002
+global: ctrl_buf1
+global: her is buf del
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: ---in move to scd flow to flows_new
+global: before
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c28d0>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>}
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>}
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: [(1, 1, 2), (1, 2, 3), (2, 3, 3)]
+global: where to buf
+global: (1, 1, 2)
+global: flow_id10.0.0.110.0.0.45001
+global: ctrl_buf1
+global: her is buf del
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: ---in move to scd flow to flows_new
+global: before
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2910>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>}
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>}
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: [(1, 1, 3), (1, 3, 4), (3, 4, 4)]
+global: where to buf
+global: (1, 1, 3)
+global: flow_id10.0.0.110.0.0.65001
+global: ctrl_buf1
+global: her is buf del
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: ---in move to scd flow to flows_new
+global: before
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0e50>}
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>}
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: [(1, 1, 2), (1, 2, 4), (2, 4, 4)]
+global: where to buf
+global: (1, 1, 2)
+global: flow_id10.0.0.110.0.0.65002
+global: ctrl_buf1
+global: her is buf del
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: ---in move to scd flow to flows_new
+global: before
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>}
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: {}
+global: {1: {u'10.0.0.110.0.0.45002': {'to_add': [], 'to_del': [(1, 1, 3)]}, u'10.0.0.110.0.0.45001': {'to_add': [], 'to_del': [(1, 1, 2)]}, u'10.0.0.110.0.0.65001': {'to_add': [], 'to_del': [(1, 1, 3)]}, u'10.0.0.110.0.0.65002': {'to_add': [], 'to_del': [(1, 1, 2)]}}}
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.45002': {'to_add': [], 'to_del': [(1, 1, 3)]}, u'10.0.0.110.0.0.45001': {'to_add': [], 'to_del': [(1, 1, 2)]}, u'10.0.0.110.0.0.65001': {'to_add': [], 'to_del': [(1, 1, 3)]}, u'10.0.0.110.0.0.65002': {'to_add': [], 'to_del': [(1, 1, 2)]}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454177d90>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454177e50>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454177f10>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454177f90>
+global: here is aggre_dict
+global: {}
+global: global get the fb len
+global: 254
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I01
+sS'status'
+p7
+(dp8
+S'buffer_remain'
+p9
+S'100'
+p10
+sS'tcam_remain'
+p11
+(dp12
+I1
+I5
+sI2
+I17
+sssS'ctrl_id'
+p13
+I1
+sS'flow_id'
+p14
+I-1
+sb.
+global: {'buffer_remain': '100', 'tcam_remain': {1: 5, 2: 17}}
+global: ---------get a statusAnswer
+global: {1: '100', 2: '100'}
+global: {1: 5, 2: 17, 3: 7, 4: 19, 5: 25}
+global: ---------------------schedule start
+global: 1620919853918
+global: ________in schedule--------------
+global: topo:
+global: {1: {2: {'latency': 7.2, 'bandwidth': 951}, 3: {'latency': 2.52, 'bandwidth': 1000}}, 2: {1: {'latency': 9.75, 'bandwidth': 1000}, 3: {'latency': 4.21, 'bandwidth': 1000}, 4: {'latency': 4.22, 'bandwidth': 951}, 5: {'latency': 6.36, 'bandwidth': 1000}}, 3: {1: {'latency': 3.62, 'bandwidth': 1000}, 2: {'latency': 9.47, 'bandwidth': 1000}, 4: {'latency': 6.38, 'bandwidth': 1000}, 5: {'latency': 1.04, 'bandwidth': 1000}}, 4: {2: {'latency': 1.56, 'bandwidth': 1000}, 3: {'latency': 7.46, 'bandwidth': 1000}, 5: {'latency': 6.95, 'bandwidth': 1000}}, 5: {2: {'latency': 3.42, 'bandwidth': 1000}, 3: {'latency': 4.73, 'bandwidth': 1000}, 4: {'latency': 9.0, 'bandwidth': 1000}}}
+global: flows:
+global: {}
+global: ctrl_dict:
+global: {1: '100', 2: '100'}
+global: dp_dict:
+global: {1: {'flowspace': 5, 'ctrl': 1}, 2: {'flowspace': 17, 'ctrl': 1}, 3: {'flowspace': 7, 'ctrl': 2}, 4: {'flowspace': 19, 'ctrl': 2}, 5: {'flowspace': 25, 'ctrl': 2}}
+scheduler: mxd input parameters===
+scheduler: {}
+scheduler: {1: '100', 2: '100'}
+scheduler: {1: {'flowspace': 5, 'ctrl': 1}, 2: {'flowspace': 17, 'ctrl': 1}, 3: {'flowspace': 7, 'ctrl': 2}, 4: {'flowspace': 19, 'ctrl': 2}, 5: {'flowspace': 25, 'ctrl': 2}}
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 10000.0
+scheduler: total_violation_count
+scheduler: 0
+scheduler: scheduling results ============
+scheduler: potential_policies[best_choice]
+scheduler: {}
+scheduler: best_performance
+scheduler: [0.0, 10000.0, 0]
+global: hahahahha let's see jason bug
+global: {}
+global: prices
+global: [0.0, 10000.0, 0]
+global: {}
+global: here is aggre_dict
+global: {}
+global: here is aggre_dict
+global: {}
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45002
+p10
+sb.
+global: 10.0.0.110.0.0.45002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177c90>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 0
+global: ctrl_ok1
+global: ctrl_wait[1]
+global: buf del over
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.45002': {'to_add': [(1, 1, 2), (1, 2, 3)], 'to_del': [(1, 1, 3)]}}, 2: {u'10.0.0.110.0.0.45002': {'to_add': [(2, 3, 3)], 'to_del': [(1, 3, 3)]}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454177e10>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454109090>
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: 10.0.0.110.0.0.45001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177fd0>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 0
+global: ctrl_ok1
+global: ctrl_wait[1]
+global: buf del over
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.45001': {'to_add': [(1, 1, 3)], 'to_del': [(1, 1, 2), (1, 2, 3)]}}, 2: {u'10.0.0.110.0.0.45001': {'to_add': [(1, 3, 3)], 'to_del': [(2, 3, 3)]}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454177f50>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541090d0>
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: 10.0.0.110.0.0.65001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177c10>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 0
+global: ctrl_ok1
+global: ctrl_wait[1]
+global: buf del over
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.65001': {'to_add': [(1, 1, 2), (1, 2, 4)], 'to_del': [(1, 1, 3)]}}, 2: {u'10.0.0.110.0.0.65001': {'to_add': [(2, 4, 4)], 'to_del': [(1, 3, 4), (3, 4, 4)]}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454109110>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454109190>
+global: 10.0.0.110.0.0.65002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177e10>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 0
+global: ctrl_ok1
+global: ctrl_wait[1]
+global: buf del over
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.65002': {'to_add': [(1, 1, 3)], 'to_del': [(1, 1, 2), (1, 2, 4)]}}, 2: {u'10.0.0.110.0.0.65002': {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': [(2, 4, 4)]}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454177d90>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454109110>
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45002
+p10
+sb.
+global: 10.0.0.110.0.0.45002
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa454177bd0>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: 10.0.0.110.0.0.45001
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa454177fd0>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: 10.0.0.110.0.0.65001
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa454177f50>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.65002
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa454177b10>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45002
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: 10.0.0.110.0.0.45002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177c90>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: buf add over
+global: 10.0.0.110.0.0.45001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177fd0>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: buf add over
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45002
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45002
+p10
+sb.
+global: 10.0.0.110.0.0.45002
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa454177f50>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.45002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177c90>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.45002
+global: updated over by buf
+global: ---in move updating flow in flows
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 951, 3: 1000}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 902, 3: 1000}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: {1: {2: 902, 3: 1000}, 2: {1: 1000, 3: 951, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: ------------------------buf over time--------------
+global: 1620919854320
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: 10.0.0.110.0.0.45001
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa454177d50>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.45001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177bd0>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.45001
+global: updated over by buf
+global: ---in move updating flow in flows
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 951, 3: 1000}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 0
+global: {1: {2: 951, 3: 951}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 902, 3: 951}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: {1: {2: 902, 3: 951}, 2: {1: 1000, 3: 951, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: ------------------------buf over time--------------
+global: 1620919854326
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: 10.0.0.110.0.0.65001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177c10>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: buf add over
+global: 10.0.0.110.0.0.65002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177f50>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: buf add over
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: 10.0.0.110.0.0.65001
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa454177e10>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.65001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177c10>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.65001
+global: updated over by buf
+global: ---in move updating flow in flows
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541a0f50>}
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 951, 3: 1000}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 0
+global: {1: {2: 951, 3: 951}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 902, 3: 951}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 902, 3: 951}, 2: {1: 1000, 3: 951, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 853, 3: 951}, 2: {1: 1000, 3: 951, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: {1: {2: 853, 3: 951}, 2: {1: 1000, 3: 951, 4: 902, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: ------------------------buf over time--------------
+global: 1620919854363
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: 10.0.0.110.0.0.65002
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa454177ed0>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.65002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177fd0>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.65002
+global: updated over by buf
+global: ---in move updating flow in flows
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496da10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: {}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 951, 3: 1000}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 0
+global: {1: {2: 951, 3: 951}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 902, 3: 951}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 902, 3: 951}, 2: {1: 1000, 3: 951, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 902, 3: 902}, 2: {1: 1000, 3: 951, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 3
+global: {1: {2: 902, 3: 902}, 2: {1: 1000, 3: 951, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 951, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: ------------------------buf over time--------------
+global: 1620919854369
+global: {u'flows': [u'10.0.0.1 10.0.0.6 5002 [1,3,4] [1,2,4] udp 1 49', u'10.0.0.1 10.0.0.6 5001 [1,2,4] [1,3,4] udp 1 49', u'10.0.0.1 10.0.0.4 5002 [1,2,3] [1,3] udp 1 49', u'10.0.0.1 10.0.0.4 5001 [1,3] [1,2,3] udp 1 49']}
+global: in ana_input
+global: [1, 2, 4]
+global: [1, 2, 4]
+global: udp
+global: [1, 3, 4]
+global: [1, 3, 4]
+global: udp
+global: [1, 3]
+global: [1, 3]
+global: udp
+global: [1, 2, 3]
+global: [1, 2, 3]
+global: udp
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: ---------------------start!---------------------
+global: 1620919857358
+global: sent Ask to local1
+global: sent Ask to local2
+global: global get the fb len
+global: 249
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I01
+sS'status'
+p7
+(dp8
+S'buffer_remain'
+p9
+I-73
+sS'tcam_remain'
+p10
+(dp11
+I1
+I13
+sI2
+I17
+sssS'ctrl_id'
+p12
+I1
+sS'flow_id'
+p13
+I-1
+sb.
+global: {'buffer_remain': -73, 'tcam_remain': {1: 13, 2: 17}}
+global: ---------get a statusAnswer
+global: {1: -73, 2: '100'}
+global: {1: 13, 2: 17, 3: 7, 4: 19, 5: 25}
+global: ---------------------schedule start
+global: 1620919857363
+global: ________in schedule--------------
+global: topo:
+global: {1: {2: {'latency': 7.2, 'bandwidth': 902}, 3: {'latency': 2.52, 'bandwidth': 902}}, 2: {1: {'latency': 9.75, 'bandwidth': 1000}, 3: {'latency': 4.21, 'bandwidth': 951}, 4: {'latency': 4.22, 'bandwidth': 951}, 5: {'latency': 6.36, 'bandwidth': 1000}}, 3: {1: {'latency': 3.62, 'bandwidth': 1000}, 2: {'latency': 9.47, 'bandwidth': 1000}, 4: {'latency': 6.38, 'bandwidth': 951}, 5: {'latency': 1.04, 'bandwidth': 1000}}, 4: {2: {'latency': 1.56, 'bandwidth': 1000}, 3: {'latency': 7.46, 'bandwidth': 1000}, 5: {'latency': 6.95, 'bandwidth': 1000}}, 5: {2: {'latency': 3.42, 'bandwidth': 1000}, 3: {'latency': 4.73, 'bandwidth': 1000}, 4: {'latency': 9.0, 'bandwidth': 1000}}}
+global: flows:
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: ctrl_dict:
+global: {1: -73, 2: '100'}
+global: dp_dict:
+global: {1: {'flowspace': 13, 'ctrl': 1}, 2: {'flowspace': 17, 'ctrl': 1}, 3: {'flowspace': 7, 'ctrl': 2}, 4: {'flowspace': 19, 'ctrl': 2}, 5: {'flowspace': 25, 'ctrl': 2}}
+scheduler: mxd input parameters===
+scheduler: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+scheduler: {1: -73, 2: '100'}
+scheduler: {1: {'flowspace': 13, 'ctrl': 1}, 2: {'flowspace': 17, 'ctrl': 1}, 3: {'flowspace': 7, 'ctrl': 2}, 4: {'flowspace': 19, 'ctrl': 2}, 5: {'flowspace': 25, 'ctrl': 2}}
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.12
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.12
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.833263894675
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.09
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.09
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0671136435326
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.09
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.09
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0671136435326
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0349649127101
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.09
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.09
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0719419284753
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0362317527835
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0362317527835
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.03
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.03
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0242130164334
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.09
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.09
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0840329072865
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0390623474127
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0390623474127
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.03
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.03
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0254452278747
+scheduler: total_violation_count
+scheduler: 1
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: fs violation happens
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.06
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.06
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0406502412592
+scheduler: total_violation_count
+scheduler: 2
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: fs violation happens
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.03
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.03
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0261095924032
+scheduler: total_violation_count
+scheduler: 2
+scheduler: estimated_buffer_time
+scheduler: 0.03
+scheduler: flow_rate
+scheduler: 1.0
+scheduler: estimated_cache_size
+scheduler: 0.03
+scheduler: fs violation happens
+scheduler: -73
+scheduler: buffer_space_demand
+scheduler: 0.03
+scheduler: buffer violation happens
+scheduler: total_buffer_demand
+scheduler: 0.03
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0261095924032
+scheduler: total_violation_count
+scheduler: 2
+scheduler: fs violation happens
+scheduler: fs violation happens
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 0.0192307322486
+scheduler: total_violation_count
+scheduler: 2
+scheduler: scheduling results ============
+scheduler: potential_policies[best_choice]
+scheduler: {u'10.0.0.110.0.0.45002': 100, u'10.0.0.110.0.0.45001': 100, u'10.0.0.110.0.0.65001': 100, u'10.0.0.110.0.0.65002': 100}
+scheduler: best_performance
+scheduler: [-1.0016452077331615, 0.8332638946754437, 1]
+global: hahahahha let's see jason bug
+global: {u'10.0.0.110.0.0.45002': 100, u'10.0.0.110.0.0.45001': 100, u'10.0.0.110.0.0.65001': 100, u'10.0.0.110.0.0.65002': 100}
+global: prices
+global: [-1.0016452077331615, 0.8332638946754437, 1]
+global: [(1, 1, 2), (1, 2, 3), (2, 3, 3)]
+global: where to buf
+global: (1, 1, 2)
+global: flow_id10.0.0.110.0.0.45002
+global: ctrl_buf1
+global: her is buf del
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: ---in move to scd flow to flows_new
+global: before
+global: {}
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>}
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: [(1, 1, 3), (1, 3, 3)]
+global: where to buf
+global: (1, 1, 3)
+global: flow_id10.0.0.110.0.0.45001
+global: ctrl_buf1
+global: her is buf del
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: ---in move to scd flow to flows_new
+global: before
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>}
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>}
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: [(1, 1, 2), (1, 2, 4), (2, 4, 4)]
+global: where to buf
+global: (1, 1, 2)
+global: flow_id10.0.0.110.0.0.65001
+global: ctrl_buf1
+global: her is buf del
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: ---in move to scd flow to flows_new
+global: before
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>}
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>}
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: [(1, 1, 3), (1, 3, 4), (3, 4, 4)]
+global: where to buf
+global: (1, 1, 3)
+global: flow_id10.0.0.110.0.0.65002
+global: ctrl_buf1
+global: her is buf del
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: ---in move to scd flow to flows_new
+global: before
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>}
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: after
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: {}
+global: {1: {u'10.0.0.110.0.0.45002': {'to_add': [], 'to_del': [(1, 1, 2)]}, u'10.0.0.110.0.0.45001': {'to_add': [], 'to_del': [(1, 1, 3)]}, u'10.0.0.110.0.0.65001': {'to_add': [], 'to_del': [(1, 1, 2)]}, u'10.0.0.110.0.0.65002': {'to_add': [], 'to_del': [(1, 1, 3)]}}}
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.45002': {'to_add': [], 'to_del': [(1, 1, 2)]}, u'10.0.0.110.0.0.45001': {'to_add': [], 'to_del': [(1, 1, 3)]}, u'10.0.0.110.0.0.65001': {'to_add': [], 'to_del': [(1, 1, 2)]}, u'10.0.0.110.0.0.65002': {'to_add': [], 'to_del': [(1, 1, 3)]}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454109190>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541090d0>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454109290>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454109310>
+global: here is aggre_dict
+global: {}
+global: global get the fb len
+global: 256
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I01
+sS'status'
+p7
+(dp8
+S'buffer_remain'
+p9
+I215
 sS'tcam_remain'
 p10
 (dp11
 I3
-I100
+I7
 sI4
-I100
+I19
 sI5
-I100
+I25
 sssS'ctrl_id'
 p12
 I2
@@ -97,16 +2480,901 @@ sS'flow_id'
 p13
 I-1
 sb.
-global: {'buffer_remain': 10000, 'tcam_remain': {3: 100, 4: 100, 5: 100}}
+global: {'buffer_remain': 215, 'tcam_remain': {3: 7, 4: 19, 5: 25}}
 global: ---------get a statusAnswer
-global: {1: 10000, 2: 10000}
-global: {1: 100, 2: 100, 3: 100, 4: 100, 5: 100}
+global: {1: -73, 2: 215}
+global: {1: 13, 2: 17, 3: 7, 4: 19, 5: 25}
+global: ---------------------schedule start
+global: 1620919857401
 global: ________in schedule--------------
 global: topo:
-global: {1: {2: {'latency': 7.2, 'bandwidth': 1000}, 3: {'latency': 2.52, 'bandwidth': 1000}}, 2: {1: {'latency': 9.75, 'bandwidth': 1000}, 3: {'latency': 4.21, 'bandwidth': 1000}, 4: {'latency': 4.22, 'bandwidth': 1000}, 5: {'latency': 6.36, 'bandwidth': 1000}}, 3: {1: {'latency': 3.62, 'bandwidth': 1000}, 2: {'latency': 9.47, 'bandwidth': 1000}, 4: {'latency': 6.38, 'bandwidth': 1000}, 5: {'latency': 1.04, 'bandwidth': 1000}}, 4: {2: {'latency': 1.56, 'bandwidth': 1000}, 3: {'latency': 7.46, 'bandwidth': 1000}, 5: {'latency': 6.95, 'bandwidth': 1000}}, 5: {2: {'latency': 3.42, 'bandwidth': 1000}, 3: {'latency': 4.73, 'bandwidth': 1000}, 4: {'latency': 9.0, 'bandwidth': 1000}}}
+global: {1: {2: {'latency': 7.2, 'bandwidth': 902}, 3: {'latency': 2.52, 'bandwidth': 902}}, 2: {1: {'latency': 9.75, 'bandwidth': 1000}, 3: {'latency': 4.21, 'bandwidth': 951}, 4: {'latency': 4.22, 'bandwidth': 951}, 5: {'latency': 6.36, 'bandwidth': 1000}}, 3: {1: {'latency': 3.62, 'bandwidth': 1000}, 2: {'latency': 9.47, 'bandwidth': 1000}, 4: {'latency': 6.38, 'bandwidth': 951}, 5: {'latency': 1.04, 'bandwidth': 1000}}, 4: {2: {'latency': 1.56, 'bandwidth': 1000}, 3: {'latency': 7.46, 'bandwidth': 1000}, 5: {'latency': 6.95, 'bandwidth': 1000}}, 5: {2: {'latency': 3.42, 'bandwidth': 1000}, 3: {'latency': 4.73, 'bandwidth': 1000}, 4: {'latency': 9.0, 'bandwidth': 1000}}}
 global: flows:
-global: {u'10.0.0.110.0.0.2None': <bricks.flow_des.FlowDesGlobal object at 0x7fa11933dbd0>, u'10.0.0.110.0.0.6None': <bricks.flow_des.FlowDesGlobal object at 0x7fa119394390>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa11933dc10>}
+global: {}
 global: ctrl_dict:
-global: {1: 10000, 2: 10000}
+global: {1: -73, 2: 215}
 global: dp_dict:
-global: {1: {'flowspace': 100, 'ctrl': 1}, 2: {'flowspace': 100, 'ctrl': 1}, 3: {'flowspace': 100, 'ctrl': 2}, 4: {'flowspace': 100, 'ctrl': 2}, 5: {'flowspace': 100, 'ctrl': 2}}
+global: {1: {'flowspace': 13, 'ctrl': 1}, 2: {'flowspace': 17, 'ctrl': 1}, 3: {'flowspace': 7, 'ctrl': 2}, 4: {'flowspace': 19, 'ctrl': 2}, 5: {'flowspace': 25, 'ctrl': 2}}
+scheduler: mxd input parameters===
+scheduler: {}
+scheduler: {1: -73, 2: 215}
+scheduler: {1: {'flowspace': 13, 'ctrl': 1}, 2: {'flowspace': 17, 'ctrl': 1}, 3: {'flowspace': 7, 'ctrl': 2}, 4: {'flowspace': 19, 'ctrl': 2}, 5: {'flowspace': 25, 'ctrl': 2}}
+scheduler: when evaluation policies=================
+scheduler: total_violation_ratio
+scheduler: grade
+scheduler: 10000.0
+scheduler: total_violation_count
+scheduler: 0
+scheduler: scheduling results ============
+scheduler: potential_policies[best_choice]
+scheduler: {}
+scheduler: best_performance
+scheduler: [0.0, 10000.0, 0]
+global: hahahahha let's see jason bug
+global: {}
+global: prices
+global: [0.0, 10000.0, 0]
+global: {}
+global: here is aggre_dict
+global: {}
+global: here is aggre_dict
+global: {}
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45002
+p10
+sb.
+global: 10.0.0.110.0.0.45002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177d90>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 0
+global: ctrl_ok1
+global: ctrl_wait[1]
+global: buf del over
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.45002': {'to_add': [(1, 1, 3)], 'to_del': [(1, 1, 2), (1, 2, 3)]}}, 2: {u'10.0.0.110.0.0.45002': {'to_add': [(1, 3, 3)], 'to_del': [(2, 3, 3)]}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541ea3d0>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541a0e50>
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: 10.0.0.110.0.0.45001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177d50>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 0
+global: ctrl_ok1
+global: ctrl_wait[1]
+global: buf del over
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.45001': {'to_add': [(1, 1, 2), (1, 2, 3)], 'to_del': [(1, 1, 3)]}}, 2: {u'10.0.0.110.0.0.45001': {'to_add': [(2, 3, 3)], 'to_del': [(1, 3, 3)]}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c28d0>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454109210>
+global: 10.0.0.110.0.0.65001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa4541ea3d0>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 0
+global: ctrl_ok1
+global: ctrl_wait[1]
+global: buf del over
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.65001': {'to_add': [(1, 1, 3)], 'to_del': [(1, 1, 2), (1, 2, 4)]}}, 2: {u'10.0.0.110.0.0.65001': {'to_add': [(1, 3, 4), (3, 4, 4)], 'to_del': [(2, 4, 4)]}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541b0050>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541c2910>
+global: 10.0.0.110.0.0.65002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa456143350>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 0
+global: ctrl_ok1
+global: ctrl_wait[1]
+global: buf del over
+global: here is aggre_dict
+global: {1: {u'10.0.0.110.0.0.65002': {'to_add': [(1, 1, 2), (1, 2, 4)], 'to_del': [(1, 1, 3)]}}, 2: {u'10.0.0.110.0.0.65002': {'to_add': [(2, 4, 4)], 'to_del': [(1, 3, 4), (3, 4, 4)]}}}
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa4541a0f50>
+global: <bricks.message.UpdateMessageByFlow object at 0x7fa454177fd0>
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45002
+p10
+sb.
+global: 10.0.0.110.0.0.45002
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa456143090>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: 10.0.0.110.0.0.45001
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa4541a0e50>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.65001
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa45496da50>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.65002
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa454177fd0>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45002
+p10
+sb.
+global: 10.0.0.110.0.0.45002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454177d90>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: buf add over
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45002
+p10
+sb.
+global: 10.0.0.110.0.0.45001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa4541b0050>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: buf add over
+global: 10.0.0.110.0.0.65001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa456143350>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: buf add over
+global: 10.0.0.110.0.0.45002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa45613cb50>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45002
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.45001
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65001
+p10
+sb.
+global: 10.0.0.110.0.0.45002
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa4541a0e90>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.45002
+global: updated over by buf
+global: ---in move updating flow in flows
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa45496d590>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 0
+global: {1: {2: 1000, 3: 951}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 0
+global: {1: {2: 1000, 3: 902}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 902}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 951, 3: 902}, 2: {1: 1000, 3: 1000, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 853}, 2: {1: 1000, 3: 1000, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 3
+global: {1: {2: 951, 3: 853}, 2: {1: 1000, 3: 1000, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 951, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: ------------------------buf over time--------------
+global: 1620919857663
+global: 10.0.0.110.0.0.45001
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa456143090>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.65001
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa454177fd0>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.45001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa4541c2950>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.45001
+global: updated over by buf
+global: ---in move updating flow in flows
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2850>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 0
+global: {1: {2: 1000, 3: 951}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 951}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 951, 3: 951}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 902, 3: 951}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 902, 3: 951}, 2: {1: 1000, 3: 951, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 902, 3: 902}, 2: {1: 1000, 3: 951, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 3
+global: {1: {2: 902, 3: 902}, 2: {1: 1000, 3: 951, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 951, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: ------------------------buf over time--------------
+global: 1620919857668
+global: 10.0.0.110.0.0.65002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454109210>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 1
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: buf add over
+global: 10.0.0.110.0.0.65001
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa454109310>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.65001
+global: updated over by buf
+global: ---in move updating flow in flows
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2890>}
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 0
+global: {1: {2: 1000, 3: 951}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 951}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 951, 3: 951}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 902}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 3
+global: 0
+global: {1: {2: 951, 3: 902}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 951, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 853}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 951, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 3
+global: {1: {2: 951, 3: 853}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 902, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: ------------------------buf over time--------------
+global: 1620919857671
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I2
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: global get the fb len
+global: 197
+global: ccopy_reg
+_reconstructor
+p1
+(cbricks.message
+FeedbackMessge
+p2
+c__builtin__
+object
+p3
+NtRp4
+(dp5
+S'statusAnswer'
+p6
+I00
+sS'status'
+p7
+NsS'ctrl_id'
+p8
+I1
+sS'flow_id'
+p9
+V10.0.0.110.0.0.65002
+p10
+sb.
+global: 10.0.0.110.0.0.65002
+global: 2
+global: <bricks.message.FeedbackMessge object at 0x7fa454177d90>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok1
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.65002
+global: 1
+global: <bricks.message.FeedbackMessge object at 0x7fa4541b0050>
+global: !!!!!!feedback to find flow
+global: {u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: hey buf feedback
+global: -------in buf fb process
+global: 2
+global: ctrl_ok2
+global: ctrl_wait[1, 2]
+global: 10.0.0.110.0.0.65002
+global: updated over by buf
+global: ---in move updating flow in flows
+global: {u'10.0.0.110.0.0.45002': <bricks.flow_des.FlowDesGlobal object at 0x7fa4541c2a10>, u'10.0.0.110.0.0.45001': <bricks.flow_des.FlowDesGlobal object at 0x7fa454177cd0>, u'10.0.0.110.0.0.65001': <bricks.flow_des.FlowDesGlobal object at 0x7fa4561433d0>, u'10.0.0.110.0.0.65002': <bricks.flow_des.FlowDesGlobal object at 0x7fa456143250>}
+global: {}
+global: 0
+global: {1: {2: 1000, 3: 1000}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 0
+global: {1: {2: 1000, 3: 951}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 951}, 2: {1: 1000, 3: 1000, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: 0
+global: {1: {2: 951, 3: 951}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 951, 3: 902}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 1000, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 3
+global: 0
+global: {1: {2: 951, 3: 902}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 951, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 1
+global: 1
+global: {1: {2: 902, 3: 902}, 2: {1: 1000, 3: 951, 4: 1000, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 951, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: 2
+global: {1: {2: 902, 3: 902}, 2: {1: 1000, 3: 951, 4: 951, 5: 1000}, 3: {1: 1000, 2: 1000, 4: 951, 5: 1000}, 4: {2: 1000, 3: 1000, 5: 1000}, 5: {2: 1000, 3: 1000, 4: 1000}}
+global: ------------------------buf over time--------------
+global: 1620919857676
+----buf over time--------------
+global: 1620919857676

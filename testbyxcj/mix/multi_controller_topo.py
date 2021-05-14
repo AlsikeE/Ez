@@ -1,6 +1,8 @@
+import sys
+sys.path.append('../../')
 from bricks.basetopo import BaseTopo
 from bricks.basenet import BaseNet
-# from simulator.datasender import DataSender
+from simulator.datasender import DataSender
 
 from mininet.node import RemoteController,OVSSwitch
 from mininet.cli import CLI
@@ -89,7 +91,7 @@ def get_link_bw(topofile):
             dp_bw = {}
             for j in range(0,len(neighbors)):
                 if neighbors[j] == '1':
-                    dp_bw.update({j+1:1000})
+                    dp_bw.update({j+1:100})
             result.update({i:dp_bw})
             i+=1
     return result
@@ -133,7 +135,7 @@ class Multi(BaseTopo):
         for i in range(0, length):
             for j in range(i,length):
                 if self.latency_matrix[i][j] != 0:
-                    self.addLink(self.ss[i+1], self.ss[j+1], delay= self.latency_matrix[i][j], loss=0)
+                    self.addLink(self.ss[i+1], self.ss[j+1], bw = 100, delay= self.latency_matrix[i][j], loss=0)
 
         for (dp,hosts) in self.dp_host.items():
             for h in hosts:
@@ -147,7 +149,7 @@ class Multi(BaseTopo):
 
         
 
-def start_net(topo_file, latency_file, local_dp_file, dp_host_file,baseport):
+def start_net(topo_file, latency_file, local_dp_file, dp_host_file,baseport,filepath,iperf,wait_time):
     topo = Multi(topo_file, latency_file, local_dp_file, dp_host_file)
     net = BaseNet( topo=topo, switch=OVSSwitch, link=TCLink, build=False, autoStaticArp=True )
     local_dp = read_mapping_from_file(local_dp_file)
@@ -182,6 +184,12 @@ def start_net(topo_file, latency_file, local_dp_file, dp_host_file,baseport):
         net.waitConnected( net.waitConn )
     net.disable_ipv6()
 
+    ds = None
+    if(filepath):
+        ds = DataSender(net, filepath, wait_time)
+        ds.read_conf(ds.filepath)
+    if(iperf):
+        ds.send_iperfs()
         # s.vsctl('--id=@ft create Flow_Table flow_limit=1 overflow_policy=refuse -- set Bridge s1 flow_tables=0=@ft')
     
     CLI( net )
@@ -201,8 +209,18 @@ if __name__ == "__main__":
     parser.add_argument('--tcamfile',nargs='?',
                         type=str,default='./data/dp_tcam.intra')
 
+
+    parser.add_argument('--iperf', nargs='?',
+                        type=int, default=0)
+    parser.add_argument('--iperfile', nargs='?',
+                        type=str, default='./data/flowdes.intra')
+    
+    parser.add_argument('--waittime',nargs='?',
+                        type=int,default=10)
+
     args = parser.parse_args()
-    start_net(args.matrix,args.latmatrix,args.localdp,args.dphost,args.baseport)
+    start_net(args.matrix,args.latmatrix,args.localdp,args.dphost,args.baseport,args.iperfile,args.iperf,args.waittime)
+
     # local_dp = read_mapping_from_file(args.localdp)
     # dp_host = read_mapping_from_file(args.dphost)
     # dp_local = get_reverse_mapping_from_file(args.localdp)

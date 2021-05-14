@@ -45,7 +45,7 @@ class LocalController(app_manager.RyuApp):
         self.buf_size = os.environ.get('BUF_SIZE',10000)
         dp_tcamfile = os.environ.get('TCAM_SIZE','./data/dp_tcam.intra')
 
-        
+        self.redis_port = os.environ.get('REDIS_PORT',6379)
         self.logger=logger.getLogger('local' + str(self.local_id),logging.INFO)
         self.topo = None
         # self.topo_input = os.environ.get("TOPO_INPUT", 1)
@@ -64,7 +64,7 @@ class LocalController(app_manager.RyuApp):
 
         self.packts_buffed = 0 #temp for update trigger
 
-        self.pool = redis.ConnectionPool(host='localhost',port=6379)
+        self.pool = redis.ConnectionPool(host='localhost',port=self.redis_port)
         self.rds = redis.Redis(connection_pool=self.pool)
         self.packets_to_save = []
 
@@ -92,7 +92,7 @@ class LocalController(app_manager.RyuApp):
     def get_from_buffer(self,key):
         msg = self.rds.lpop(key)    
         while(msg):
-            self.buf_size += 1
+            self.buf_size =int( self.buf_size) + 1
             obj = pickle.loads(msg)
             pkg = obj["pkg"]
             dpid = obj["dpid"]
@@ -110,7 +110,7 @@ class LocalController(app_manager.RyuApp):
             "in_port":in_port
         })
         self.rds.rpush(key,value)
-        self.buf_size -= 1
+        self.buf_size = int(self.buf_size) - 1
     
     def make_buf_key(self,src,dst,dst_port):
         return src + dst + str(dst_port)
@@ -202,6 +202,178 @@ class LocalController(app_manager.RyuApp):
         self.send_fb_to_global(fb_msg)
 
 #methods for tag
+
+    #tag 1
+    def remove_tag_on_packets(self,f,up_msg):
+        dplast,dpid,dpnext = up_msg.to_add[0]
+        f.dp_tag = dpid
+        datapath = self.datapaths[dpid]
+        ofproto = datapath.ofproto
+        parser = datapath.ofproto_parser
+        match_pop,match_pop_reverse = self.make_match(parser,f,version_tag=(up_msg.version_tag|0x1000))
+        priority = 2
+        if(up_msg.if_reverse):
+            out = self.hosts[dpid][f.dst] if(dpid == dplast) else self.neighbors[dpid][dplast]
+            self.logger.info("reverse pop tag")
+            action_pop = [parser.OFPActionPopVlan(),
+                          parser.OFPActionOutput(out)]
+            self.add_flow(datapath,priority,match_pop,action_pop)#when the dp is end-node pop the tag
+        else:
+            out_reverse = self.hosts[dpid][f.src] if(dpid==dplast) else self.neighbors[dpid][dplast]
+            self.logger.info("normal pop tag")
+            action_pop = [parser.OFPActionPopVlan(),
+                          parser.OFPActionOutput(out_reverse)]
+            self.add_flow(datapath,priority,match_pop_reverse,action_pop)
+        self.send_barrier(datapath,f.up_step,f.flow_id)
+        self.logger.info("sent a barrier for pop tag on pks")
+
+    #tag 2 5
+    def add_tag_for_packets(self,f,up_msg):
+        self.logger.info("---------in add tag for pkts--------")
+
+        dplast,dpid,dpnext = up_msg.to_add[0]
+        f.dp_tag = dpid
+        datapath = self.datapaths[dpid]
+        ofproto = datapath.ofproto
+        parser = datapath.ofproto_parser
+        match,match_reverse = self.make_match(parser,f)
+        
+        priority = 2
+        if(up_msg.if_reverse):
+            out_reverse = self.hosts[dpid][f.src] if(dpid==dpnext) else self.neighbors[dpid][dpnext]
+            self.logger.info("reverse add tag")
+            actions = [parser.OFPActionPushVlan(),
+                       parser.OFPActionSetField(vlan_vid =(up_msg.version_tag|0x1000)),
+                       parser.OFPActionOutput(out_reverse)]
+            self.add_flow(datapath,priority,match_reverse,actions)#for the <--flow to add tag
+        else:
+            out = self.hosts[dpid][f.dst] if(dpid == dpnext) else self.neighbors[dpid][dpnext]
+            self.logger.info("normal add tag")
+            actions = [parser.OFPActionPushVlan(),
+                       parser.OFPActionSetField(vlan_vid =(up_msg.version_tag|0x1000)),
+                       parser.OFPActionOutput(out)]
+            self.add_flow(datapath,priority,match,actions)
+        self.send_barrier(datapath,f.up_step,f.flow_id)
+        self.logger.info("sent a barrier for tag pks")
+    
+    #tag 3 4
+    def add_tag_for_entries(self,f,up_msg):
+        self.logger.info("add flows")
+        f.up_step = up_msg.up_step
+        version_tag = up_msg.version_tag
+        to_barr_dp = []
+        if(len(up_msg.to_add) == 0):
+            fb_msg = FeedbackMessge(f.flow_id,self.local_id)
+            self.send_fb_to_global(fb_msg)
+            return 
+        for a in up_msg.to_add:
+            dplast,dpid,dpnext = a
+            # print(dpid)
+            if (dpid not in to_barr_dp):
+                to_barr_dp.append(dpid)
+            # print("haha" + str(self.datapaths))
+            datapath = self.datapaths[dpid]
+            ofproto = datapath.ofproto
+            parser = datapath.ofproto_parser
+            match,match_reverse = self.make_match(parser,f,version_tag = up_msg.version_tag)
+            self.logger.info(str(match))
+            self.logger.info(str(match_reverse))
+            out = self.hosts[dpid][f.dst] if(dpid == dpnext) else self.neighbors[dpid][dpnext]
+            out_reverse = self.hosts[dpid][f.src] if(dpid==dplast) else self.neighbors[dpid][dplast]
+            actions = [parser.OFPActionOutput(out)]
+            actions_reverse = [parser.OFPActionOutput(out_reverse)]
+            priority = 2
+            self.add_flow(datapath,priority,match,actions)
+            self.add_flow(datapath,priority,match_reverse,actions_reverse)
+        self.logger.info(to_barr_dp)
+        for dpid in to_barr_dp:
+            self.send_barrier(self.datapaths[dpid],f.up_step,f.flow_id)
+    
+    #tag6
+    def remove_tag_flow(self,f,up_msg):
+        to_barr_dp = []
+        if(len(up_msg.to_del) > 0):
+            for d in up_msg.to_del: 
+                dplast,dpid,dpnext = d
+                datapath = self.datapaths[dpid]
+                if (dpid not in to_barr_dp):
+                    to_barr_dp.append(dpid)
+                ofproto = datapath.ofproto
+                parser = datapath.ofproto_parser
+                match,match_reverse = self.make_match(parser,f,version_tag=up_msg.version_tag)
+                priority = 2
+                self.remove_flow(datapath,priority,match)
+                self.remove_flow(datapath,priority,match_reverse)
+            for dpid in to_barr_dp:
+                self.send_barrier(self.datapaths[dpid],f.up_step,f.flow_id)
+        else:
+            fb_msg = FeedbackMessge(f.flow_id,self.local_id)
+            self.send_fb_to_global(fb_msg)
+    #tag7
+    def mod_flow_vid(self,f,up_msg):
+        self.logger.info("mod flows vid")
+        f.up_step = up_msg.up_step
+        version_tag = up_msg.version_tag
+        to_barr_dp = []
+        if(len(up_msg.to_add) == 0):
+            fb_msg = FeedbackMessge(f.flow_id,self.local_id)
+            self.send_fb_to_global(fb_msg)
+            return 
+        for a in up_msg.to_add:
+            dplast,dpid,dpnext = a
+            # print(dpid)
+            if (dpid not in to_barr_dp):
+                to_barr_dp.append(dpid)
+            # print("haha" + str(self.datapaths))
+            datapath = self.datapaths[dpid]
+            ofproto = datapath.ofproto
+            parser = datapath.ofproto_parser
+            match,match_reverse = self.make_match(parser,f,version_tag = None)
+            match_del,match_reverse_del = self.make_match(parser,f,version_tag = up_msg.version_tag)
+            self.logger.info(str(match))
+            self.logger.info(str(match_reverse))
+            self.logger.info(str(match_del))
+            self.logger.info(str(match_reverse_del))
+            out = self.hosts[dpid][f.dst] if(dpid == dpnext) else self.neighbors[dpid][dpnext]
+            out_reverse = self.hosts[dpid][f.src] if(dpid==dplast) else self.neighbors[dpid][dplast]
+            actions = [parser.OFPActionOutput(out)]
+            actions_reverse = [parser.OFPActionOutput(out_reverse)]
+            priority = 2
+            self.add_flow(datapath,priority,match,actions)
+            self.add_flow(datapath,priority,match_reverse,actions_reverse)
+            self.remove_flow(datapath,2,match_del)
+            self.remove_flow(datapath,2,match_reverse_del)
+        self.logger.info(to_barr_dp)
+        for dpid in to_barr_dp:
+            self.send_barrier(self.datapaths[dpid],f.up_step,f.flow_id)
+
+    #tag entry
+    def any_up_msg_TAG_new(self,f,up_msg):
+        f.up_step = up_msg.up_step
+        self.logger.info("it's in " + str(f.up_step))
+        if(f.up_step == 0):
+            fb_msg = FeedbackMessge(f.flow_id,self.local_id)
+            self.send_fb_to_global(fb_msg)
+        if(f.up_step == consts.TAG_POP_ADD):
+            self.remove_tag_on_packets(f,up_msg)
+        elif(f.up_step == consts.TAG_PUSH_OLD):
+            self.add_tag_for_packets(f,up_msg)
+        elif(f.up_step == consts.TAG_OLD_TAG):
+            self.add_tag_for_entries(f,up_msg)
+        elif(f.up_step == consts.TAG_NEW_TAG):
+            self.add_tag_for_entries(f,up_msg)
+        elif(f.up_step == consts.TAG_PUSH_NEW):
+            self.logger.info("--------yes in 5")
+            self.add_tag_for_packets(f,up_msg)
+        elif(f.up_step == consts.TAG_DEL_OLD):
+            self.remove_tag_flow(f,up_msg)
+        elif(f.up_step == consts.TAG_MOD_NEW):
+            self.mod_flow_vid(f,up_msg)
+
+            
+
+
+###############################################
     #Tag step 1 add_tagged_entry
     def any_up_msg_TAG(self,f,up_msg):
         f.up_step = up_msg.up_step
@@ -262,14 +434,16 @@ class LocalController(app_manager.RyuApp):
         elif(f.up_step == consts.TAG_UNTAG):
             pass
         
+    #old version this method
+    def _add_tag_for_packets(self,f,up_msg):
         
-    def add_tag_for_packets(self,f,up_msg):
         
-        dplast,dpid,dpnext = up_msg.to_add[0]
-        
-        f.dp_tag = dpid
         self.logger.info("---------in add tag for pkts--------")
         self.logger.info(f.version_tag)
+        self.logger.info(up_msg.to_add)
+
+        dplast,dpid,dpnext = up_msg.to_add[0]
+        f.dp_tag = dpid
         datapath = self.datapaths[dpid]
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
@@ -304,6 +478,8 @@ class LocalController(app_manager.RyuApp):
             self.add_flow(datapath,priority,match_pop_reverse,action_pop)
         self.send_barrier(datapath,f.up_step,f.flow_id)
         self.logger.info("sent a barrier for tag pks")
+    
+    
 
 #methods for raw
     def any_up_msg_RAW(self,f,up_msg):
@@ -353,10 +529,6 @@ class LocalController(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
         dpid = datapath.id     
-        
-        
-        self.logger.info("------------in features----------")
-        self.logger.info(str(msg))
 
         if(dpid in self.datapaths.keys()):
             return
@@ -390,6 +562,8 @@ class LocalController(app_manager.RyuApp):
         self.logger.info("hello this is reply for xid" +str(ev.msg.xid))
         xid = ev.msg.xid
         flows_move_on = self.get_flows_move_on(xid)
+        self.logger.info("here's move on")
+        self.logger.info(flows_move_on)
         self.logger.info(self.xid_find_flow)
         # self.logger.info(self.flows["10.0.0.110.0.0.25001"].barrs_wait)
         self.logger.info(flows_move_on)
@@ -468,7 +642,7 @@ class LocalController(app_manager.RyuApp):
                 self.logger.info("in rls")
                 self.any_up_msg_RLS_BUF(f,up_msg)
         elif(up_type == consts.TAG):
-            self.any_up_msg_TAG(f,up_msg)
+            self.any_up_msg_TAG_new(f,up_msg)
         elif(up_type == consts.RAW):
             self.any_up_msg_RAW(f,up_msg)
 
@@ -477,9 +651,12 @@ class LocalController(app_manager.RyuApp):
             self.logger.info("---------get an Ask")
             fb_msg = FeedbackMessge(-1,self.local_id)
             fb_msg.statusAnswer = True
+            a = {}
+            for dp,tcam in self.dp_tcam_size.items():
+                a[dp] = tcam if tcam > 0 else 0
             fb_msg.status = ({
                 "buffer_remain":self.buf_size,
-                "tcam_remain":self.dp_tcam_size
+                "tcam_remain":a
             })
             self.logger.info(fb_msg)
             self.send_fb_to_global(fb_msg)
@@ -505,14 +682,16 @@ class LocalController(app_manager.RyuApp):
         if(self.flows.has_key(key) and self.flows[key].up_type == consts.BUF):
             self.logger.info("buffffffffffff")
             self.save_to_buffer(pkt_in)
-        self.logger.info("--------------in packet in---------------") 
+        # self.logger.info("--------------in packet in---------------") 
         # self.logger.info(self.flows[key].up_type)
         # self.logger.info(self.flows[key].up_step)   
-        if(self.flows.has_key(key) and self.flows[key].up_type == consts.TAG and self.flows[key].up_step > consts.TAG_ADD):
-            self.logger.info("yes tagged now go back and enjoy your tour")
-            actions = [parser.OFPActionOutput(port=ofproto.OFPP_TABLE)]
-            req = parser.OFPPacketOut(datapath,in_port=in_port,buffer_id=ofproto.OFP_NO_BUFFER,actions=actions,data=pkg)
-            datapath.send_msg(req)
+
+        # if(self.flows.has_key(key) and self.flows[key].up_type == consts.TAG and self.flows[key].up_step > consts.TAG_ADD):
+        #     self.logger.info("yes tagged now go back and enjoy your tour")
+        #     actions = [parser.OFPActionOutput(port=ofproto.OFPP_TABLE)]
+        #     req = parser.OFPPacketOut(datapath,in_port=in_port,buffer_id=ofproto.OFP_NO_BUFFER,actions=actions,data=pkg)
+        #     datapath.send_msg(req)
+        
         #for simulating the latency of updateing
         # self.packts_buffed += 1
         # if(self.packts_buffed == 30):
@@ -552,7 +731,7 @@ class LocalController(app_manager.RyuApp):
                                 match=match, priority=priority)
         datapath.send_msg(mod)
         dpid = {value: key for key, value in self.datapaths.items()}[datapath]
-        self.dp_tcam_size[dpid] += 1
+        self.dp_tcam_size[dpid] = int(self.dp_tcam_size[dpid]) + 1
 
     def add_flow(self,datapath,priority,match,actions):
         self.logger.info(match)
@@ -564,7 +743,7 @@ class LocalController(app_manager.RyuApp):
                                     match=match, instructions=inst)
         datapath.send_msg(mod)
         dpid = {value: key for key, value in self.datapaths.items()}[datapath]
-        self.dp_tcam_size[dpid] -= 1
+        self.dp_tcam_size[dpid] = int(self.dp_tcam_size[dpid]) - 1
 
 
 #methods for comm with global

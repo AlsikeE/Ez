@@ -37,6 +37,7 @@ class DataSender(object):
         line  = f.readline()
         while line:
             des = line.strip('\n').split("\t")
+            logger.info(des)
             nodes_index =  des[1].strip('(').strip(')').split(',')
             logger.info("hhhhhhhhhhhhhhhhhhhhhhhhhhh")
             logger.info(nodes_index)
@@ -58,14 +59,16 @@ class DataSender(object):
         if((server,port) not in self.srv_ports):
             self.srv_ports.append((server,port))
             logger.info('mxdhhhhhhhhhhhhhhhhhhh')
-            logger.info('iperf -s -u -p %d -i 1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
+            # logger.info('iperf3 -s -p %d -i 0.1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
 
 
 
 # 'iperf -s -u -p %d -i 1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid
 
-            server.cmd('iperf -s -u -p %d -i 5 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
-            logger.info('operf -s -p %d' %port)
+            # server.cmd('iperf -s -u -p %d -i 0.1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
+            server.cmd('iperf -s -u -p %d -i 0.1 > '%port +IPERF_SERVER_LOG_DIR+'server%s.txt&'% uuid)
+
+            logger.info('server runs iperf3 -s -p %d' %port)
 
         iperfArgs = 'iperf -p %d ' % port
         bwArgs = ''
@@ -80,10 +83,10 @@ class DataSender(object):
             if not waitListening( client, server.IP(), port ):
                 raise Exception( 'Could not connect to iperf on port %d'
                                  % port )
-        client.cmd( iperfArgs + '-t %d -i 5 -c ' % seconds +
+        client.cmd( iperfArgs + '-t %d -i 0.1 -c ' % seconds +
+                             server.IP() + ' ' + bwArgs +' >' + IPERF_CLIENT_LOG_DIR +'client%s.txt &'%uuid)
+        logger.info("client runs " + iperfArgs + '-t %d -i 0.1 -c ' % seconds +
                              server.IP() + ' ' + bwArgs +' > ' + IPERF_CLIENT_LOG_DIR +'client%s.txt &'%uuid)
-        logger.info(iperfArgs + '-t %d -c ' % seconds +
-                             server.IP() + ' ' + bwArgs)
 
 
     def send_iperfs(self):
