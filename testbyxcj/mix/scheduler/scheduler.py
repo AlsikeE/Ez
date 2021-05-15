@@ -6,6 +6,17 @@ sys.path.append('../')
 import logging
 import logger as logger
 
+
+log = logging.getLogger(__name__)
+log.setLevel(level = logging.INFO)
+handler = logging.FileHandler("/root/ez-segway/testbyxcj/front/static/schedule.log")
+handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(message)s')
+handler.setFormatter(formatter)
+log.addHandler(handler)
+
+
+
 class PolicyUtil():
     def __init__(self):
         pass
@@ -15,7 +26,7 @@ class PolicyUtil():
     TAG = 101
     RAW = 102
 
-    BUFFER_PRICE = 10
+    BUFFER_PRICE = 100
     FLOW_ENTRY_PRICE = 1
     BANDWIDTH_PRICE = 1
 
@@ -318,6 +329,7 @@ class Scheduler(object):
                     # _TIME_TO_UPDATE_ONE_SWITCH
                     # buffer_time = _TIME_TO_UPDATE_ONE_SWITCH * switch_count
                     estimated_buffer_time = 30.00 / 1000 #ms
+                    # estimated_buffer_time = 60.00 / 1000 #ms
 
                     self.logger.info("estimated_buffer_time")
                     self.logger.info(estimated_buffer_time)
@@ -349,6 +361,9 @@ class Scheduler(object):
         self.logger.info(potential_policies[best_choice])
         self.logger.info("best_performance")
         self.logger.info(best_performance)
+        if(best_performance[1] != 10000):
+            log.info(potential_policies[best_choice])
+            # log.info(best_performance)
         return potential_policies[best_choice], best_performance
 
 

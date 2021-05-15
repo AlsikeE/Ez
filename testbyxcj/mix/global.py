@@ -16,6 +16,7 @@ import logging
 import logger as logger
 import time
 
+BW_NUM = 100
 nowTime = lambda:int(round(time.time() * 1000))
 
 class GlobalController(object):
@@ -129,7 +130,7 @@ class GlobalController(object):
     def cal_remain_bw(self):
         for dp,linkto in self.link_bw.items():
             for dpnext,v in linkto.items():
-                self.link_bw[dp][dpnext] = 1000
+                self.link_bw[dp][dpnext] = BW_NUM
         for f in self.flows.values():
             path = f.new
             if(path):

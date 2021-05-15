@@ -42,7 +42,7 @@ class LocalController(app_manager.RyuApp):
         topofile = os.environ.get("TOPO", './data/topo.intra')
         local_dpfile = os.environ.get('LOCAL_DP','./data/local_dp.intra')
         dp_hostfile = os.environ.get('DP_HOST','./data/dp_host.intra')
-        self.buf_size = os.environ.get('BUF_SIZE',10000)
+        self.buf_size = float(os.environ.get('BUF_SIZE',1))
         dp_tcamfile = os.environ.get('TCAM_SIZE','./data/dp_tcam.intra')
 
         self.redis_port = os.environ.get('REDIS_PORT',6379)
@@ -92,7 +92,7 @@ class LocalController(app_manager.RyuApp):
     def get_from_buffer(self,key):
         msg = self.rds.lpop(key)    
         while(msg):
-            self.buf_size =int( self.buf_size) + 1
+            self.buf_size =int( self.buf_size) + 0.001
             obj = pickle.loads(msg)
             pkg = obj["pkg"]
             dpid = obj["dpid"]
@@ -110,13 +110,17 @@ class LocalController(app_manager.RyuApp):
             "in_port":in_port
         })
         self.rds.rpush(key,value)
-        self.buf_size = int(self.buf_size) - 1
+        self.buf_size = int(self.buf_size) - 0.001
     
     def make_buf_key(self,src,dst,dst_port):
         return src + dst + str(dst_port)
 
     def send_back(self,pkg,dpid,in_port):
-        datapath = self.datapaths[dpid]
+        try:
+            datapath = self.datapaths[dpid]
+        except Exception as e:
+            self.logger.info(e)
+            return
         parser = datapath.ofproto_parser
         ofproto = datapath.ofproto
         actions = [parser.OFPActionOutput(port=ofproto.OFPP_TABLE)]

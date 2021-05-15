@@ -30,8 +30,7 @@ def write_config(tcam,buff):
     f = open('../mix/data/local_bufsize.intra','r+')
     f.seek(0)
     f.truncate()
-    for i in range(1,3):
-        f.write(str(i)+':' + str(buff) + '\n')
+    f.write(str(buff))
 
 def start_tests(tcam,buff):
     write_config(tcam,buff)
@@ -75,8 +74,32 @@ def update():
         data = {"flows":flow_list}
         headers = {'content-type': "application/json"}
         res = requests.post(url='http://192.168.0.33:8800',data=json.dumps(data),headers=headers)
-    return 'stopped'
+    return 'update request sent'
 
+@app.route('/methlogs/',methods=['GET'])
+def get_methlogs():
+    if request.method == 'GET':
+        with open('./static/schedule.log') as f:
+            lines = f.readlines()
+            line = None
+            try:
+                line = lines[-1]
+            except:
+                print('why?')
+            if(line):
+                result = {}
+                metlist = line[1:-2].split(', ')
+                # return metlist
+                for met in metlist:
+                    k,v = met.split(': ')
+                    print(k,v)
+                    k = k.strip('u').strip('\'')
+                    value = 'BUF' if v == '100' else 'TAG'
+                    if v == '102':
+                        value = 'RAW'
+                    result.update({k:value})
+                return json.dumps(result)
+    return ''
 if __name__=='__main__':
 
     app.run(host='0.0.0.0',debug=True,port=8100)

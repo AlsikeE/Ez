@@ -21,17 +21,26 @@
                           <!-- <label for="flowInput">更新流命令</label> -->
                           <textarea  type="text" class="form-control" rows=6 id="flows" placeholder="flows to update"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-default" onclick='send_to_update()'>Submit</button>
+                        <!-- <button type="submit" class="btn btn-default" onclick='send_to_update()'>提交更新或安装</button> -->
                       </form>
+                      <button type="submit" class="btn btn-default" onclick='send_to_update()'>提交更新或安装</button>
                     </textarea>
                 </div>
             </div>
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    <h3 class="panel-title">输出日志</h3>
+                    <div class="row">
+                      <div class="col-md-4">
+                        <h3 class="panel-title">混合结果</h3>
+                      </div>
+                      <div class="col-md-8 text-right">
+                        <button type="submit" class="btn btn-default" onclick="get_methlogs()">获取结果</button>
+                      </div>
+                    </div>
+                    
                   </div>
                   <div class="panel-body">
-                    <textarea  type="text" class="form-control" rows=6 id="flows_update" placeholder="flows to update"></textarea>                    
+                    <textarea  type="text" class="form-control" disabled rows=5 id="method_logs" placeholder="logs will be printed here"></textarea>                    
                     </textarea>
                 </div>
             </div>
@@ -62,12 +71,12 @@
                   <div class="panel-body">
                     <form>
                         <div class="form-group">
-                          <label for="tcam">TCAM空间设置</label>
+                          <label for="tcam">TCAM空间设置/条</label>
                           <input  type="number" class="form-control" id="tcam" value=25 placeholder="20--1000"></input>
                         </div>
                         <div class="form-group">
-                            <label for="buff">Buffer空间设置</label>
-                            <input  type="number" class="form-control" id="buff" value=1000 placeholder="0--1000"></input>
+                            <label for="buff">Buffer空间设置/MB</label>
+                            <input  type="number" class="form-control" id="buff" value=1 placeholder="0--10"></input>
                           </div>
                         <button type="submit" class="btn btn-default" onclick='startall()'>启动网络</button>
                         <button type="submit" class="btn btn-default" onclick='stopall()'>停止运行</button>

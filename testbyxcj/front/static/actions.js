@@ -19,6 +19,15 @@ send_to_update= function(){
     },
     function(data){alert(data)})
 }
+
+get_methlogs = function(){
+    $.get('/methlogs/', {'method':'GET', 'text':'from html'}, 
+    function(data){
+        // alert(data);
+        $("#method_logs").val(data);
+
+    })
+}
 // send_to_update = function(){
 //     $.post('update',)
 // }
