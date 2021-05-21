@@ -22,7 +22,7 @@ tmux new-window -t $N:99 -n "mn"
 # tmux send-keys -t $N:99 "mn --topo=single,4 --arp --controller=remote,ip=127.0.0.1,port=6666" Enter
 # tmux send-keys -t $N:99 "python topo.py --iperf 1 --filepath ./data/flowdes.intra" Enter
 tmux send-keys -t $N:99 "python ./multi_controller_topo.py --iperf 1" Enter
-# tmux send-keys -t $N:99 "python multi_controller_topo.py" Enter
+# tmux send-keys -t $N:99 "python ./multi_controller_topo.py" Enter
 # tmux send-keys -t $N:99 "python topo3.py " Enter
 sleep 1
 

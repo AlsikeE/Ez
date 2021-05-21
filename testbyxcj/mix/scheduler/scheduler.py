@@ -123,7 +123,9 @@ class Scheduler(object):
             assert f.ratio >= 0
             assert f.target_loss >= 0
             assert f.target_latency >= 0
-            info["rate"] = f.ratio            
+            # info["rate"] = f.ratio   
+            info['latlossrate'] = f.ratio
+            info["rate"] = f.bw         
             info["loss"] = f.target_loss
             info["latency"] = f.target_latency
             info["instance"] = f
@@ -294,6 +296,7 @@ class Scheduler(object):
                     demanded_flowspace_dict[diverge_point] += COMMONSWITCH_TAG_ENRTY
                     demanded_flowspace_dict[converge_point] += COMMONSWITCH_TAG_ENRTY
 
+
                     new_switch = f_info["new_only_nodes"]
                     for ns in new_switch:
                         demanded_flowspace_dict[ns] += NEWSWITCH_TAG_ENTRY
@@ -337,8 +340,10 @@ class Scheduler(object):
                     self.logger.info("flow_rate")
                     self.logger.info(flow_rate)
 
-                    estimated_cache_size = 1.00 * flow_rate * estimated_buffer_time  #MB
+                    estimated_cache_size = 1.00 * flow_rate * estimated_buffer_time * f_info['latlossrate'] #MB
                     
+
+                    # estimated_cache_size = 1.00 * flow_rate * estimated_buffer_time #MB
                     self.logger.info("estimated_cache_size")
                     self.logger.info(estimated_cache_size)
 
@@ -384,10 +389,12 @@ class Scheduler(object):
         # 1.1 bandwidth
         violate_bw_count = 0
         violate_bw_percent = 0.00
-
-        print(demanded_flowspace_dict)
-        print(demanded_bw_dict)
-        print(demanded_bufferspace_dict)
+        self.logger.info("-------------tcam-----------------")
+        self.logger.info(demanded_flowspace_dict)
+        self.logger.info("-------------bw-----------------")
+        self.logger.info(demanded_bw_dict)
+        self.logger.info("-------------buffer-----------------")
+        self.logger.info(demanded_bufferspace_dict)
 
         for link,bandwidth_demand in demanded_bw_dict.items():
             total_bw_demand += bandwidth_demand

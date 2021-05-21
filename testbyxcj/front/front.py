@@ -100,6 +100,24 @@ def get_methlogs():
                     result.update({k:value})
                 return json.dumps(result)
     return ''
+
+@app.route('/imgs/',methods=['GET'])
+def get_iperfs():
+    bw_list,jitter_list,loss_list = [],[],[]
+    for root,dirs,files in os.walk('./static/iperfimgs/'):
+        for d in dirs:
+            p = '../static/iperfimgs/' + d + '/' + d
+            bw_list.append(p + '_bw.png')
+            jitter_list.append(p + '_jitter.png')
+            loss_list.append(p +'_loss.png')
+    result = json.dumps({
+        'bw':bw_list,
+        'jitter':jitter_list,
+        'loss':loss_list
+    })
+    return result
+
+
 if __name__=='__main__':
 
     app.run(host='0.0.0.0',debug=True,port=8100)

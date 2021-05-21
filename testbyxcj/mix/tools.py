@@ -22,6 +22,26 @@ def _put_all_in_tuple(path_to_deal):
         i += 1
     return target
 
+def _compare_put_all_in_tuple(path_to_deal,raw_path):
+    target = []
+    length = len(path_to_deal)
+   
+    i = 0
+    while(i < length):
+        dp = path_to_deal[i]
+        if(i == 0):
+            dplast = dp if(path_to_deal[0] == raw_path[0]) else raw_path[raw_path.index(dp) - 1]
+        else:
+            dplast = path_to_deal[i-1]
+        if(i == length - 1):
+            dpnext = dp if(path_to_deal[-1] == raw_path[-1]) else raw_path[raw_path.index(dp) + 1]
+        else:
+            dpnext = path_to_deal[i] if (i==length-1) else path_to_deal[i+1]
+        target.append((dplast,dp,dpnext))
+        i += 1
+    
+    return target
+
 
 def _find_dif_str(path_old,path_new):
     i = 0
@@ -53,8 +73,10 @@ def diff_old_new(path_old,path_new):
         to_del = _put_all_in_tuple(path_old)
     elif(path_new!=[] and path_old!=[]):
         po,pn = _find_dif_str(path_old,path_new)
-        to_add = _put_all_in_tuple(pn)
-        to_del = _put_all_in_tuple(po)
+        # to_add = _put_all_in_tuple(pn)
+        # to_del = _put_all_in_tuple(po)
+        to_add = _compare_put_all_in_tuple(pn,path_new)
+        to_del = _compare_put_all_in_tuple(po,path_old)
     print(to_add,to_del)
     return to_add,to_del
 
@@ -130,10 +152,18 @@ def str_to_list(lstr):
 
 if __name__ == "__main__":
 
-    print(_find_dif_str([1,2,3,4],[1,2,4]))
-    diff_old_new([1,2,3,4],[1,2,4])
-    diff_old_new([1,2],[])
-    target1 = flowkey_to_ctrlkey({},{1:233,2:888},'flow1',[],[])
+    # print(_find_dif_str([1,2,3,4],[1,2,4]))
+    # diff_old_new([1,2,3,4],[1,2,4])
+    # diff_old_new([1,2],[])
+    # target1 = flowkey_to_ctrlkey({},{1:233,2:888},'flow1',[],[])
+    print(_find_dif_str([1,2,3,5,4],[1,2,5,4]))
+    diff_old_new([],[1,2,5,4])
+
+    diff_old_new([1,2,3,5,4],[])
+    diff_old_new([1,2,3,5,4],[1,2,5,4])
+    diff_old_new([1,4],[1,2,5,4])
+
+    # print(_compare_put_all_in_tuple([1,2,3,5],[]))
     # target2 = flowkey_to_ctrlkey(target1,{1:233,2:888},'flow1',[(3,1,5)],[(2,2,2)])
     # target3 = flowkey_to_ctrlkey(target1,{1:233,2:888},'flow2',[(3,1,5)],[(2,2,2)])
     
